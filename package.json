@@ -1,0 +1,23 @@
+{
+  "name": "chunks-webpack-plugin",
+  "version": "1.0.0",
+  "description": "Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoriiis/chunks-webpack-plugin.git"
+  },
+  "keywords": [
+    "webpack",
+    "plugin",
+    "chunks",
+    "chunks-webpack-plugin"
+  ],
+  "author": "Yoriiis aka Joris DANIEL",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yoriiis/chunks-webpack-plugin/issues"
+  },
+  "homepage": "https://github.com/yoriiis/chunks-webpack-plugin#readme"
+}
