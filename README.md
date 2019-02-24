@@ -18,6 +18,8 @@ The `chunks-webpack-plugin` works without configuration.
 
 ## Installation
 
+The plugin is available as the `chunks-webpack-plugin` package on <a href="https://www.npmjs.com/package/chunks-webpack-plugin" title="ChunksWebpackPlugin on npm" target="_blank">npm</a> and <a href="https://github.com/yoriiis/chunks-webpack-plugin" title="ChunksWebpackPlugin on Github" target="_blank">Github</a>.
+
 ```
 npm install --save-dev chunks-webpack-plugin
 ```
@@ -26,7 +28,7 @@ npm install --save-dev chunks-webpack-plugin
 
 ChunksWebpackPlugin was built for Node.js 8.x and Webpack 4.x
 
-## Basic Usage
+## Basic usage
 
 The plugin will generate for you two HTML5 files for each entry points. Each filename contains the entrypoint name, `{{entry}}` is dynamically replace.
 
@@ -62,6 +64,40 @@ This will generate the following HTML files in `./dist/` folder:
 ```html
 <script src="main.js"></script>
 ```
+
+## Using a configuration
+
+You can pass configuration options to ChunksWebpackPlugin. Allowed values are as follows:
+
+* `path` - The output path of generated files (default `output.path`)
+* `fileExtension` - The extension of generated files (default `.html`)
+* `templateStyle` - Custom template for HTML `<style>` tags
+* `templateScript` - Custom template for HTML `<script>` tags
+
+```javascript
+var ChunksWebpackPlugin = require('chunks-webpack-plugin');
+var path = require('path');
+
+module.exports = {
+    entry: 'index.js',
+    output: {
+        path: path.resolve(__dirname, './dist'),
+        filename: 'bundle.js'
+    },
+    plugins: [
+        new ChunksWebpackPlugin({
+            path: path.resolve(__dirname, `./built`),
+            fileExtension: '.html.twig',
+            templateStyle: `<link rel="stylesheet" href="https://cdn.domain.com{{chunk}}"/>`,
+            templateScript: `<script async src="https://cdn.domain.com{{chunk}}"></script>`
+        })
+    ]
+};
+```
+
+**Keep `{{chunk}}` placeholder**, it is automatically replace by the Webpack public path and chunk filename.
+
+Custom templates allows to writes your own tags with for example custom attributes (async, defer) or add a CDN url before assets path.
 
 ### Caching
 
@@ -140,40 +176,6 @@ The plugin will generate all files in `./dist/` folder:
 <script src="news.js"></script>
 ```
 
-## Configuration
+## Licence
 
-You can pass configuration options to ChunksWebpackPlugin. Allowed values are as follows:
-
-* `path` - The output path of generated files (default `output.path`)
-* `fileExtension` - The extension of generated files (default `.html`)
-* `templateStyle` - Custom template for HTML `<style>` tags
-* `templateScript` - Custom template for HTML `<script>` tags
-
-```javascript
-var ChunksWebpackPlugin = require('chunks-webpack-plugin');
-var path = require('path');
-
-module.exports = {
-    entry: 'index.js',
-    output: {
-        path: path.resolve(__dirname, './dist'),
-        filename: 'bundle.js'
-    },
-    plugins: [
-        new ChunksWebpackPlugin({
-            path: path.resolve(__dirname, `./built`),
-            fileExtension: '.html.twig',
-            templateStyle: `<link rel="stylesheet" href="https://cdn.domain.com{{chunk}}"/>`,
-            templateScript: `<script async src="https://cdn.domain.com{{chunk}}"></script>`
-        })
-    ]
-};
-```
-
-**Keep `{{chunk}}` placeholder**, it is automatically replace by the Webpack public path and chunk filename.
-
-Custom templates allows to writes your own tags with for example custom attributes (async, defer) or add a CDN url before assets path.
-
-## Licences
-
-Available with the MIT licence.
+Available with the <a href="https://github.com/yoriiis/chunks-webpack-plugin/blob/master/LICENSE" title="MIT licence" target="_blank">MIT licence</a>.
