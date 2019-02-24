@@ -1,4 +1,4 @@
-![ChunksWebpackPlugin](https://img.shields.io/badge/ChunksWebpackPlugin-v1.0.0-1a6bac.svg?style=flat-square)
+![ChunksWebpackPlugin](https://img.shields.io/badge/ChunksWebpackPlugin-v1.0.1-1a6bac.svg?style=flat-square)
 
 # ChunksWebpackPlugin
 
