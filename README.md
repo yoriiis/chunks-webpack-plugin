@@ -1,4 +1,4 @@
-![ChunksWebpackPlugin](https://img.shields.io/badge/ChunksWebpackPlugin-v1.0.1-1a6bac.svg?style=flat-square)
+![ChunksWebpackPlugin](https://img.shields.io/badge/ChunksWebpackPlugin-v2.0.0-1a6bac.svg?style=flat-square)
 
 # ChunksWebpackPlugin
 
@@ -69,10 +69,15 @@ This will generate the following HTML files in `./dist/` folder:
 
 You can pass configuration options to ChunksWebpackPlugin. Allowed values are as follows:
 
-* `path` - The output path of generated files (default `output.path`)
-* `fileExtension` - The extension of generated files (default `.html`)
-* `templateStyle` - Custom template for HTML `<style>` tags
-* `templateScript` - Custom template for HTML `<script>` tags
+* `outputPath` - {String} - The output path of generated files (default `output.path`)
+* `fileExtension` - {String} - The extension of generated files (default `.html`)
+* `templateStyle` - {String} - Custom template for HTML `<style>` tags
+* `templateScript` - {String} - Custom template for HTML `<script>` tags
+* `customFormatTags` - {Function} - Custom function to generate your own templates
+
+### Custom templates
+
+Custom templates allows to writes your own HTML `styles` and `scripts` tags with for example custom attributes (async, defer) or add a CDN url before assets path.
 
 ```javascript
 var ChunksWebpackPlugin = require('chunks-webpack-plugin');
@@ -86,9 +91,9 @@ module.exports = {
     },
     plugins: [
         new ChunksWebpackPlugin({
-            path: path.resolve(__dirname, `./built`),
+            outputPath: path.resolve(__dirname, `./built`),
             fileExtension: '.html.twig',
-            templateStyle: `<link rel="stylesheet" href="https://cdn.domain.com{{chunk}}"/>`,
+            templateStyle: `<link rel="stylesheet" href="https://cdn.domain.com{{chunk}}" />`,
             templateScript: `<script async src="https://cdn.domain.com{{chunk}}"></script>`
         })
     ]
@@ -97,7 +102,41 @@ module.exports = {
 
 **Keep `{{chunk}}` placeholder**, it is automatically replace by the Webpack public path and chunk filename.
 
-Custom templates allows to writes your own tags with for example custom attributes (async, defer) or add a CDN url before assets path.
+### Full custom generation
+
+The function `customFormatTags` allows to help you manage everything during the compilation. If the function is defined, there is **no default behavior, you must generate yourself your templates**. The function is called for each entry points and the context of the function (without arrow functions), is the class `ChunksWebpackPlugin` to access its properties.
+
+The `customFormatTags` function take two parameters:
+* `chunksSorted` - {Object} - List of chunks sorted by type (styles, scripts)
+* `chunkGroup` - {Object} - Webpack `chunkGroup` for each entry points
+
+```javascript
+var ChunksWebpackPlugin = require('chunks-webpack-plugin');
+var path = require('path');
+
+module.exports = {
+    entry: 'index.js',
+    output: {
+        path: path.resolve(__dirname, './dist'),
+        filename: 'bundle.js'
+    },
+    plugins: [
+        new ChunksWebpackPlugin({
+            outputPath: path.resolve(__dirname, `./built`),
+            fileExtension: '.html.twig',
+            customFormatTags: function(chunksSorted, chunkGroup) {
+
+                //The function must returns this formatted object with your styles and scripts HTML
+                return {
+                  'styles': ''
+                  'scripts': ''
+                }
+
+            }
+        })
+    ]
+};
+```
 
 ### Caching
 
