@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 2.0.1
+ * @version 2.0.2
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description:
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -23,10 +23,10 @@ module.exports = class ChunksWebpackPlugin {
 			fileExtension: '.html',
 			templateStyle: `<link rel="stylesheet" href="{{chunk}}" />`,
 			templateScript: `<script src="{{chunk}}"></script>`,
-            customFormatTags: null
+			customFormatTags: null
 		};
 
-		//Merge default options with user options
+		// Merge default options with user options
 		this.options = Object.assign(defaultOptions, userOptions);
 
 	}
@@ -45,55 +45,58 @@ module.exports = class ChunksWebpackPlugin {
 	 */
 	_done(compilation) {
 
-		//Get publicPath from Webpack and add slashes suffix if necessary
+		// Get publicPath from Webpack and add slashes suffix if necessary
 		this.publicPath = compilation.compilation.options.output.publicPath;
 		if (this.publicPath) {
-			if(this.publicPath.substr(-1) !== '/'){
+			if (this.publicPath.substr(-1) !== '/') {
 				this.publicPath = `${this.publicPath}/`
 			}
 		}
 
-		//Use default Webpack outputPath
+		// Use default Webpack outputPath
 		if (this.options.outputPath === null) {
 			this.outputPath = compilation.compilation.options.output.path;
 		} else if (this.options.outputPath !== '' && path.isAbsolute(this.options.outputPath)) {
-			//Use custom outputPath (must be absolute)
+			// Use custom outputPath (must be absolute)
 			this.outputPath = this.options.outputPath;
 		} else {
 			throw new Error('ChunksWebpackPlugin::outputPath is incorrect');
 		}
 
-		//Check if destination folder is available
+		// Check if destination folder is available
 		if (compilation.compilation.chunkGroups.length) {
 			this.checkDestinationFolder();
 		}
 
 		compilation.compilation.chunkGroups.forEach(chunkGroup => {
 
-            let chunksSorted = this.sortsChunksByType(chunkGroup.chunks);
-			let tagsHTML = null;
+			// Check if chunkGroup contains chunks
+			if (chunkGroup.chunks.length) {
+				let chunksSorted = this.sortsChunksByType(chunkGroup.chunks);
+				let tagsHTML = null;
 
-			//The user prefers to generate his own HTML tags, use his object
-			if(typeof this.options.customFormatTags === 'function'){
+				// The user prefers to generate his own HTML tags, use his object
+				if (typeof this.options.customFormatTags === 'function') {
 
-				//Change context of the function, to allow access to this class
-                tagsHTML = this.options.customFormatTags.call(this, chunksSorted, chunkGroup);
+					// Change context of the function, to allow access to this class
+					tagsHTML = this.options.customFormatTags.call(this, chunksSorted, chunkGroup);
 
-				//Check if datas are correctly formatted
-				if(tagsHTML === null || typeof tagsHTML.styles === 'undefined' || typeof tagsHTML.scripts === 'undefined'){
-					throw new Error('ChunksWebpackPlugin::customFormatTags return incorrect object');
+					// Check if datas are correctly formatted
+					if (tagsHTML === null || typeof tagsHTML.styles === 'undefined' || typeof tagsHTML.scripts === 'undefined') {
+						throw new Error('ChunksWebpackPlugin::customFormatTags return incorrect object');
+					}
+
+				} else {
+					// Default behavior, generate HTML tags with templateStyle and templateScript
+					tagsHTML = this.generateTags(chunksSorted);
 				}
 
-            }else{
-				//Default behavior, generate HTML tags with templateStyle and templateScript
-            	tagsHTML = this.generateTags(chunksSorted);
+				this.createFiles({
+					htmlStyles: chunksSorted.styles.length ? tagsHTML.styles : false,
+					htmlScripts: chunksSorted.scripts.length ? tagsHTML.scripts : false,
+					entry: chunkGroup.options.name
+				});
 			}
-
-			this.createFiles({
-				htmlStyles: tagsHTML.styles,
-				htmlScripts: tagsHTML.scripts,
-				entry: chunkGroup.options.name
-			});
 		})
 
 	}
@@ -103,26 +106,26 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {Array} chunks The list of chunks of chunkGroups
 	 * @returns {Object} files All chunks sorted by type (extension)
 	 */
-    sortsChunksByType(chunks){
+	sortsChunksByType(chunks) {
 
-        let files = {
-            'styles': [],
-            'scripts': []
-        };
+		let files = {
+			'styles': [],
+			'scripts': []
+		};
 
-        chunks.forEach(chunk => {
+		chunks.forEach(chunk => {
 			chunk.files.forEach(file => {
 				if (this.getFileExtension(file) === 'css') {
-                    files['styles'].push(`${this.publicPath}${file}`);
+					files['styles'].push(`${this.publicPath}${file}`);
 				} else if (this.getFileExtension(file) === 'js') {
-                    files['scripts'].push(`${this.publicPath}${file}`);
+					files['scripts'].push(`${this.publicPath}${file}`);
 				}
 			})
 		});
 
-        return files;
+		return files;
 
-    }
+	}
 
 	/**
 	 * Generate HTML styles and scripts tags for each entrypoints
@@ -131,18 +134,18 @@ module.exports = class ChunksWebpackPlugin {
 	 */
 	generateTags(chunksSorted) {
 
-        let html = {
-            'styles': '',
-            'scripts': ''
-        }
+		let html = {
+			'styles': '',
+			'scripts': ''
+		}
 
 		chunksSorted['styles'].forEach(chunkCSS => {
-            html['styles'] += this.options.templateStyle.replace('{{chunk}}', chunkCSS);
-        });
+			html['styles'] += this.options.templateStyle.replace('{{chunk}}', chunkCSS);
+		});
 
-        chunksSorted['scripts'].forEach(chunkJS => {
-            html['scripts'] += this.options.templateScript.replace('{{chunk}}', chunkJS);
-        });
+		chunksSorted['scripts'].forEach(chunkJS => {
+			html['scripts'] += this.options.templateScript.replace('{{chunk}}', chunkJS);
+		});
 
 		return html
 	}
@@ -154,12 +157,16 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {String} entry The name of the entrypoint
 	 */
 	createFiles({
-		htmlStyles,
-		htmlScripts,
+		htmlStyles = false,
+		htmlScripts = false,
 		entry
 	}) {
-		fs.writeFileSync(`${this.outputPath}/${entry}-scripts${this.options.fileExtension}`, htmlScripts);
-		fs.writeFileSync(`${this.outputPath}/${entry}-styles${this.options.fileExtension}`, htmlStyles);
+		if (htmlScripts) {
+			fs.writeFileSync(`${this.outputPath}/${entry}-scripts${this.options.fileExtension}`, htmlScripts);
+		}
+		if (htmlStyles) {
+			fs.writeFileSync(`${this.outputPath}/${entry}-styles${this.options.fileExtension}`, htmlStyles);
+		}
 	}
 
 	/**
