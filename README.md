@@ -1,9 +1,9 @@
-[![chunks-webpack-plugin](https://img.shields.io/badge/chunks--webpack--plugin-v2.0.2-1a6bac.svg?style=flat-square)](https://github.com/yoriiis/chunks-webpack-plugin)
+[![chunks-webpack-plugin](https://img.shields.io/badge/chunks--webpack--plugin-v3.0.0-1a6bac.svg?style=flat-square)](https://github.com/yoriiis/chunks-webpack-plugin)
 [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=1a6bac&label=npm%20downloads&style=flat-square)](https://npmjs.com/package/chunks-webpack-plugin)
 
 # ChunksWebpackPlugin
 
-The ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entry points and it works without configuration.
+The `ChunksWebpackPlugin` create HTML files to serve your webpack bundles. It is very convenient with multiple entry points and it works without configuration.
 
 Since Webpack 4, <a href="https://webpack.js.org/plugins/split-chunks-plugin" title="SplitChunksPlugin" target="_blank">SplitChunksPlugin</a> offer the possibility to optimizes all chunks. It can be particularly powerful, because it means that chunks can be shared even between async and non-async chunks. See Webpack documentation for <a href="https://webpack.js.org/plugins/split-chunks-plugin/#splitchunkschunks" title="splitChunks.chunks" target="_blank">`splitChunks.chunks`</a>.
 
@@ -19,15 +19,18 @@ The `chunks-webpack-plugin` works without configuration.
 
 ## Installation
 
-The plugin is available as the `chunks-webpack-plugin` package on <a href="https://www.npmjs.com/package/chunks-webpack-plugin" title="ChunksWebpackPlugin on npm" target="_blank">npm</a> and <a href="https://github.com/yoriiis/chunks-webpack-plugin" title="ChunksWebpackPlugin on Github" target="_blank">Github</a>.
+The plugin is available as the `chunks-webpack-plugin` package name on <a href="https://www.npmjs.com/package/chunks-webpack-plugin" title="ChunksWebpackPlugin on npm" target="_blank">npm</a> and <a href="https://github.com/yoriiis/chunks-webpack-plugin" title="ChunksWebpackPlugin on Github" target="_blank">Github</a>.
 
 ```
-npm install --save-dev chunks-webpack-plugin
+npm i --save-dev chunks-webpack-plugin
+```
+```
+yarn add --dev chunks-webpack-plugin
 ```
 
 ## Environment
 
-ChunksWebpackPlugin was built for Node.js 8.x and Webpack 4.x
+`ChunksWebpackPlugin` was built for Node.js 8.x and Webpack 4.x
 
 ## Basic usage
 
@@ -45,7 +48,7 @@ var ChunksWebpackPlugin = require('chunks-webpack-plugin');
 var path = require('path');
 
 module.exports = {
-  entry: 'index.js',
+  entry: 'main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
     filename: 'bundle.js'
@@ -56,87 +59,127 @@ module.exports = {
 
 This will generate the following HTML files in `./dist/` folder:
 
-**main-styles.html**
 ```html
+<!--main-styles.html-->
 <link rel="stylesheet" href="main.css"/>
 ```
 
-**main-scripts.html**
 ```html
+<!--main-scripts.html-->
 <script src="main.js"></script>
 ```
 
 ## Using a configuration
 
-You can pass configuration options to ChunksWebpackPlugin. Allowed values are as follows:
+You can pass configuration options to `ChunksWebpackPlugin`. Allowed values are as follows:
 
-* `outputPath` - {String} - The output path of generated files (default `output.path`)
-* `fileExtension` - {String} - The extension of generated files (default `.html`)
-* `templateStyle` - {String} - Custom template for HTML `<style>` tags
-* `templateScript` - {String} - Custom template for HTML `<script>` tags
-* `customFormatTags` - {Function} - Custom function to generate your own templates
+#### `outputPath`
 
-### Custom templates
+`string = 'default'`
 
-Custom templates allows to writes your own HTML `styles` and `scripts` tags with for example custom attributes (async, defer) or add a CDN url before assets path.
+Tells plugin whether to personalize the output path of generated files (need absolute path). By default the plugin will use `output.path` from the Webpack configuration.
 
 ```javascript
-var ChunksWebpackPlugin = require('chunks-webpack-plugin');
-var path = require('path');
-
-module.exports = {
-    entry: 'index.js',
-    output: {
-        path: path.resolve(__dirname, './dist'),
-        filename: 'bundle.js'
-    },
-    plugins: [
-        new ChunksWebpackPlugin({
-            outputPath: path.resolve(__dirname, `./built`),
-            fileExtension: '.html.twig',
-            templateStyle: `<link rel="stylesheet" href="https://cdn.domain.com{{chunk}}" />`,
-            templateScript: `<script async src="https://cdn.domain.com{{chunk}}"></script>`
-        })
-    ]
-};
+new ChunksWebpackPlugin({
+    outputPath: path.resolve(__dirname, `./built`)
+})
 ```
 
-**Keep `{{chunk}}` placeholder**, it is automatically replace by the Webpack public path and chunk filename.
+#### `fileExtension`
 
-### Full custom generation
+`string = '.html'`
 
-The function `customFormatTags` allows to help you manage everything during the compilation. If the function is defined, there is **no default behavior, you must generate yourself your templates**. The function is called for each entry points and the context of the function (without arrow functions), is the class `ChunksWebpackPlugin` to access its properties.
-
-The `customFormatTags` function take two parameters:
-* `chunksSorted` - {Object} - List of chunks sorted by type (styles, scripts)
-* `chunkGroup` - {Object} - Webpack `chunkGroup` for each entry points
+Tells plugin whether to personalize the extension of generated files.
 
 ```javascript
-var ChunksWebpackPlugin = require('chunks-webpack-plugin');
-var path = require('path');
+new ChunksWebpackPlugin({
+    fileExtension: '.php'
+})
+```
 
-module.exports = {
-    entry: 'index.js',
-    output: {
-        path: path.resolve(__dirname, './dist'),
-        filename: 'bundle.js'
-    },
-    plugins: [
-        new ChunksWebpackPlugin({
-            outputPath: path.resolve(__dirname, `./built`),
-            fileExtension: '.html.twig',
-            customFormatTags: function(chunksSorted, chunkGroup) {
+#### `templateStyle`
 
-                //The function must returns this formatted object with your styles and scripts HTML
-                return {
-                  'styles': ''
-                  'scripts': ''
-                }
+`string = '<link rel="stylesheet" href="{{chunk}}" />'`
 
-            }
-        })
-    ]
-};
+Tells plugin whether to personalize the default template for HTML `<style>` tags.
+
+>Keep `{{chunk}}` placeholder, it is automatically replace by the Webpack public path and chunk filename.
+
+```javascript
+new ChunksWebpackPlugin({
+    templateStyle: `<link rel="stylesheet" href="https://cdn.domain.com{{chunk}}" />`
+})
+```
+
+#### `templateScript`
+
+`string = '<script src="{{chunk}}"></script>'`
+
+Tells plugin whether to personalize the default template for HTML `<script>` tags.
+
+>Keep `{{chunk}}` placeholder, it is automatically replace by the Webpack public path and chunk filename.
+
+
+```javascript
+new ChunksWebpackPlugin({
+    templateScript: `<script defer src="{{chunk}}"></script>`
+})
+```
+
+#### `customFormatTags`
+
+`false || function (chunksSorted, chunkGroup)
+`
+
+Tells plugin whether to personalize the default behavior for generate your own templates. The function is called for each entry points. Custom behavior can also be add for a specific entrypoint. The arrow function syntax allow you to access the class properties.
+
+The `customFormatTags` function take two parameters:
+
+##### `chunksSorted`
+
+`object`
+
+List of chunks sorted by type (`styles`, `scripts`)
+
+##### `chunkGroup`
+
+`object`
+
+Webpack `chunkGroup` for each entry points
+
+> The function overrides the default behavior, you need to generate yourself your templates, like the example below:
+
+```javascript
+new ChunksWebpackPlugin({
+    customFormatTags: (chunksSorted, chunkGroup) => {
+
+        let html = {
+          'styles': '',
+          'scripts': ''
+        };
+
+        // Generate all HTML style tags with CDN prefix
+        chunksSorted['styles'].forEach(chunkCss => {
+          html['styles'] += `<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`
+        });
+
+        // Generate all HTML style tags with CDN prefix and defer attribute
+        chunksSorted['scripts'].forEach(chunkJs => {
+          html['scripts'] += `<script defer src="https://cdn.domain.com${chunkJs}"></script>`
+        });
+
+        return html;
+    }
+})
+```
+
+The function need to return an object with this format:
+
+```json
+{
+    "styles": "",
+    "scripts": ""
+}
 ```
 
 ### Caching
@@ -148,10 +191,10 @@ var ChunksWebpackPlugin = require('chunks-webpack-plugin');
 var path = require('path');
 
 module.exports = {
-  entry: 'index.js',
+  entry: 'main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.[hash].js'
+    filename: 'bundle.[contenthash].js'
   },
   plugins: [new ChunksWebpackPlugin()]
 };
@@ -159,13 +202,13 @@ module.exports = {
 
 This will generate the following HTML files in `./dist/` folder:
 
-**main-styles.html**
 ```html
+<!--main-styles.html-->
 <link rel="stylesheet" href="main.72dd90acdd3d4a4a1fd4.css"/>
 ```
 
-**main-scripts.html**
 ```html
+<!--main-scripts.html-->
 <script src="main.72dd90acdd3d4a4a1fd4.js"></script>
 ```
 
@@ -192,26 +235,26 @@ module.exports = {
 
 The plugin will generate all files in `./dist/` folder:
 
-**home-styles.html**
 ```html
+<!--home-styles.html-->
 <link rel="stylesheet" href="vendors~home~news.css"/>
 <link rel="stylesheet" href="home.css"/>
 ```
 
-**home-scripts.html**
 ```html
+<!--home-scripts.html-->
 <script src="vendors~home~news.js"></script>
 <script src="home.js"></script>
 ```
 
-**news-styles.html**
 ```html
+<!--news-styles.html-->
 <link rel="stylesheet" href="vendors~home~news.css"/>
 <link rel="stylesheet" href="news.css"/>
 ```
 
-**news-scripts.html**
 ```html
+<!--news-scripts.html-->
 <script src="vendors~home~news.js"></script>
 <script src="news.js"></script>
 ```
