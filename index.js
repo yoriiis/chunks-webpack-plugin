@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 2.0.2
+ * @version 3.0.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description:
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -19,11 +19,11 @@ module.exports = class ChunksWebpackPlugin {
 
 		const userOptions = options || {};
 		const defaultOptions = {
-			outputPath: null,
+			outputPath: 'default',
 			fileExtension: '.html',
 			templateStyle: `<link rel="stylesheet" href="{{chunk}}" />`,
 			templateScript: `<script src="{{chunk}}"></script>`,
-			customFormatTags: null
+			customFormatTags: false
 		};
 
 		// Merge default options with user options
@@ -32,7 +32,7 @@ module.exports = class ChunksWebpackPlugin {
 	}
 
 	/**
-	 * apply function is automatically called by the Webpack main compiler
+	 * Apply function is automatically called by the Webpack main compiler
 	 * @param {Object} compiler The Webpack compiler variable
 	 */
 	apply(compiler) {
@@ -41,21 +41,21 @@ module.exports = class ChunksWebpackPlugin {
 
 	/**
 	 * Hook expose by the Webpack compiler
-	 * @param {Object} compilation The Webpack compilation variable
+	 * @param {Object} stats The Webpack compilation variable
 	 */
-	_done(compilation) {
+	_done(stats) {
 
 		// Get publicPath from Webpack and add slashes suffix if necessary
-		this.publicPath = compilation.compilation.options.output.publicPath;
+		this.publicPath = stats.compilation.options.output.publicPath;
 		if (this.publicPath) {
 			if (this.publicPath.substr(-1) !== '/') {
-				this.publicPath = `${this.publicPath}/`
+				this.publicPath = `${this.publicPath}/`;
 			}
 		}
 
 		// Use default Webpack outputPath
-		if (this.options.outputPath === null) {
-			this.outputPath = compilation.compilation.options.output.path;
+		if (this.options.outputPath === 'default') {
+			this.outputPath = stats.compilation.options.output.path;
 		} else if (this.options.outputPath !== '' && path.isAbsolute(this.options.outputPath)) {
 			// Use custom outputPath (must be absolute)
 			this.outputPath = this.options.outputPath;
@@ -64,11 +64,11 @@ module.exports = class ChunksWebpackPlugin {
 		}
 
 		// Check if destination folder is available
-		if (compilation.compilation.chunkGroups.length) {
+		if (stats.compilation.chunkGroups.length) {
 			this.checkDestinationFolder();
 		}
 
-		compilation.compilation.chunkGroups.forEach(chunkGroup => {
+		stats.compilation.chunkGroups.forEach(chunkGroup => {
 
 			// Check if chunkGroup contains chunks
 			if (chunkGroup.chunks.length) {
@@ -76,7 +76,7 @@ module.exports = class ChunksWebpackPlugin {
 				let tagsHTML = null;
 
 				// The user prefers to generate his own HTML tags, use his object
-				if (typeof this.options.customFormatTags === 'function') {
+				if (this.options.customFormatTags && typeof this.options.customFormatTags === 'function') {
 
 					// Change context of the function, to allow access to this class
 					tagsHTML = this.options.customFormatTags.call(this, chunksSorted, chunkGroup);
@@ -137,7 +137,7 @@ module.exports = class ChunksWebpackPlugin {
 		let html = {
 			'styles': '',
 			'scripts': ''
-		}
+		};
 
 		chunksSorted['styles'].forEach(chunkCSS => {
 			html['styles'] += this.options.templateStyle.replace('{{chunk}}', chunkCSS);
@@ -147,7 +147,7 @@ module.exports = class ChunksWebpackPlugin {
 			html['scripts'] += this.options.templateScript.replace('{{chunk}}', chunkJS);
 		});
 
-		return html
+		return html;
 	}
 
 	/**
