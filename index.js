@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 3.0.0
+ * @version 3.0.1
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description:
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -46,7 +46,7 @@ module.exports = class ChunksWebpackPlugin {
 	_done(stats) {
 
 		// Get publicPath from Webpack and add slashes suffix if necessary
-		this.publicPath = stats.compilation.options.output.publicPath;
+		this.publicPath = stats.compilation.options.output.publicPath || '';
 		if (this.publicPath) {
 			if (this.publicPath.substr(-1) !== '/') {
 				this.publicPath = `${this.publicPath}/`;

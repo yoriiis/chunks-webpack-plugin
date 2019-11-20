@@ -1,4 +1,4 @@
-[![chunks-webpack-plugin](https://img.shields.io/badge/chunks--webpack--plugin-v3.0.0-1a6bac.svg?style=flat-square)](https://github.com/yoriiis/chunks-webpack-plugin)
+[![chunks-webpack-plugin](https://img.shields.io/badge/chunks--webpack--plugin-v3.0.1-1a6bac.svg?style=flat-square)](https://github.com/yoriiis/chunks-webpack-plugin)
 [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=1a6bac&label=npm%20downloads&style=flat-square)](https://npmjs.com/package/chunks-webpack-plugin)
 
 # ChunksWebpackPlugin
