@@ -1,3 +1,9 @@
+# 3.0.1
+
+#### Fixes
+
+* Fixed chunks urls when public path is not defined [#3](https://github.com/yoriiis/chunks-webpack-plugin/issues/3)
+
 # 3.0.0
 
 #### Updates
