@@ -1,15 +1,17 @@
-<img alt="TravisCI" src="https://img.shields.io/badge/chunks--webpack--plugin-v3.2.0-ff7f15.svg?style=for-the-badge">
-<a href="https://travis-ci.com/yoriiis/chunks-webpack-plugin">
-    <img alt="TravisCI" src="https://img.shields.io/travis/yoriiis/chunks-webpack-plugin?style=for-the-badge">
-</a>
-<img alt="npm" src="https://img.shields.io/npm/v/chunks-webpack-plugin?style=for-the-badge">
-<img alt="Node.js" src="https://img.shields.io/node/v/chunks-webpack-plugin?style=for-the-badge">
-<a href="https://bundlephobia.com/result?p=fela@latest">
-    <img alt="Bundlephobia" src="https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge">
-</a>
-<a href="https://npmjs.com/package/chunks-webpack-plugin">
-    <img alt="Npm downloads" src="https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge">
-</a>
+<p>
+	<img alt="TravisCI" src="https://img.shields.io/badge/chunks--webpack--plugin-v3.2.0-ff7f15.svg?style=for-the-badge">
+	<a href="https://travis-ci.com/yoriiis/chunks-webpack-plugin">
+		<img alt="TravisCI" src="https://img.shields.io/travis/yoriiis/chunks-webpack-plugin?style=for-the-badge">
+	</a>
+	<img alt="npm" src="https://img.shields.io/npm/v/chunks-webpack-plugin?style=for-the-badge">
+	<img alt="Node.js" src="https://img.shields.io/node/v/chunks-webpack-plugin?style=for-the-badge">
+	<a href="https://bundlephobia.com/result?p=fela@latest">
+		<img alt="Bundlephobia" src="https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge">
+	</a>
+	<a href="https://npmjs.com/package/chunks-webpack-plugin">
+		<img alt="Npm downloads" src="https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge">
+	</a>
+</p>
 
 # ChunksWebpackPlugin
 
