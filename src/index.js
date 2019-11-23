@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 3.0.1
+ * @version 3.2.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description:
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
