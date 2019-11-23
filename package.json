@@ -6,8 +6,8 @@
 		"chunks",
 		"chunks-webpack-plugin",
 		"plugin",
-		"webpack",
-		"split chunks"
+		"split chunks",
+		"webpack"
 	],
 	"homepage": "https://github.com/yoriiis/chunks-webpack-plugin",
 	"bugs": "https://github.com/yoriiis/chunks-webpack-plugin/issues",
