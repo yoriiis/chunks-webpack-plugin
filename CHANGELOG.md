@@ -1,8 +1,21 @@
+# 3.2.0
+
+#### New features
+
+* Add Travis builds: `eslint`
+* Add `ESLint` with `Standard JS` on the project with associated npm scripts
+* Add `Babel` configuration on the project
+* Add `.github` folder with `ISSUE_TEMPLATE` and `PULL_REQUEST_TEMPLATE`
+* Add `./dist` folder with vLitejs assets
+* Add `.editorconfig` file
+
+
 # 3.0.1
 
 #### Fixes
 
 * Fixed chunks urls when public path is not defined [#3](https://github.com/yoriiis/chunks-webpack-plugin/issues/3)
+
 
 # 3.0.0
 
