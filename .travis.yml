@@ -1,0 +1,25 @@
+os: linux
+
+language: node_js
+
+node_js: "8.11.2"
+
+# Safelist
+branches:
+  only:
+    - master
+
+cache:
+  npm: true
+  pip: true
+
+cache:
+  npm: true
+  pip: true
+
+jobs:
+  include:
+    - before_script:
+        - npm install
+      script:
+        - npm run test:eslint
