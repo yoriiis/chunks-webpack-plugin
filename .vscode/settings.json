@@ -1,0 +1,15 @@
+{
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.autoIndent": false,
+    "editor.formatOnSave": false,
+    "editor.tabSize": 4,
+    "eslint.autoFixOnSave": false,
+    "files.trimTrailingWhitespace": true,
+    "javascript.format.enable": false,
+    "javascript.validate.enable": false,
+    "search.exclude": {
+        "**/node_modules": true
+    }
+}
