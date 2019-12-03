@@ -1,3 +1,10 @@
+# 3.2.1
+
+#### Fixes
+
+* Fixed strict node engine version break with different node version [#6](https://github.com/yoriiis/chunks-webpack-plugin/issues/6)
+
+
 # 3.2.0
 
 #### New features
