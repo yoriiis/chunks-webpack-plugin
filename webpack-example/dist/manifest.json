@@ -1,0 +1,9 @@
+{
+  "vendors~app-a~app-b.css": "/dist/css/vendors~app-a~app-b.css",
+  "vendors~app-a~app-b.js": "/dist/js/vendors~app-a~app-b.js",
+  "app-a.css": "/dist/css/app-a.css",
+  "app-a.js": "/dist/js/app-a.js",
+  "app-b.css": "/dist/css/app-b.css",
+  "app-b.js": "/dist/js/app-b.js",
+  "chunks-manifest.json": "/dist/chunks-manifest.json"
+}

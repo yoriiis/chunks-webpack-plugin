@@ -16,7 +16,7 @@
 	"author": "Yoriiis aka Joris DANIEL",
 	"main": "dist/index.js",
 	"scripts": {
-		"build": "babel ./src/index.js --out-file ./dist/index.js",
+		"build": "babel ./src/ --out-dir ./dist/",
 		"test:eslint": "eslint -c ./.eslintrc.js ./src/"
 	},
 	"devDependencies": {
@@ -30,6 +30,7 @@
 		"eslint-plugin-node": "5.2.1",
 		"eslint-plugin-promise": "3.6.0",
 		"eslint-plugin-standard": "3.0.1",
+		"fs-extra": "8.1.0",
 		"prettier-eslint": "9.0.1"
 	},
 	"peerDependencies": {

@@ -35,25 +35,21 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {Object} compiler The Webpack compiler variable
 	 */
 	apply (compiler) {
-		compiler.hooks.done.tap('compilerDone', this.compilerDone.bind(this))
+		compiler.hooks.emit.tap('ChunksWebpackPlugin', this.compilerDone.bind(this))
 	}
 
 	/**
 	 * Hook expose by the Webpack compiler
 	 *
-	 * @param {Object} stats The Webpack compilation variable
+	 * @param {Object} compilation The Webpack compilation variable
 	 */
-	compilerDone (stats) {
+	compilerDone (compilation) {
+
 		// Get public and output path
-		const publicPath = this.getPublicPath(stats)
-		const outputPath = this.getOutputPath(stats)
+		const publicPath = this.getPublicPath(compilation)
+		const outputPath = this.getOutputPath(compilation)
 
-		// Check if destination directory exist, else create the directory
-		if (stats.compilation.chunkGroups.length) {
-			utils.checkDestinationFolder(outputPath)
-		}
-
-		stats.compilation.chunkGroups.forEach(chunkGroup => {
+		compilation.chunkGroups.forEach(chunkGroup => {
 			// Check if chunkGroup contains chunks
 			if (chunkGroup.chunks.length) {
 				const entryName = chunkGroup.options.name
@@ -99,7 +95,7 @@ module.exports = class ChunksWebpackPlugin {
 
 		// Check if manifest option is enabled
 		if (this.options.generateChunksManifest) {
-			this.createChunksManifestFile(outputPath)
+			this.createChunksManifestFile({ compilation, outputPath })
 		}
 	}
 
@@ -120,12 +116,12 @@ module.exports = class ChunksWebpackPlugin {
 	 * Get the public path from Webpack configuation
 	 * and add slash at the end if necessary
 	 *
-	 * @param {Object} stats
+	 * @param {Object} compilation
 	 *
 	 * @return {String} The public path
 	 */
-	getPublicPath (stats) {
-		let publicPath = stats.compilation.options.output.publicPath || ''
+	getPublicPath (compilation) {
+		let publicPath = compilation.compiler.options.output.publicPath || ''
 
 		if (publicPath) {
 			if (publicPath.substr(-1) !== '/') {
@@ -140,19 +136,20 @@ module.exports = class ChunksWebpackPlugin {
 	 * Get the output path from Webpack configuation
 	 * or from constructor options
 	 *
-	 * @param {Object} stats
+	 * @param {Object} compilation Webpack compilation from compiler
 	 *
 	 * @return {String} The output path
 	 */
-	getOutputPath (stats) {
+	getOutputPath (compilation) {
+		let optionsOutputPath = this.options.outputPath
 		let outputPath
 
-		if (this.options.outputPath === 'default') {
+		if (optionsOutputPath === 'default') {
 			// Use default Webpack outputPath
-			outputPath = stats.compilation.options.output.path || ''
-		} else if (utils.isOutputPathValid(this.options.outputPath)) {
+			outputPath = compilation.compiler.options.output.path || ''
+		} else if (optionsOutputPath !== '' && utils.isAbsolutePath(optionsOutputPath)) {
 			// Use custom outputPath (must be absolute)
-			outputPath = this.options.outputPath
+			outputPath = optionsOutputPath
 		} else {
 			utils.setError('ChunksWebpackPlugin::outputPath option is invalid')
 		}
@@ -225,14 +222,14 @@ module.exports = class ChunksWebpackPlugin {
 	}) {
 		if (tagsHTML.scripts.length) {
 			utils.writeFile({
-				path: `${outputPath}/${entry}-scripts${this.options.fileExtension}`,
-				content: tagsHTML.scripts
+				outputPath: `${outputPath}/${entry}-scripts${this.options.fileExtension}`,
+				output: tagsHTML.scripts
 			})
 		}
 		if (tagsHTML.styles.length) {
 			utils.writeFile({
-				path: `${outputPath}/${entry}-styles${this.options.fileExtension}`,
-				content: tagsHTML.styles
+				outputPath: `${outputPath}/${entry}-styles${this.options.fileExtension}`,
+				output: tagsHTML.styles
 			})
 		}
 	}
@@ -241,12 +238,18 @@ module.exports = class ChunksWebpackPlugin {
 	 * Create the chunks manifest file
 	 * Contains all scripts and styles chunks by entrypoint
 	 *
+	 * @param {Object} compilation Webpack compilation from compiler
 	 * @param {String} outputPath Output path of generated files
 	 */
-	createChunksManifestFile (outputPath) {
-		utils.writeFile({
-			path: `${outputPath}/chunks-manifest.json`,
-			content: JSON.stringify(this.manifest, null, 2)
-		})
+	createChunksManifestFile ({ compilation, outputPath }) {
+		// Stringify the content of the manifest
+		const output = JSON.stringify(this.manifest, null, 2)
+
+		// Expose the manifest file into the assets compilation
+		// The file is automatically created by the compiler
+		compilation.assets['chunks-manifest.json'] = {
+			source: () => output,
+			size: () => output.length
+		}
 	}
 }
