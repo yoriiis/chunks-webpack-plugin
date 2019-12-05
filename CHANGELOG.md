@@ -3,13 +3,13 @@
 #### New features
 
 * Add minimalist project example to run the plugin and see ChunksWebpackPlugin implementation in action with SplitChunks.
-* Add `generateChunksManifest` file which contains a list of chunks grouped by entry points.
+* Add `generateChunksManifest` option to generate a file which contains a list of chunks grouped by entry points.
 * Add `generateChunksFiles` to enable/disable HTML files generation. Usefull only with addition of `generateChunksManifest` option.
 
 #### Updates
 
 * Update Webpack compiler hook from `done` to `emit` to improve performance.
-* Split code in minimalist functions and create utils functions.
+* Split plugin code in minimalist functions and create utils functions.
 
 
 # 3.2.1

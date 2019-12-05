@@ -13,10 +13,6 @@ cache:
   npm: true
   pip: true
 
-cache:
-  npm: true
-  pip: true
-
 jobs:
   include:
     - before_script:
