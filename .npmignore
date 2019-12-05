@@ -1,9 +1,11 @@
 .github/
+.vscode/
+demo/
 src/
+.editorconfig
 .eslintignore
 .eslintrc.js
 .gitignore
 .nvmrc
 .travis.yml
 babel.config.js
-.editorconfig
