@@ -13,13 +13,12 @@ cache:
   npm: true
   pip: true
 
-cache:
-  npm: true
-  pip: true
-
 jobs:
   include:
     - before_script:
-        - npm install
+        - npm i
+        - cd ./demo/ && npm i && cd ../
       script:
         - npm run test:eslint
+        - npm run build
+        - cd ./demo/ && npm run build && cd ../
