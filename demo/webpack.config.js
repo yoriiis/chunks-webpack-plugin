@@ -12,7 +12,7 @@ module.exports = (env, argv) => {
 		watch: !isProduction,
 		entry: {
 			'app-a': './src/js/app-a.js',
-			'app-b': './src/js/app-B.js'
+			'app-b': './src/js/app-b.js'
 		},
 		watchOptions: {
 			ignored: /node_modules/
@@ -33,10 +33,7 @@ module.exports = (env, argv) => {
 				test: /\.css$/,
 				use: [
 					MiniCssExtractPlugin.loader, {
-						loader: 'css-loader',
-						options: {
-							minimize: true
-						}
+						loader: 'css-loader'
 					}
 				]
 			}]

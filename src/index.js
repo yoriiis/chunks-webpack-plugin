@@ -3,7 +3,7 @@
  * @name ChunksWebpackPlugin
  * @version 3.3.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
- * @description:
+ * @description: Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
  * @copyright 2019 Joris DANIEL
  **/
@@ -35,7 +35,7 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {Object} compiler The Webpack compiler variable
 	 */
 	apply (compiler) {
-		compiler.hooks.emit.tap('ChunksWebpackPlugin', this.compilerDone.bind(this))
+		compiler.hooks.emit.tap('ChunksWebpackPlugin', this.hookEmit.bind(this))
 	}
 
 	/**
@@ -43,7 +43,7 @@ module.exports = class ChunksWebpackPlugin {
 	 *
 	 * @param {Object} compilation The Webpack compilation variable
 	 */
-	compilerDone (compilation) {
+	hookEmit (compilation) {
 		// Get public and output path
 		const publicPath = this.getPublicPath(compilation)
 		const outputPath = this.getOutputPath(compilation)
@@ -75,7 +75,7 @@ module.exports = class ChunksWebpackPlugin {
 						tagsHTML = this.generateTags(chunksSorted)
 					}
 
-					this.createChunksFiles({
+					this.createHtmlChunksFiles({
 						entry: entryName,
 						tagsHTML: tagsHTML,
 						outputPath: outputPath
@@ -115,7 +115,7 @@ module.exports = class ChunksWebpackPlugin {
 	 * Get the public path from Webpack configuation
 	 * and add slash at the end if necessary
 	 *
-	 * @param {Object} compilation
+	 * @param {Object} compilation Webpack compilation from compiler
 	 *
 	 * @return {String} The public path
 	 */
@@ -214,7 +214,7 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {Object} tagsHTML Generated HTML of script and styles tags
 	 * @param {String} outputPath Output path of generated files
 	 */
-	createChunksFiles ({
+	createHtmlChunksFiles ({
 		entry,
 		tagsHTML,
 		outputPath
@@ -235,7 +235,7 @@ module.exports = class ChunksWebpackPlugin {
 
 	/**
 	 * Create the chunks manifest file
-	 * Contains all scripts and styles chunks by entrypoint
+	 * Contains all scripts and styles chunks grouped by entrypoint
 	 *
 	 * @param {Object} compilation Webpack compilation from compiler
 	 * @param {String} outputPath Output path of generated files

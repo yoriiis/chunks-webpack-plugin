@@ -3,6 +3,7 @@ const fse = require('fs-extra')
 
 /**
  * Throw an error
+ *
  * @param {String} message Text to display in the error
  */
 const setError = (message) => {
@@ -11,6 +12,7 @@ const setError = (message) => {
 
 /**
  * Check if the path is absolute
+ *
  * @param {String} currentPath Path
  */
 const isAbsolutePath = (currentPath) => {
