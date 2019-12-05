@@ -2,14 +2,17 @@
 
 #### New features
 
-* Add minimalist project example to run the plugin and see ChunksWebpackPlugin implementation in action with SplitChunks.
-* Add `generateChunksManifest` option to generate a file which contains a list of chunks grouped by entry points.
-* Add `generateChunksFiles` to enable/disable HTML files generation. Usefull only with addition of `generateChunksManifest` option.
+* Add minimalist project example to run the plugin and see ChunksWebpackPlugin implementation in action with SplitChunks
+* Add `generateChunksManifest` option to generate a file which contains a list of chunks grouped by entry points
+* Add `generateChunksFiles` to enable/disable HTML files generation. Usefull only with addition of `generateChunksManifest` option
 
 #### Updates
 
-* Update Webpack compiler hook from `done` to `emit` to improve performance.
-* Split plugin code in minimalist functions and create utils functions.
+* Update Webpack compiler hook from `done` to `emit` to improve performance
+* Split plugin code in minimalist functions and create utils functions
+* Babel build now the directory `./src/`
+* Replace `fs` by `fs-extra`
+* Lint all Javascript files with ESLint
 
 
 # 3.2.1
