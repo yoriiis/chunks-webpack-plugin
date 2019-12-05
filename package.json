@@ -17,8 +17,7 @@
 	"main": "dist/index.js",
 	"scripts": {
 		"build": "babel ./src/ --out-dir ./dist/",
-		"test:eslint:example": "eslint -c ./.eslintrc.js ./demo/src/",
-		"test:eslint:plugin": "eslint -c ./.eslintrc.js ./src/"
+		"test:eslint": "eslint -c ./.eslintrc.js ."
 	},
 	"devDependencies": {
 		"@babel/cli": "7.7.4",

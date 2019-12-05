@@ -1,7 +1,9 @@
 const path = require('path')
-const ChunksWebpackPlugin = require('../dist/index')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const TerserJSPlugin = require('terser-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const ChunksWebpackPlugin = require('../dist/index')
 
 module.exports = (env, argv) => {
 	const isProduction = argv.mode === 'production'
@@ -31,7 +33,10 @@ module.exports = (env, argv) => {
 				test: /\.css$/,
 				use: [
 					MiniCssExtractPlugin.loader, {
-						loader: 'css-loader'
+						loader: 'css-loader',
+						options: {
+							minimize: true
+						}
 					}
 				]
 			}]
@@ -79,7 +84,12 @@ module.exports = (env, argv) => {
 			assetsSort: '!size'
 		},
 		optimization: {
-			minimize: isProduction,
+			minimizer: [
+				new TerserJSPlugin({
+					extractComments: false
+				}),
+				new OptimizeCSSAssetsPlugin({})
+			],
 			namedChunks: false,
 			namedModules: false,
 			removeAvailableModules: true,

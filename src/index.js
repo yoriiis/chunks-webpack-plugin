@@ -44,7 +44,6 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {Object} compilation The Webpack compilation variable
 	 */
 	compilerDone (compilation) {
-
 		// Get public and output path
 		const publicPath = this.getPublicPath(compilation)
 		const outputPath = this.getOutputPath(compilation)
