@@ -1,5 +1,5 @@
 const path = require('path')
-const ChunksWebpackPlugin = require('../src/index')
+const ChunksWebpackPlugin = require('../dist/index')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
 
@@ -44,7 +44,21 @@ module.exports = (env, argv) => {
 			new ChunksWebpackPlugin({
 				outputPath: path.resolve(__dirname, 'dist/templates'),
 				fileExtension: '.html',
-				generateChunksManifest: true
+				generateChunksManifest: true,
+				generateChunksFiles: true,
+				customFormatTags: (chunksSorted, chunkGroup) => {
+					// Generate all HTML style tags with CDN prefix
+					const styles = chunksSorted['styles'].map(chunkCss =>
+						`<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`
+					).join('')
+
+					// Generate all HTML style tags with CDN prefix and defer attribute
+					const scripts = chunksSorted['scripts'].map(chunkJs =>
+						`<script defer src="https://cdn.domain.com${chunkJs}"></script>`
+					).join('')
+
+					return { styles, scripts }
+				}
 			}),
 			new ManifestPlugin({
 				writeToFileEmit: true,

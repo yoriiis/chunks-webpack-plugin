@@ -1,6 +1,7 @@
 {
-	"name": "webpack-example",
+	"name": "chunks-webpack-plugin",
 	"version": "1.0.0",
+	"description": "ChunksWebpackPlugin demo with a minimalist project",
 	"scripts": {
 		"analyze:bundle": "webpack --mode=production --profile --json > webpack-stats.json && webpack-bundle-analyzer ./webpack-stats.json ./ -p 1664",
 		"build": "rm -rf ./dist/ && webpack --mode=production",

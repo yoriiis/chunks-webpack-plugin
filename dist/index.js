@@ -126,7 +126,7 @@ module.exports = class ChunksWebpackPlugin {
 
 
   getPublicPath(compilation) {
-    let publicPath = compilation.compiler.options.output.publicPath || '';
+    let publicPath = compilation.options.output.publicPath || '';
 
     if (publicPath) {
       if (publicPath.substr(-1) !== '/') {
@@ -152,7 +152,7 @@ module.exports = class ChunksWebpackPlugin {
 
     if (optionsOutputPath === 'default') {
       // Use default Webpack outputPath
-      outputPath = compilation.compiler.options.output.path || '';
+      outputPath = compilation.options.output.path || '';
     } else if (optionsOutputPath !== '' && utils.isAbsolutePath(optionsOutputPath)) {
       // Use custom outputPath (must be absolute)
       outputPath = optionsOutputPath;

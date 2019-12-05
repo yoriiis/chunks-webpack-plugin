@@ -20,6 +20,8 @@ cache:
 jobs:
   include:
     - before_script:
-        - npm install
+        - npm i
+        - cd ./demo/ && npm i && cd ../
       script:
-        - npm run test:eslint
+        - npm run test:eslint:plugin
+        - npm run test:eslint:example
