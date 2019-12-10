@@ -1,6 +1,6 @@
 {
 	"name": "chunks-webpack-plugin",
-	"version": "3.3.0",
+	"version": "3.3.1",
 	"description": "Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)",
 	"keywords": [
 		"chunks",
@@ -19,6 +19,9 @@
 		"build": "babel ./src/ --out-dir ./dist/",
 		"test:eslint": "eslint -c ./.eslintrc.js ."
 	},
+	"dependencies": {
+		"fs-extra": "^8.1.0"
+	},
 	"devDependencies": {
 		"@babel/cli": "7.7.4",
 		"@babel/core": "7.7.4",
@@ -30,7 +33,6 @@
 		"eslint-plugin-node": "5.2.1",
 		"eslint-plugin-promise": "3.6.0",
 		"eslint-plugin-standard": "3.0.1",
-		"fs-extra": "8.1.0",
 		"prettier-eslint": "9.0.1"
 	},
 	"peerDependencies": {
