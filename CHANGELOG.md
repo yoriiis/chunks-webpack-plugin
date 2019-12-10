@@ -2,7 +2,7 @@
 
 #### Fixes
 
-* Fixed missing dependency `fs-extra` [#6](https://github.com/yoriiis/chunks-webpack-plugin/issues/9)
+* Fixed missing dependency `fs-extra` [#9](https://github.com/yoriiis/chunks-webpack-plugin/issues/9)
 
 
 # 3.3.0
