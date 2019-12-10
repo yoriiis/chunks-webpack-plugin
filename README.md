@@ -1,5 +1,5 @@
 <p>
-	<img alt="TravisCI" src="https://img.shields.io/badge/chunks--webpack--plugin-v3.3.0-ff7f15.svg?style=for-the-badge">
+	<img alt="TravisCI" src="https://img.shields.io/badge/chunks--webpack--plugin-v3.3.1-ff7f15.svg?style=for-the-badge">
 	<a href="https://travis-ci.com/yoriiis/chunks-webpack-plugin">
 		<img alt="TravisCI" src="https://img.shields.io/travis/com/yoriiis/chunks-webpack-plugin/master?style=for-the-badge">
 	</a>
