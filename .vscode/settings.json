@@ -11,5 +11,8 @@
     "javascript.validate.enable": false,
     "search.exclude": {
         "**/node_modules": true
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": false
     }
 }
