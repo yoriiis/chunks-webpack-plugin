@@ -1,3 +1,19 @@
+# 3.3.2
+
+#### Updates
+
+* Bumps `@babel/preset-env` from 7.4.5 to 7.7.7
+* Bumps `eslint-plugin-standard` from 3.0.1 to 3.1.0
+* Bumps `eslint` from 4.18.2 to 4.19.1
+* Bumps `@babel/core` from 7.7.4 to 7.7.7
+* Bumps `eslint-config-standard` from 10.2.1 to 11.0.0
+* Bumps `@babel/cli` from 7.7.4 to 7.7.7
+* Bumps `eslint-plugin-promise` from 3.6.0 to 4.2.1
+* Bumps `eslint-plugin-import` from 2.8.0 to 2.19.1
+* Bumps `eslint-plugin-node` from 5.2.1 to 8.0.1
+* Bumps `babel-eslint` from 8.0.1 to 10.0.3
+
+
 # 3.3.1
 
 #### Fixes
