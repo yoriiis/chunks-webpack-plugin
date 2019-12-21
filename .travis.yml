@@ -17,8 +17,8 @@ jobs:
   include:
     - before_script:
         - npm i
-        - cd ./demo/ && npm i && cd ../
       script:
         - npm run test:eslint
+        - npm run test
         - npm run build
-        - cd ./demo/ && npm run build && cd ../
+        - npm run build:example

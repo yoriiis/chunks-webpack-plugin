@@ -1,3 +1,15 @@
+# 3.4.0
+
+#### New features
+
+* Add Jest tests
+
+#### Updates
+
+* Rename `demo` into `example`
+* Merge example and main `package.json`
+
+
 # 3.3.2
 
 #### Updates
