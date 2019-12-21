@@ -1,3 +1,14 @@
+# 3.4.0
+
+#### New features
+
+*
+
+#### Updates
+
+*
+
+
 # 3.3.2
 
 #### Updates
