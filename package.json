@@ -23,6 +23,7 @@
 		"start:example": "rm -rf ./dist/ && webpack --config=./example/webpack.config.js --mode=development",
 		"test": "jest --verbose --coverage",
 		"test:eslint": "eslint -c ./.eslintrc.js .",
+		"test:coverage": "jest --coverage",
 		"test:watch": "jest --watch --coverage"
 	},
 	"dependencies": {
