@@ -1,5 +1,5 @@
 <p>
-	<img alt="TravisCI" src="https://img.shields.io/badge/chunks--webpack--plugin-v3.3.2-ff7f15.svg?style=for-the-badge">
+	<img alt="TravisCI" src="https://img.shields.io/badge/chunks--webpack--plugin-v3.4.0-ff7f15.svg?style=for-the-badge">
 	<a href="https://travis-ci.com/yoriiis/chunks-webpack-plugin">
 		<img alt="TravisCI" src="https://img.shields.io/travis/com/yoriiis/chunks-webpack-plugin/master?style=for-the-badge">
 	</a>
@@ -45,9 +45,9 @@ yarn add --dev chunks-webpack-plugin
 
 `ChunksWebpackPlugin` was built for Node.js `>=8.11.2` and Webpack `>=4.x`.
 
-## Demo
+## Example
 
-The project includes a minimalist demo in the `./demo` directory to run the plugin and see ChunksWebpackPlugin implementation in action with SplitChunks.
+The project includes a minimalist example in the `./example` directory. Run the `npm run build:example` command to execute the Webpack example and see ChunksWebpackPlugin implementation in action with SplitChunks.
 
 ## Basic usage
 
