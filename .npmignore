@@ -1,6 +1,6 @@
 .github/
 .vscode/
-demo/
+example/
 src/
 .editorconfig
 .eslintignore
