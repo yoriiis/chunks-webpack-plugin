@@ -1,7 +1,6 @@
 'use strict'
 
 import ChunksWebpackPlugin from '../index'
-import utils from '../utils'
 
 const getInstance = () => new ChunksWebpackPlugin({
 	outputPath: '/dist/templates',
