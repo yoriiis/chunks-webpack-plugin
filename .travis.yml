@@ -20,5 +20,6 @@ jobs:
         - cd ./demo/ && npm i && cd ../
       script:
         - npm run test:eslint
+        - npm run test
         - npm run build
         - cd ./demo/ && npm run build && cd ../

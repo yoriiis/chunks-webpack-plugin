@@ -6,7 +6,7 @@
 	"scripts": {
 		"analyze:bundle": "webpack --mode=production --profile --json > webpack-stats.json && webpack-bundle-analyzer ./webpack-stats.json ./ -p 1664",
 		"build": "rm -rf ./dist/ && webpack --mode=production",
-		"inspect": "rm -rf ./dist/ && node --inspect node_modules/webpack/bin/webpack.js --mode=production --hidden=node_modules/",
+		"inspect": "rm -rf ./dist/ && node --inspect node_modules/webpack/bin/webpack.js --mode=development --hidden=node_modules/",
 		"start": "rm -rf ./dist/ && webpack --mode=development"
 	},
 	"dependencies": {
