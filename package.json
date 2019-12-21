@@ -17,7 +17,7 @@
 	"main": "dist/index.js",
 	"scripts": {
 		"analyze:bundle": "webpack --mode=production --profile --json > webpack-stats.json && webpack-bundle-analyzer ./webpack-stats.json ./ -p 1664",
-		"build": "babel ./src/ --out-dir ./dist/",
+		"build": "rm -rf ./dist && babel ./src/ --out-dir ./dist/ --ignore './src/__tests__'",
 		"build:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=production",
 		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --mode=development --hidden=node_modules/",
 		"start:example": "rm -rf ./dist/ && webpack --config=./example/webpack.config.js --mode=development",
