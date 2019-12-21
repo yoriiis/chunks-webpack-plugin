@@ -22,8 +22,8 @@
 		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --mode=development --hidden=node_modules/",
 		"start:example": "rm -rf ./dist/ && webpack --config=./example/webpack.config.js --mode=development",
 		"test": "jest --verbose --coverage",
-		"test:eslint": "eslint -c ./.eslintrc.js .",
 		"test:coverage": "jest --coverage",
+		"test:eslint": "eslint -c ./.eslintrc.js .",
 		"test:watch": "jest --watch --coverage"
 	},
 	"dependencies": {

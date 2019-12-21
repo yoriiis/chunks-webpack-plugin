@@ -47,7 +47,7 @@ yarn add --dev chunks-webpack-plugin
 
 ## Example
 
-The project includes a minimalist example in the `./example` directory. Run the `npm run build:example` command to execute the plugin and see ChunksWebpackPlugin implementation in action with SplitChunks.
+The project includes a minimalist example in the `./example` directory. Run the `npm run build:example` command to execute the Webpack example and see ChunksWebpackPlugin implementation in action with SplitChunks.
 
 ## Basic usage
 

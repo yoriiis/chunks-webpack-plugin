@@ -11,6 +11,7 @@ module.exports = function (api) {
 	]
 
 	const plugins = []
+
 	api.cache.using(() => process.env.NODE_ENV)
 
 	if (api.env('test')) {
@@ -18,6 +19,7 @@ module.exports = function (api) {
 	}
 
 	return {
-		presets
+		presets,
+		plugins
 	}
 }

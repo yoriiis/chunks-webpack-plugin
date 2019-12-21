@@ -2,11 +2,12 @@
 
 #### New features
 
-*
+* Add Jest tests
 
 #### Updates
 
-*
+* Rename `demo` into `example`
+* Merge example and main `package.json`
 
 
 # 3.3.2

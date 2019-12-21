@@ -3,6 +3,11 @@
 import ChunksWebpackPlugin from '../index'
 import utils from '../utils'
 
+let chunksWebpackPlugin
+let chunksSorted
+let compilationWebpack
+let compilerWebpack
+
 const getInstance = () => new ChunksWebpackPlugin({
 	outputPath: '/dist/templates',
 	fileExtension: '.html',
@@ -30,9 +35,12 @@ const getChunksSorted = () => {
 	})
 }
 
-let chunksWebpackPlugin
-let compilationWebpack
-let compilerWebpack
+function updateManifest () {
+	chunksWebpackPlugin.updateManifest({
+		entryName: compilationWebpack.chunkGroups[0].options.name,
+		chunks: chunksSorted
+	})
+}
 
 beforeEach(() => {
 	compilerWebpack = {
@@ -45,21 +53,17 @@ beforeEach(() => {
 
 	compilationWebpack = {
 		assets: {},
-		chunkGroups: [
-			{
-				chunks: [
-					{
-						files: [
-							'css/vendors~app-a~app-b.css',
-							'js/vendors~app-a~app-b.js'
-						]
-					}
-				],
-				options: {
-					name: 'app-a'
-				}
+		chunkGroups: [{
+			chunks: [{
+				files: [
+					'css/vendors~app-a~app-b.css',
+					'js/vendors~app-a~app-b.js'
+				]
+			}],
+			options: {
+				name: 'app-a'
 			}
-		],
+		}],
 		options: {
 			output: {
 				path: '/dist/',
@@ -69,6 +73,7 @@ beforeEach(() => {
 	}
 
 	chunksWebpackPlugin = getInstance()
+	chunksSorted = getChunksSorted()
 })
 
 describe('ChunksWebpackPlugin', () => {
@@ -85,8 +90,9 @@ describe('ChunksWebpackPlugin', () => {
 	})
 
 	it('should init the apply function', () => {
-		chunksWebpackPlugin.apply(compilerWebpack)
 		compilerWebpack.hooks.emit.tap = jest.fn()
+
+		chunksWebpackPlugin.apply(compilerWebpack)
 		compilerWebpack.hooks.emit.tap()
 
 		expect(compilerWebpack.hooks.emit.tap).toHaveBeenCalled()
@@ -122,10 +128,7 @@ describe('ChunksWebpackPlugin', () => {
 	})
 
 	it('should init the updateManifest function', () => {
-		chunksWebpackPlugin.updateManifest({
-			entryName: compilationWebpack.chunkGroups[0].options.name,
-			chunks: getChunksSorted()
-		})
+		updateManifest()
 
 		expect(chunksWebpackPlugin.manifest).toMatchObject({
 			'app-a': {
@@ -164,14 +167,14 @@ describe('ChunksWebpackPlugin', () => {
 	})
 
 	it('should init the sortsChunksByType function', () => {
-		expect(getChunksSorted()).toMatchObject({
+		expect(chunksSorted).toMatchObject({
 			styles: ['/dist/css/vendors~app-a~app-b.css'],
 			scripts: ['/dist/js/vendors~app-a~app-b.js']
 		})
 	})
 
 	it('should init the generateTags function', () => {
-		const tags = chunksWebpackPlugin.generateTags(getChunksSorted())
+		const tags = chunksWebpackPlugin.generateTags(chunksSorted)
 
 		expect(tags).toMatchObject({
 			styles: '<link rel="stylesheet" href="/dist/css/vendors~app-a~app-b.css" />',
@@ -195,10 +198,7 @@ describe('ChunksWebpackPlugin', () => {
 	})
 
 	it('should init the createChunksManifestFile function', () => {
-		chunksWebpackPlugin.updateManifest({
-			entryName: compilationWebpack.chunkGroups[0].options.name,
-			chunks: getChunksSorted()
-		})
+		updateManifest()
 
 		chunksWebpackPlugin.createChunksManifestFile({
 			compilation: compilationWebpack,
@@ -209,14 +209,12 @@ describe('ChunksWebpackPlugin', () => {
 		expect(Object.keys(compilationWebpack.assets['chunks-manifest.json'])).toEqual(['source', 'size'])
 
 		const source = compilationWebpack.assets['chunks-manifest.json'].source()
-		expect(source).toEqual(
-			JSON.stringify({
-				'app-a': {
-					styles: ['/dist/css/vendors~app-a~app-b.css'],
-					scripts: ['/dist/js/vendors~app-a~app-b.js']
-				}
-			}, null, 2)
-		)
+		expect(source).toEqual(JSON.stringify({
+			'app-a': {
+				styles: ['/dist/css/vendors~app-a~app-b.css'],
+				scripts: ['/dist/js/vendors~app-a~app-b.js']
+			}
+		}, null, 2))
 
 		const size = compilationWebpack.assets['chunks-manifest.json'].size()
 		expect(size).toEqual(148)
