@@ -19,6 +19,7 @@
 		"build": "babel ./src/ --out-dir ./dist/",
 		"majestic": "majestic",
 		"test": "jest",
+		"test:coverage": "jest --coverage",
 		"test:eslint": "eslint -c ./.eslintrc.js .",
 		"test:watch": "jest --watch --coverage"
 	},

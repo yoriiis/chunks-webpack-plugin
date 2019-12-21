@@ -1,12 +1,26 @@
 'use strict'
 
 import ChunksWebpackPlugin from '../index'
+import utils from '../utils'
 
 const getInstance = () => new ChunksWebpackPlugin({
 	outputPath: '/dist/templates',
 	fileExtension: '.html',
 	generateChunksManifest: true,
-	generateChunksFiles: true
+	generateChunksFiles: true,
+	customFormatTags: (chunksSorted, chunkGroup) => {
+		// Generate all HTML style tags with CDN prefix
+		const styles = chunksSorted['styles'].map(chunkCss =>
+						`<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`
+		).join('')
+
+		// Generate all HTML style tags with CDN prefix and defer attribute
+		const scripts = chunksSorted['scripts'].map(chunkJs =>
+						`<script defer src="https://cdn.domain.com${chunkJs}"></script>`
+		).join('')
+
+		return { styles, scripts }
+	}
 })
 
 let chunksWebpackPlugin
@@ -33,8 +47,8 @@ beforeEach(() => {
 		options: {
 			output: {
 				path:
-					'/Users/jdaniel/Development/sandbox/chunks-webpack-plugin/demo/dist',
-				publicPath: '/dist/'
+					'/dist/',
+				publicPath: '/dist'
 			}
 		}
 	}
@@ -42,6 +56,18 @@ beforeEach(() => {
 })
 
 describe('ChunksWebpackPlugin', () => {
+	it('should init the constructor function', () => {
+		expect(chunksWebpackPlugin.options).toMatchObject({
+			outputPath: '/dist/templates',
+			fileExtension: '.html',
+			templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
+			templateScript: '<script src="{{chunk}}"></script>',
+			generateChunksManifest: true,
+			generateChunksFiles: true,
+			customFormatTags: expect.any(Function)
+		})
+	})
+
 	it('should init the hookEmit function', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 		chunksWebpackPlugin.hookEmit(compilationWebpack)
@@ -49,10 +75,12 @@ describe('ChunksWebpackPlugin', () => {
 	})
 
 	it('should init the updateManifest function', () => {
+		const publicPath = chunksWebpackPlugin.getPublicPath(compilationWebpack)
+
 		compilationWebpack.chunkGroups.forEach(chunkGroup => {
 			let chunksSorted = chunksWebpackPlugin.sortsChunksByType({
 				chunks: chunkGroup.chunks,
-				publicPath: compilationWebpack.options.output.publicPath
+				publicPath: publicPath
 			})
 
 			chunksWebpackPlugin.updateManifest({
@@ -84,10 +112,12 @@ describe('ChunksWebpackPlugin', () => {
 	})
 
 	it('should init the sortsChunksByType function', () => {
+		const publicPath = chunksWebpackPlugin.getPublicPath(compilationWebpack)
+
 		compilationWebpack.chunkGroups.forEach(chunkGroup => {
 			let chunksSorted = chunksWebpackPlugin.sortsChunksByType({
 				chunks: chunkGroup.chunks,
-				publicPath: compilationWebpack.options.output.publicPath
+				publicPath: publicPath
 			})
 
 			expect(chunksSorted).toMatchObject({
@@ -98,10 +128,12 @@ describe('ChunksWebpackPlugin', () => {
 	})
 
 	it('should init the generateTags function', () => {
+		const publicPath = chunksWebpackPlugin.getPublicPath(compilationWebpack)
+
 		compilationWebpack.chunkGroups.forEach(chunkGroup => {
 			let chunksSorted = chunksWebpackPlugin.sortsChunksByType({
 				chunks: chunkGroup.chunks,
-				publicPath: compilationWebpack.options.output.publicPath
+				publicPath: publicPath
 			})
 
 			const tags = chunksWebpackPlugin.generateTags(chunksSorted)
@@ -113,13 +145,28 @@ describe('ChunksWebpackPlugin', () => {
 		})
 	})
 
+	it('should init the createHtmlChunksFiles function', () => {
+		utils.writeFile = jest.fn()
+
+		chunksWebpackPlugin.createHtmlChunksFiles({
+			entry: 'app-a',
+			tagsHTML: {
+				styles: '<link rel="stylesheet" href="/dist/css/vendors~app-a~app-b.css" />',
+				scripts: '<script src="/dist/js/vendors~app-a~app-b.js"></script>'
+			},
+			outputPath: '/dist/'
+		})
+
+		expect(utils.writeFile).toHaveBeenCalled()
+	})
+
 	it('should init the createChunksManifestFile function', () => {
-		const outputPath = chunksWebpackPlugin.getOutputPath(compilationWebpack)
+		const publicPath = chunksWebpackPlugin.getPublicPath(compilationWebpack)
 
 		compilationWebpack.chunkGroups.forEach(chunkGroup => {
 			let chunksSorted = chunksWebpackPlugin.sortsChunksByType({
 				chunks: chunkGroup.chunks,
-				publicPath: compilationWebpack.options.output.publicPath
+				publicPath: publicPath
 			})
 
 			chunksWebpackPlugin.updateManifest({
@@ -128,6 +175,7 @@ describe('ChunksWebpackPlugin', () => {
 			})
 		})
 
+		const outputPath = chunksWebpackPlugin.getOutputPath(compilationWebpack)
 		chunksWebpackPlugin.createChunksManifestFile({
 			compilation: compilationWebpack,
 			outputPath: outputPath
