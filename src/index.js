@@ -50,7 +50,6 @@ module.exports = class ChunksWebpackPlugin {
 
 		compilation.chunkGroups.forEach(chunkGroup => {
 			// Check if chunkGroup contains chunks
-			/* istanbul ignore else */
 			if (chunkGroup.chunks.length) {
 				const entryName = chunkGroup.options.name
 				let chunksSorted = this.sortsChunksByType({
@@ -59,7 +58,6 @@ module.exports = class ChunksWebpackPlugin {
 				})
 
 				// Check if chunks files generation is enabled
-				/* istanbul ignore else */
 				if (this.options.generateChunksFiles) {
 					let tagsHTML = null
 
@@ -85,7 +83,6 @@ module.exports = class ChunksWebpackPlugin {
 				}
 
 				// Check if manifest option is enabled
-				/* istanbul ignore else */
 				if (this.options.generateChunksManifest) {
 					this.updateManifest({
 						entryName: entryName,
@@ -96,7 +93,6 @@ module.exports = class ChunksWebpackPlugin {
 		})
 
 		// Check if manifest option is enabled
-		/* istanbul ignore else */
 		if (this.options.generateChunksManifest) {
 			this.createChunksManifestFile({ compilation, outputPath })
 		}
@@ -126,12 +122,8 @@ module.exports = class ChunksWebpackPlugin {
 	getPublicPath (compilation) {
 		let publicPath = compilation.options.output.publicPath || ''
 
-		/* istanbul ignore else */
-		if (publicPath) {
-			/* istanbul ignore else */
-			if (publicPath.substr(-1) !== '/') {
-				publicPath = `${publicPath}/`
-			}
+		if (publicPath && publicPath.substr(-1) !== '/') {
+			publicPath = `${publicPath}/`
 		}
 
 		return publicPath
@@ -175,15 +167,15 @@ module.exports = class ChunksWebpackPlugin {
 			'styles': [],
 			'scripts': []
 		}
+		let extensionKeys = {
+			css: 'styles',
+			js: 'scripts'
+		}
 
 		chunks.forEach(chunk => {
 			chunk.files.forEach(file => {
-				/* istanbul ignore else */
-				if (utils.getFileExtension(file) === 'css') {
-					files['styles'].push(`${publicPath}${file}`)
-				} else if (utils.getFileExtension(file) === 'js') {
-					files['scripts'].push(`${publicPath}${file}`)
-				}
+				let extension = utils.getFileExtension(file)
+				files[extensionKeys[extension]].push(`${publicPath}${file}`)
 			})
 		})
 
@@ -226,14 +218,12 @@ module.exports = class ChunksWebpackPlugin {
 		tagsHTML,
 		outputPath
 	}) {
-		/* istanbul ignore else */
 		if (tagsHTML.scripts.length) {
 			utils.writeFile({
 				outputPath: `${outputPath}/${entry}-scripts${this.options.fileExtension}`,
 				output: tagsHTML.scripts
 			})
 		}
-		/* istanbul ignore else */
 		if (tagsHTML.styles.length) {
 			utils.writeFile({
 				outputPath: `${outputPath}/${entry}-styles${this.options.fileExtension}`,
