@@ -1,3 +1,14 @@
+# 3.4.1
+
+#### New features
+
+* Add Coveralls
+
+#### Updates
+
+* Up covrage test to 100%
+
+
 # 3.4.0
 
 #### New features
