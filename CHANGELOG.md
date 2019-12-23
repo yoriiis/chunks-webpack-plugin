@@ -6,7 +6,7 @@
 
 #### Updates
 
-* Up covrage test to 100%
+* Up code covrage to 100%
 
 
 # 3.4.0

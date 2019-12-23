@@ -194,13 +194,6 @@ describe('ChunksWebpackPlugin', () => {
 		expect(publicPath).toBe('')
 	})
 
-	// it('Initialize the getPublicPath function with publicPath not ending with slash', () => {
-	// 	compilationWebpack.options.output.publicPath = false
-	// 	const publicPath = chunksWebpackPlugin.getPublicPath(compilationWebpack)
-
-	// 	expect(publicPath).toBe('')
-	// })
-
 	it('Initialize the getOutputPath function', () => {
 		const outputPath = chunksWebpackPlugin.getOutputPath(compilationWebpack)
 

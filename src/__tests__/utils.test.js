@@ -11,7 +11,7 @@ describe('Utils', () => {
 	})
 
 	it('Initialize the isAbsolutePath function', () => {
-		expect(utils.isAbsolutePath('dist')).toBe(false)
+		expect(utils.isAbsolutePath('dist/')).toBe(false)
 	})
 
 	it('Initialize the getFileExtension function', () => {
