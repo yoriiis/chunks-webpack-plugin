@@ -180,7 +180,6 @@ describe('ChunksWebpackPlugin', () => {
 	})
 
 	it('should init the getOutputPath function with default outputPath and without value', () => {
-
 		compilationWebpack.options.output.path = false
 		chunksWebpackPlugin.options.outputPath = 'default'
 		const outputPath = chunksWebpackPlugin.getOutputPath(compilationWebpack)
