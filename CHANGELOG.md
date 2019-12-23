@@ -1,3 +1,14 @@
+# 3.4.1
+
+#### New features
+
+* Add Coveralls
+
+#### Updates
+
+* Up code covrage to 100%
+
+
 # 3.4.0
 
 #### New features

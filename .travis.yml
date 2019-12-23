@@ -22,3 +22,5 @@ jobs:
         - npm run test
         - npm run build
         - npm run build:example
+    - after_success:
+        - npm run coverage

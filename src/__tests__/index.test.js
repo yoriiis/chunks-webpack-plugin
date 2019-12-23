@@ -8,7 +8,7 @@ let chunksSorted
 let compilationWebpack
 let compilerWebpack
 
-const getInstance = () => new ChunksWebpackPlugin({
+const options = {
 	outputPath: '/dist/templates',
 	fileExtension: '.html',
 	generateChunksManifest: true,
@@ -26,7 +26,9 @@ const getInstance = () => new ChunksWebpackPlugin({
 
 		return { styles, scripts }
 	}
-})
+}
+
+const getInstance = () => new ChunksWebpackPlugin(options)
 
 const getChunksSorted = () => {
 	return chunksWebpackPlugin.sortsChunksByType({
@@ -77,7 +79,7 @@ beforeEach(() => {
 })
 
 describe('ChunksWebpackPlugin', () => {
-	it('should init the constructor function', () => {
+	it('Initialize the constructor', () => {
 		expect(chunksWebpackPlugin.options).toMatchObject({
 			outputPath: '/dist/templates',
 			fileExtension: '.html',
@@ -89,7 +91,20 @@ describe('ChunksWebpackPlugin', () => {
 		})
 	})
 
-	it('should init the apply function', () => {
+	it('Initialize the constructor without options', () => {
+		const instance = new ChunksWebpackPlugin()
+		expect(instance.options).toMatchObject({
+			outputPath: 'default',
+			fileExtension: '.html',
+			templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
+			templateScript: '<script src="{{chunk}}"></script>',
+			generateChunksManifest: false,
+			generateChunksFiles: true,
+			customFormatTags: false
+		})
+	})
+
+	it('Initialize the apply function', () => {
 		compilerWebpack.hooks.emit.tap = jest.fn()
 
 		chunksWebpackPlugin.apply(compilerWebpack)
@@ -98,7 +113,7 @@ describe('ChunksWebpackPlugin', () => {
 		expect(compilerWebpack.hooks.emit.tap).toHaveBeenCalled()
 	})
 
-	it('should init the hookEmit function', () => {
+	it('Initialize the hookEmit function', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 
 		chunksWebpackPlugin.hookEmit(compilationWebpack)
@@ -106,7 +121,35 @@ describe('ChunksWebpackPlugin', () => {
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalled()
 	})
 
-	it('should init the hookEmit function with wrong returns of customFormatTags', () => {
+	it('Initialize the hookEmit function without chunks', () => {
+		chunksWebpackPlugin.sortsChunksByType = jest.fn()
+
+		compilationWebpack.chunkGroups[0].chunks = []
+		chunksWebpackPlugin.hookEmit(compilationWebpack)
+
+		expect(chunksWebpackPlugin.sortsChunksByType).not.toHaveBeenCalled()
+	})
+
+	it('Initialize the hookEmit function without generating chunk files', () => {
+		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
+
+		chunksWebpackPlugin.options.generateChunksFiles = false
+		chunksWebpackPlugin.hookEmit(compilationWebpack)
+
+		expect(chunksWebpackPlugin.createHtmlChunksFiles).not.toHaveBeenCalled()
+	})
+
+	it('Initialize the hookEmit function without generating chunk manifest', () => {
+		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
+		chunksWebpackPlugin.updateManifest = jest.fn()
+
+		chunksWebpackPlugin.options.generateChunksManifest = false
+		chunksWebpackPlugin.hookEmit(compilationWebpack)
+
+		expect(chunksWebpackPlugin.updateManifest).not.toHaveBeenCalled()
+	})
+
+	it('Initialize the hookEmit function with wrong returns of customFormatTags', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 		utils.setError = jest.fn()
 
@@ -117,7 +160,7 @@ describe('ChunksWebpackPlugin', () => {
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalled()
 	})
 
-	it('should init the hookEmit function with wrong declaration of customFormatTags', () => {
+	it('Initialize the hookEmit function with wrong declaration of customFormatTags', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 		chunksWebpackPlugin.generateTags = jest.fn()
 
@@ -127,7 +170,7 @@ describe('ChunksWebpackPlugin', () => {
 		expect(chunksWebpackPlugin.generateTags).toHaveBeenCalled()
 	})
 
-	it('should init the updateManifest function', () => {
+	it('Initialize the updateManifest function', () => {
 		updateManifest()
 
 		expect(chunksWebpackPlugin.manifest).toMatchObject({
@@ -138,26 +181,41 @@ describe('ChunksWebpackPlugin', () => {
 		})
 	})
 
-	it('should init the getPublicPath function', () => {
+	it('Initialize the getPublicPath function', () => {
 		const publicPath = chunksWebpackPlugin.getPublicPath(compilationWebpack)
 
 		expect(publicPath).toBe('/dist/')
 	})
 
-	it('should init the getOutputPath function', () => {
+	it('Initialize the getPublicPath function with empty value', () => {
+		compilationWebpack.options.output.publicPath = false
+		const publicPath = chunksWebpackPlugin.getPublicPath(compilationWebpack)
+
+		expect(publicPath).toBe('')
+	})
+
+	it('Initialize the getOutputPath function', () => {
 		const outputPath = chunksWebpackPlugin.getOutputPath(compilationWebpack)
 
 		expect(outputPath).toBe('/dist/templates')
 	})
 
-	it('should init the getOutputPath function with default outputPath', () => {
+	it('Initialize the getOutputPath function with default outputPath', () => {
 		chunksWebpackPlugin.options.outputPath = 'default'
 		const outputPath = chunksWebpackPlugin.getOutputPath(compilationWebpack)
 
 		expect(outputPath).toBe('/dist/')
 	})
 
-	it('should init the getOutputPath function with wrong outputPath', () => {
+	it('Initialize the getOutputPath function with default outputPath and without value', () => {
+		compilationWebpack.options.output.path = false
+		chunksWebpackPlugin.options.outputPath = 'default'
+		const outputPath = chunksWebpackPlugin.getOutputPath(compilationWebpack)
+
+		expect(outputPath).toBe('')
+	})
+
+	it('Initialize the getOutputPath function with wrong outputPath', () => {
 		utils.setError = jest.fn()
 
 		chunksWebpackPlugin.options.outputPath = ''
@@ -166,14 +224,27 @@ describe('ChunksWebpackPlugin', () => {
 		expect(utils.setError).toHaveBeenCalled()
 	})
 
-	it('should init the sortsChunksByType function', () => {
+	it('Initialize the sortsChunksByType function', () => {
 		expect(chunksSorted).toMatchObject({
 			styles: ['/dist/css/vendors~app-a~app-b.css'],
 			scripts: ['/dist/js/vendors~app-a~app-b.js']
 		})
 	})
 
-	it('should init the generateTags function', () => {
+	it('Initialize the sortsChunksByType function with scripts only', () => {
+		let chunksSorted = chunksWebpackPlugin.sortsChunksByType({
+			chunks: [{
+				files: [
+					'css/vendors~app-a~app-b.css'
+				]
+			}],
+			publicPath: chunksWebpackPlugin.getPublicPath(compilationWebpack)
+		})
+
+		expect(chunksSorted.scripts.length).toEqual(0)
+	})
+
+	it('Initialize the generateTags function', () => {
 		const tags = chunksWebpackPlugin.generateTags(chunksSorted)
 
 		expect(tags).toMatchObject({
@@ -182,7 +253,7 @@ describe('ChunksWebpackPlugin', () => {
 		})
 	})
 
-	it('should init the createHtmlChunksFiles function', () => {
+	it('Initialize the createHtmlChunksFiles function', () => {
 		utils.writeFile = jest.fn()
 
 		chunksWebpackPlugin.createHtmlChunksFiles({
@@ -197,7 +268,22 @@ describe('ChunksWebpackPlugin', () => {
 		expect(utils.writeFile).toHaveBeenCalled()
 	})
 
-	it('should init the createChunksManifestFile function', () => {
+	it('Initialize the createHtmlChunksFiles function without styles and scripts', () => {
+		utils.writeFile = jest.fn()
+
+		chunksWebpackPlugin.createHtmlChunksFiles({
+			entry: 'app-a',
+			tagsHTML: {
+				styles: '',
+				scripts: ''
+			},
+			outputPath: '/dist/'
+		})
+
+		expect(utils.writeFile).not.toHaveBeenCalled()
+	})
+
+	it('Initialize the createChunksManifestFile function', () => {
 		updateManifest()
 
 		chunksWebpackPlugin.createChunksManifestFile({
