@@ -7,6 +7,9 @@
 	<a href="https://bundlephobia.com/result?p=fela@latest">
 		<img alt="Bundlephobia" src="https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge">
 	</a>
+	<a href="https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master">
+    <img src="https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge" alt="Coverage Status" />
+  </a>
 	<a href="https://npmjs.com/package/chunks-webpack-plugin">
 		<img alt="Npm downloads" src="https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge">
 	</a>
