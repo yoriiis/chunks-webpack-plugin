@@ -8,7 +8,7 @@ let chunksSorted
 let compilationWebpack
 let compilerWebpack
 
-const getInstance = () => new ChunksWebpackPlugin({
+const options = {
 	outputPath: '/dist/templates',
 	fileExtension: '.html',
 	generateChunksManifest: true,
@@ -26,7 +26,9 @@ const getInstance = () => new ChunksWebpackPlugin({
 
 		return { styles, scripts }
 	}
-})
+}
+
+const getInstance = () => new ChunksWebpackPlugin(options)
 
 const getChunksSorted = () => {
 	return chunksWebpackPlugin.sortsChunksByType({
@@ -89,6 +91,19 @@ describe('ChunksWebpackPlugin', () => {
 		})
 	})
 
+	it('should init the constructor function without options', () => {
+		const instance = new ChunksWebpackPlugin()
+		expect(instance.options).toMatchObject({
+			outputPath: 'default',
+			fileExtension: '.html',
+			templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
+			templateScript: '<script src="{{chunk}}"></script>',
+			generateChunksManifest: false,
+			generateChunksFiles: true,
+			customFormatTags: false
+		})
+	})
+
 	it('should init the apply function', () => {
 		compilerWebpack.hooks.emit.tap = jest.fn()
 
@@ -144,6 +159,13 @@ describe('ChunksWebpackPlugin', () => {
 		expect(publicPath).toBe('/dist/')
 	})
 
+	it('should init the getPublicPath function with empty value', () => {
+		compilationWebpack.options.output.publicPath = false
+		const publicPath = chunksWebpackPlugin.getPublicPath(compilationWebpack)
+
+		expect(publicPath).toBe('')
+	})
+
 	it('should init the getOutputPath function', () => {
 		const outputPath = chunksWebpackPlugin.getOutputPath(compilationWebpack)
 
@@ -155,6 +177,15 @@ describe('ChunksWebpackPlugin', () => {
 		const outputPath = chunksWebpackPlugin.getOutputPath(compilationWebpack)
 
 		expect(outputPath).toBe('/dist/')
+	})
+
+	it('should init the getOutputPath function with default outputPath and without value', () => {
+
+		compilationWebpack.options.output.path = false
+		chunksWebpackPlugin.options.outputPath = 'default'
+		const outputPath = chunksWebpackPlugin.getOutputPath(compilationWebpack)
+
+		expect(outputPath).toBe('')
 	})
 
 	it('should init the getOutputPath function with wrong outputPath', () => {
