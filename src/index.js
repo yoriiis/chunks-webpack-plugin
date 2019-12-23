@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 3.4.0
+ * @version 3.4.1
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -122,10 +122,8 @@ module.exports = class ChunksWebpackPlugin {
 	getPublicPath (compilation) {
 		let publicPath = compilation.options.output.publicPath || ''
 
-		if (publicPath) {
-			if (publicPath.substr(-1) !== '/') {
-				publicPath = `${publicPath}/`
-			}
+		if (publicPath && publicPath.substr(-1) !== '/') {
+			publicPath = `${publicPath}/`
 		}
 
 		return publicPath
@@ -169,14 +167,15 @@ module.exports = class ChunksWebpackPlugin {
 			'styles': [],
 			'scripts': []
 		}
+		let extensionKeys = {
+			css: 'styles',
+			js: 'scripts'
+		}
 
 		chunks.forEach(chunk => {
 			chunk.files.forEach(file => {
-				if (utils.getFileExtension(file) === 'css') {
-					files['styles'].push(`${publicPath}${file}`)
-				} else if (utils.getFileExtension(file) === 'js') {
-					files['scripts'].push(`${publicPath}${file}`)
-				}
+				let extension = utils.getFileExtension(file)
+				files[extensionKeys[extension]].push(`${publicPath}${file}`)
 			})
 		})
 
