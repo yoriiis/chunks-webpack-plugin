@@ -1,3 +1,10 @@
+# 3.4.2
+
+#### Updates
+
+* Build source files
+
+
 # 3.4.1
 
 #### New features
