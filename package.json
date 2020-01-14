@@ -51,7 +51,7 @@
 		"prettier-eslint": "9.0.1",
 		"sanitize.css": "11.0.0",
 		"terser-webpack-plugin": "2.2.1",
-		"vlitejs": "3.0.2",
+		"vlitejs": "3.0.4",
 		"webpack": "4.41.2",
 		"webpack-bundle-analyzer": "3.6.0",
 		"webpack-cli": "3.3.10",
