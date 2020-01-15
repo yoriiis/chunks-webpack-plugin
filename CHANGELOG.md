@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 3.4.4
+
+### New features
+
+* Add `markdownlint` to lint markdown files
+
+### Updates
+
+* Upgrade Node.js version to `12.14.0`
+* Update Travis config with markdown lint script
+* Lint `CHANGELOG.md` and `README.md`
+
+
 ## 3.4.3
 
 ### Fixes
