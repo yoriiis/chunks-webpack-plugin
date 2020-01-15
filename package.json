@@ -25,7 +25,7 @@
 		"test": "jest --verbose --coverage",
 		"test:coverage": "jest --coverage",
 		"test:eslint": "eslint -c ./.eslintrc.js .",
-		"test:markdown": "markdomarkdownlint '**/*.md' --ignore node_moduleswnlint",
+		"test:markdown": "markdownlint '**/*.md' --ignore node_modules",
 		"test:watch": "jest --watch --coverage"
 	},
 	"dependencies": {
