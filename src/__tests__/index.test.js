@@ -305,4 +305,41 @@ describe('ChunksWebpackPlugin', () => {
 		const size = compilationWebpack.assets['chunks-manifest.json'].size()
 		expect(size).toEqual(148)
 	})
+
+	it('Initialize sortsChunksByType function ignore source map file', () => {
+		chunksWebpackPlugin.updateManifest = jest.fn()
+		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
+		let chunksSorted = chunksWebpackPlugin.sortsChunksByType({
+			chunks: [{
+				files: [
+					'css/vendors~app-a~app-b.css',
+					'js/vendors~app-a~app-b.js',
+					'js/vendors~app-a~app-b.js.map'
+				]
+			}],
+			publicPath: chunksWebpackPlugin.getPublicPath(compilationWebpack)
+		})
+		expect(chunksSorted).toEqual({ styles: [ '/dist/css/vendors~app-a~app-b.css' ], scripts: [ '/dist/js/vendors~app-a~app-b.js' ] })
+	})
+
+	it('Initialize the hookEmit function ignore dynamic import chunk', () => {
+		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
+		chunksWebpackPlugin.options.customFormatTags = ''
+		chunksWebpackPlugin.options.outputPath = 'default'
+		compilationWebpack.chunkGroups.push({
+			chunks: [{
+				files: [ 'js/4.js', 'js/4.js.map' ]
+			}],
+			options: { name: null }
+		})
+		chunksWebpackPlugin.hookEmit(compilationWebpack)
+		expect(chunksWebpackPlugin.createHtmlChunksFiles).not.toHaveBeenCalledWith({
+			entry: null,
+			tagsHTML: {
+				styles: '',
+				scripts: '<script src="/dist/js/4.js"></script>'
+			},
+			outputPath: '/dist/'
+		})
+	})
 })
