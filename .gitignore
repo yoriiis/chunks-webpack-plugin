@@ -1,3 +1,4 @@
 node_modules/
 webpack-stats.json
 coverage
+example/dist/
