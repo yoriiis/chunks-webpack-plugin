@@ -52,6 +52,10 @@ module.exports = class ChunksWebpackPlugin {
 			// Check if chunkGroup contains chunks
 			if (chunkGroup.chunks.length) {
 				const entryName = chunkGroup.options.name
+				// ignore dynamic import chunk
+				if (entryName === null || typeof entryName === 'undefined') {
+					return
+				}
 				let chunksSorted = this.sortsChunksByType({
 					chunks: chunkGroup.chunks,
 					publicPath: publicPath
@@ -175,6 +179,10 @@ module.exports = class ChunksWebpackPlugin {
 		chunks.forEach(chunk => {
 			chunk.files.forEach(file => {
 				let extension = utils.getFileExtension(file)
+				// ignore the other files, eg: sourceMap(*.map)
+				if (!extensionKeys[extension]) {
+					return
+				}
 				files[extensionKeys[extension]].push(`${publicPath}${file}`)
 			})
 		})
