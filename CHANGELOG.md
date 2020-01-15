@@ -1,3 +1,38 @@
+# 3.4.3
+
+#### Fixes
+
+* Fix ignore sourceMap file and dynamic import chunk [#24](https://github.com/yoriiis/chunks-webpack-plugin/pull/24)
+* Fix npm scripts
+* Fix lint on Webpack config
+* Fix bundle analyzer
+
+
+#### New features
+
+* Add `./.vscode/launch.json` file to debugging Node.js
+
+
+#### Updates
+
+* Bumps [vlitejs](https://github.com/yoriiis/vlitejs) from `3.0.2` to `3.0.4`
+* Bumps [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin) from `0.4.1` to `0.9.0`
+* Bumps [@babel/core](https://github.com/babel/babel) from `7.7.7` to `7.8.3`
+* Bumps [css-loader](https://github.com/webpack-contrib/css-loader) from `1.0.0` to `3.4.2`
+* Bumps [webpack](https://github.com/webpack/webpack) from `4.41.2` to `4.41.5`
+* Bumps [@babel/cli](https://github.com/babel/babel) from `7.7.7` to `7.8.3`
+* Bumps [eslint-plugin-import](https://github.com/benmosher/eslint-plugin-import) from `2.19.1` to `2.20.0`
+* Bumps [terser-webpack-plugin](https://github.com/webpack-contrib/terser-webpack-plugin) from `2.2.1` to `2.3.2`
+* Bumps [@babel/preset-env](https://github.com/babel/babel) from `7.7.7` to `7.8.3`
+* Bumps [eslint](https://github.com/eslint/eslint) from `4.19.1` to `6.8.0`
+
+
+#### Removes
+
+* Remove example dist files and update `.gitignore`
+* Remove dist test files
+
+
 # 3.4.2
 
 #### Updates

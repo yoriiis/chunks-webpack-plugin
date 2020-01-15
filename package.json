@@ -1,6 +1,6 @@
 {
 	"name": "chunks-webpack-plugin",
-	"version": "3.4.2",
+	"version": "3.4.3",
 	"description": "Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)",
 	"keywords": [
 		"chunks",
