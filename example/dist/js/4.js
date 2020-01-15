@@ -1,2 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[4],{12:function(n,o,c){"use strict";c.r(o),c.d(o,"dynamicLog",(function(){return s}));const s=(...n)=>{console.log(...n)}}}]);
-//# sourceMappingURL=4.js.map
