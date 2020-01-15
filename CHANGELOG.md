@@ -9,9 +9,11 @@
 ### Updates
 
 * Upgrade Node.js version to `12.14.0`
+* Bumps `eslint-config-standard` from `11.0.0` to `14.1.0`
+* Bumps `eslint-plugin-node` from `8.0.1` to `11.0.0`
+* Bumps `eslint-plugin-standard` from `3.1.0` to `4.0.1`
 * Update Travis config with markdown lint script
 * Lint `CHANGELOG.md` and `README.md`
-
 
 ## 3.4.3
 

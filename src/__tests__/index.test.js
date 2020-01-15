@@ -15,12 +15,12 @@ const options = {
 	generateChunksFiles: true,
 	customFormatTags: (chunksSorted, chunkGroup) => {
 		// Generate all HTML style tags with CDN prefix
-		const styles = chunksSorted['styles'].map(chunkCss =>
+		const styles = chunksSorted.styles.map(chunkCss =>
 			`<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`
 		).join('')
 
 		// Generate all HTML style tags with CDN prefix and defer attribute
-		const scripts = chunksSorted['scripts'].map(chunkJs =>
+		const scripts = chunksSorted.scripts.map(chunkJs =>
 			`<script defer src="https://cdn.domain.com${chunkJs}"></script>`
 		).join('')
 
@@ -232,7 +232,7 @@ describe('ChunksWebpackPlugin', () => {
 	})
 
 	it('Initialize the sortsChunksByType function with scripts only', () => {
-		let chunksSorted = chunksWebpackPlugin.sortsChunksByType({
+		const chunksSorted = chunksWebpackPlugin.sortsChunksByType({
 			chunks: [{
 				files: [
 					'css/vendors~app-a~app-b.css'
@@ -309,7 +309,7 @@ describe('ChunksWebpackPlugin', () => {
 	it('Initialize sortsChunksByType function ignore source map file', () => {
 		chunksWebpackPlugin.updateManifest = jest.fn()
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
-		let chunksSorted = chunksWebpackPlugin.sortsChunksByType({
+		const chunksSorted = chunksWebpackPlugin.sortsChunksByType({
 			chunks: [{
 				files: [
 					'css/vendors~app-a~app-b.css',
@@ -319,7 +319,7 @@ describe('ChunksWebpackPlugin', () => {
 			}],
 			publicPath: chunksWebpackPlugin.getPublicPath(compilationWebpack)
 		})
-		expect(chunksSorted).toEqual({ styles: [ '/dist/css/vendors~app-a~app-b.css' ], scripts: [ '/dist/js/vendors~app-a~app-b.js' ] })
+		expect(chunksSorted).toEqual({ styles: ['/dist/css/vendors~app-a~app-b.css'], scripts: ['/dist/js/vendors~app-a~app-b.js'] })
 	})
 
 	it('Initialize the hookEmit function ignore dynamic import chunk', () => {
@@ -328,7 +328,7 @@ describe('ChunksWebpackPlugin', () => {
 		chunksWebpackPlugin.options.outputPath = 'default'
 		compilationWebpack.chunkGroups.push({
 			chunks: [{
-				files: [ 'js/4.js', 'js/4.js.map' ]
+				files: ['js/lib-dynamic.js', 'js/lib-dynamic.js.map']
 			}],
 			options: { name: null }
 		})
