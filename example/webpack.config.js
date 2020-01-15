@@ -12,12 +12,14 @@ module.exports = (env, argv) => {
 		watch: !isProduction,
 		entry: {
 			'app-a': `${path.resolve(__dirname, './src/js/app-a.js')}`,
-			'app-b': `${path.resolve(__dirname, './src/js/app-b.js')}`
+			'app-b': `${path.resolve(__dirname, './src/js/app-b.js')}`,
+			'app-c': `${path.resolve(__dirname, './src/js/app-c.js')}`
 		},
 		watchOptions: {
 			ignored: /node_modules/
 		},
-		devtool: 'none',
+		// devtool: 'none',
+		devtool: 'nosources-source-map',
 		output: {
 			path: path.resolve(__dirname, './dist'),
 			publicPath: '/dist/',
