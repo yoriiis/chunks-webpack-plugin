@@ -319,7 +319,10 @@ describe('ChunksWebpackPlugin', () => {
 			}],
 			publicPath: chunksWebpackPlugin.getPublicPath(compilationWebpack)
 		})
-		expect(chunksSorted).toEqual({ styles: ['/dist/css/vendors~app-a~app-b.css'], scripts: ['/dist/js/vendors~app-a~app-b.js'] })
+		expect(chunksSorted).toEqual({
+			styles: ['/dist/css/vendors~app-a~app-b.css'],
+			scripts: ['/dist/js/vendors~app-a~app-b.js']
+		})
 	})
 
 	it('Initialize the hookEmit function ignore dynamic import chunk', () => {
