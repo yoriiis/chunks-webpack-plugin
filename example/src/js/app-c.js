@@ -3,5 +3,5 @@ import 'sanitize.css'
 import '../css/app-c.css'
 
 (async () => {
-	await import('../lib/dynamic')
+	await import(/* webpackChunkName: "lib-dynamic" */'../lib/dynamic')
 })()
