@@ -1,11 +1,14 @@
 .github/
 .vscode/
+coverage
 example/
 src/
 .editorconfig
 .eslintignore
 .eslintrc.js
 .gitignore
+.markdownlint.yml
 .nvmrc
 .travis.yml
 babel.config.js
+webpack-stats.json
