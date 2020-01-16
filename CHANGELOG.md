@@ -14,6 +14,7 @@
 * Bumps `eslint-plugin-standard` from `3.1.0` to `4.0.1`
 * Update Travis config with markdown lint script
 * Lint `CHANGELOG.md` and `README.md`
+* Update Github `ISSUE_TEMPLATE`
 
 ## 3.4.3
 
