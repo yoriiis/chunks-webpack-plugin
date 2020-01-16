@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 3.4.3
+ * @version 3.4.4
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -20,8 +20,8 @@ module.exports = class ChunksWebpackPlugin {
 		this.options = Object.assign({
 			outputPath: 'default',
 			fileExtension: '.html',
-			templateStyle: `<link rel="stylesheet" href="{{chunk}}" />`,
-			templateScript: `<script src="{{chunk}}"></script>`,
+			templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
+			templateScript: '<script src="{{chunk}}"></script>',
 			customFormatTags: false,
 			generateChunksManifest: false,
 			generateChunksFiles: true
@@ -56,7 +56,7 @@ module.exports = class ChunksWebpackPlugin {
 				if (entryName === null || typeof entryName === 'undefined') {
 					return
 				}
-				let chunksSorted = this.sortsChunksByType({
+				const chunksSorted = this.sortsChunksByType({
 					chunks: chunkGroup.chunks,
 					publicPath: publicPath
 				})
@@ -109,10 +109,10 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {String} entryName Entrypoint name
 	 * @param {Object} chunks List of styles and scripts chunks by entrypoint
 	 */
-	updateManifest ({entryName, chunks}) {
+	updateManifest ({ entryName, chunks }) {
 		this.manifest[entryName] = {}
-		this.manifest[entryName]['styles'] = chunks['styles']
-		this.manifest[entryName]['scripts'] = chunks['scripts']
+		this.manifest[entryName].styles = chunks.styles
+		this.manifest[entryName].scripts = chunks.scripts
 	}
 
 	/**
@@ -142,7 +142,7 @@ module.exports = class ChunksWebpackPlugin {
 	 * @return {String} The output path
 	 */
 	getOutputPath (compilation) {
-		let optionsOutputPath = this.options.outputPath
+		const optionsOutputPath = this.options.outputPath
 		let outputPath
 
 		if (optionsOutputPath === 'default') {
@@ -166,19 +166,19 @@ module.exports = class ChunksWebpackPlugin {
 	 *
 	 * @returns {Object} files All chunks sorted by type (extension)
 	 */
-	sortsChunksByType ({chunks, publicPath}) {
-		let files = {
-			'styles': [],
-			'scripts': []
+	sortsChunksByType ({ chunks, publicPath }) {
+		const files = {
+			styles: [],
+			scripts: []
 		}
-		let extensionKeys = {
+		const extensionKeys = {
 			css: 'styles',
 			js: 'scripts'
 		}
 
 		chunks.forEach(chunk => {
 			chunk.files.forEach(file => {
-				let extension = utils.getFileExtension(file)
+				const extension = utils.getFileExtension(file)
 				// ignore the other files, eg: sourceMap(*.map)
 				if (!extensionKeys[extension]) {
 					return
@@ -198,17 +198,17 @@ module.exports = class ChunksWebpackPlugin {
 	 * @returns {Object} html HTML tags with all assets chunks
 	 */
 	generateTags (chunksSorted) {
-		let html = {
-			'styles': '',
-			'scripts': ''
+		const html = {
+			styles: '',
+			scripts: ''
 		}
 
-		chunksSorted['styles'].forEach(chunkCSS => {
-			html['styles'] += this.options.templateStyle.replace('{{chunk}}', chunkCSS)
+		chunksSorted.styles.forEach(chunkCSS => {
+			html.styles += this.options.templateStyle.replace('{{chunk}}', chunkCSS)
 		})
 
-		chunksSorted['scripts'].forEach(chunkJS => {
-			html['scripts'] += this.options.templateScript.replace('{{chunk}}', chunkJS)
+		chunksSorted.scripts.forEach(chunkJS => {
+			html.scripts += this.options.templateScript.replace('{{chunk}}', chunkJS)
 		})
 
 		return html
