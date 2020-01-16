@@ -3,7 +3,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 3.4.3
+ * @version 3.4.4
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
