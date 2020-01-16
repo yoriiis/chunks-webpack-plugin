@@ -21,8 +21,8 @@ module.exports = class ChunksWebpackPlugin {
     this.options = Object.assign({
       outputPath: 'default',
       fileExtension: '.html',
-      templateStyle: `<link rel="stylesheet" href="{{chunk}}" />`,
-      templateScript: `<script src="{{chunk}}"></script>`,
+      templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
+      templateScript: '<script src="{{chunk}}"></script>',
       customFormatTags: false,
       generateChunksManifest: false,
       generateChunksFiles: true
@@ -59,7 +59,7 @@ module.exports = class ChunksWebpackPlugin {
           return;
         }
 
-        let chunksSorted = this.sortsChunksByType({
+        const chunksSorted = this.sortsChunksByType({
           chunks: chunkGroup.chunks,
           publicPath: publicPath
         }); // Check if chunks files generation is enabled
@@ -117,8 +117,8 @@ module.exports = class ChunksWebpackPlugin {
     chunks
   }) {
     this.manifest[entryName] = {};
-    this.manifest[entryName]['styles'] = chunks['styles'];
-    this.manifest[entryName]['scripts'] = chunks['scripts'];
+    this.manifest[entryName].styles = chunks.styles;
+    this.manifest[entryName].scripts = chunks.scripts;
   }
   /**
    * Get the public path from Webpack configuation
@@ -150,7 +150,7 @@ module.exports = class ChunksWebpackPlugin {
 
 
   getOutputPath(compilation) {
-    let optionsOutputPath = this.options.outputPath;
+    const optionsOutputPath = this.options.outputPath;
     let outputPath;
 
     if (optionsOutputPath === 'default') {
@@ -179,17 +179,17 @@ module.exports = class ChunksWebpackPlugin {
     chunks,
     publicPath
   }) {
-    let files = {
-      'styles': [],
-      'scripts': []
+    const files = {
+      styles: [],
+      scripts: []
     };
-    let extensionKeys = {
+    const extensionKeys = {
       css: 'styles',
       js: 'scripts'
     };
     chunks.forEach(chunk => {
       chunk.files.forEach(file => {
-        let extension = utils.getFileExtension(file); // ignore the other files, eg: sourceMap(*.map)
+        const extension = utils.getFileExtension(file); // ignore the other files, eg: sourceMap(*.map)
 
         if (!extensionKeys[extension]) {
           return;
@@ -210,15 +210,15 @@ module.exports = class ChunksWebpackPlugin {
 
 
   generateTags(chunksSorted) {
-    let html = {
-      'styles': '',
-      'scripts': ''
+    const html = {
+      styles: '',
+      scripts: ''
     };
-    chunksSorted['styles'].forEach(chunkCSS => {
-      html['styles'] += this.options.templateStyle.replace('{{chunk}}', chunkCSS);
+    chunksSorted.styles.forEach(chunkCSS => {
+      html.styles += this.options.templateStyle.replace('{{chunk}}', chunkCSS);
     });
-    chunksSorted['scripts'].forEach(chunkJS => {
-      html['scripts'] += this.options.templateScript.replace('{{chunk}}', chunkJS);
+    chunksSorted.scripts.forEach(chunkJS => {
+      html.scripts += this.options.templateScript.replace('{{chunk}}', chunkJS);
     });
     return html;
   }
