@@ -15,6 +15,7 @@
 * Update Travis config with markdown lint script
 * Lint `CHANGELOG.md` and `README.md`
 * Update Github `ISSUE_TEMPLATE`
+* Update `.npmignore`
 
 ## 3.4.3
 
