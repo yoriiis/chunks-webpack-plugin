@@ -3,7 +3,7 @@ os: linux
 language: node_js
 
 node_js:
-  # - node # Latest stable Node.js release
+  - node # Latest stable Node.js release
   - lts/* # Latest LTS Node.js release
   # - 12.14.0
   # - 8.11.2
