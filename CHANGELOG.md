@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 3.4.5
+
+### Updates
+
+* Update Travis CI with more Node.js versions (stable, lts, 12, 10, 8)
+
 ## 3.4.4
 
 ### New features
