@@ -3,12 +3,17 @@ os: linux
 language: node_js
 
 node_js:
-  - node
-  - lts/*
+  - node # Latest stable Node.js release
+  - lts/* # Latest LTS Node.js release
   - 12.14.0
   - 10
   - 8.11.2
   - 8
+
+os:
+  - windows
+  - linux
+  - osx
 
 # Safelist
 branches:
