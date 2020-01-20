@@ -2,7 +2,14 @@ os: linux
 
 language: node_js
 
-node_js: "12.14.0"
+node_js:
+  - node # Latest stable Node.js release
+  - lts/* # Latest LTS Node.js release
+  - 12.14.0
+  - 8.11.2
+
+os:
+  - linux
 
 # Safelist
 branches:
@@ -12,6 +19,17 @@ branches:
 cache:
   npm: true
   pip: true
+
+# Retry install on fail to avoid failing a build on network/disk/external errors
+install:
+  - travis_retry npm install
+
+script:
+  - npm run test:markdown
+  - npm run test:eslint
+  - npm run test
+  - npm run build
+  - npm run build:example
 
 jobs:
   include:
