@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 3.4.5
+
+### New features
+
+* Add Discord chat
+
+### Updates
+
+* Update Travis CI with more Node.js versions (`node`, `lts/*`, `12.14.0`, `8.11.2`)
+
 ## 3.4.4
 
 ### New features
