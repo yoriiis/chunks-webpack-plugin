@@ -23,6 +23,17 @@ cache:
   npm: true
   pip: true
 
+# Retry install on fail to avoid failing a build on network/disk/external errors
+install:
+  - travis_retry npm install
+
+script:
+  - npm run test:markdown
+  - npm run test:eslint
+  - npm run test
+  - npm run build
+  - npm run build:example
+
 jobs:
   include:
     - before_script:
