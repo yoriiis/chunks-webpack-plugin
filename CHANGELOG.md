@@ -2,6 +2,10 @@
 
 ## 3.4.5
 
+### New features
+
+* Add Discord chat
+
 ### Updates
 
 * Update Travis CI with more Node.js versions (stable, lts, 12, 10, 8)
