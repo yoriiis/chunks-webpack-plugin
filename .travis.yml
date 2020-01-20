@@ -2,7 +2,11 @@ os: linux
 
 language: node_js
 
-node_js: "12.14.0"
+node_js:
+  - node
+  - lts/*
+  - 10
+  - 8
 
 # Safelist
 branches:
