@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 3.4.5
+ * @version 3.4.6
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -17,15 +17,18 @@ module.exports = class ChunksWebpackPlugin {
 	 */
 	constructor (options = {}) {
 		// Merge default options with user options
-		this.options = Object.assign({
-			outputPath: 'default',
-			fileExtension: '.html',
-			templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
-			templateScript: '<script src="{{chunk}}"></script>',
-			customFormatTags: false,
-			generateChunksManifest: false,
-			generateChunksFiles: true
-		}, options)
+		this.options = Object.assign(
+			{
+				outputPath: 'default',
+				fileExtension: '.html',
+				templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
+				templateScript: '<script src="{{chunk}}"></script>',
+				customFormatTags: false,
+				generateChunksManifest: false,
+				generateChunksFiles: true
+			},
+			options
+		)
 		this.manifest = {}
 	}
 
@@ -51,8 +54,9 @@ module.exports = class ChunksWebpackPlugin {
 		compilation.chunkGroups.forEach(chunkGroup => {
 			// Check if chunkGroup contains chunks
 			if (chunkGroup.chunks.length) {
-				const entryName = chunkGroup.options.name
-				// ignore dynamic import chunk
+				const entryName = this.getEntryName(chunkGroup)
+
+				// Ignore dynamic import chunk
 				if (entryName === null || typeof entryName === 'undefined') {
 					return
 				}
@@ -66,13 +70,26 @@ module.exports = class ChunksWebpackPlugin {
 					let tagsHTML = null
 
 					// The user prefers to generate his own HTML tags, use his object
-					if (this.options.customFormatTags && typeof this.options.customFormatTags === 'function') {
+					if (
+						this.options.customFormatTags &&
+						typeof this.options.customFormatTags === 'function'
+					) {
 						// Change context of the function, to allow access to this class
-						tagsHTML = this.options.customFormatTags.call(this, chunksSorted, chunkGroup)
+						tagsHTML = this.options.customFormatTags.call(
+							this,
+							chunksSorted,
+							chunkGroup
+						)
 
 						// Check if datas are correctly formatted
-						if (tagsHTML === null || typeof tagsHTML.styles === 'undefined' || typeof tagsHTML.scripts === 'undefined') {
-							utils.setError('ChunksWebpackPlugin::customFormatTags return invalid object')
+						if (
+							tagsHTML === null ||
+							typeof tagsHTML.styles === 'undefined' ||
+							typeof tagsHTML.scripts === 'undefined'
+						) {
+							utils.setError(
+								'ChunksWebpackPlugin::customFormatTags return invalid object'
+							)
 						}
 					} else {
 						// Default behavior, generate HTML tags with templateStyle and templateScript
@@ -100,6 +117,25 @@ module.exports = class ChunksWebpackPlugin {
 		if (this.options.generateChunksManifest) {
 			this.createChunksManifestFile({ compilation, outputPath })
 		}
+	}
+
+	/**
+	 * Get entry point name from chunk group
+	 *
+	 * @param {Object} chunkGroup Group of chunks from Webpack compilation
+	 *
+	 * @return {(String|null)} Entry point name
+	 */
+	getEntryName (chunkGroup) {
+		let entryName
+		try {
+			entryName = chunkGroup.options.name
+		} catch (error) {
+			// Compatibility support with Webpack v4.4.0
+			// https://github.com/webpack/webpack/commit/9cb1a663173f5fcbda83b2916e0f1679c1dc642e#diff-d833826ec29decf85ce1163ac4e7972eL31
+			entryName = chunkGroup.name || null
+		}
+		return entryName
 	}
 
 	/**
@@ -221,11 +257,7 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {Object} tagsHTML Generated HTML of script and styles tags
 	 * @param {String} outputPath Output path of generated files
 	 */
-	createHtmlChunksFiles ({
-		entry,
-		tagsHTML,
-		outputPath
-	}) {
+	createHtmlChunksFiles ({ entry, tagsHTML, outputPath }) {
 		if (tagsHTML.scripts.length) {
 			utils.writeFile({
 				outputPath: `${outputPath}/${entry}-scripts${this.options.fileExtension}`,
