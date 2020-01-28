@@ -11,4 +11,5 @@ src/
 .nvmrc
 .travis.yml
 babel.config.js
+prettier.config.js
 webpack-stats.json
