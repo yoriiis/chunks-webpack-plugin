@@ -1,11 +1,15 @@
 {
     "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
     },
-    "editor.autoIndent": false,
+    "[postcss]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.formatOnSave": true
+	},
+    "editor.autoIndent": "none",
     "editor.formatOnSave": false,
     "editor.tabSize": 4,
-    "eslint.autoFixOnSave": false,
     "files.trimTrailingWhitespace": true,
     "javascript.format.enable": false,
     "javascript.validate.enable": false,
@@ -13,6 +17,7 @@
         "**/node_modules": true
     },
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": false
-    }
+        "source.fixAll.eslint": true
+    },
+	"editor.rulers": [100]
 }

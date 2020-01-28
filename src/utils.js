@@ -6,7 +6,7 @@ const fse = require('fs-extra')
  *
  * @param {String} message Text to display in the error
  */
-const setError = (message) => {
+const setError = message => {
 	throw new Error(message)
 }
 
@@ -15,7 +15,7 @@ const setError = (message) => {
  *
  * @param {String} currentPath Path
  */
-const isAbsolutePath = (currentPath) => {
+const isAbsolutePath = currentPath => {
 	return path.isAbsolute(currentPath)
 }
 
@@ -26,7 +26,7 @@ const isAbsolutePath = (currentPath) => {
  *
  * @returns {String} Extension of the filename
  */
-const getFileExtension = (file) => {
+const getFileExtension = file => {
 	return file.substr(file.lastIndexOf('.') + 1, file.length)
 }
 

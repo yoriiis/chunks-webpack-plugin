@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 3.4.6
+
+### Fixes
+
+* Fix comptibility support with Webpack `v4.0.0` [#39](https://github.com/yoriiis/chunks-webpack-plugin/issues/39)
+
 ## 3.4.5
 
 ### New features

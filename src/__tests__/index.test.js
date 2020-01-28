@@ -15,14 +15,14 @@ const options = {
 	generateChunksFiles: true,
 	customFormatTags: (chunksSorted, chunkGroup) => {
 		// Generate all HTML style tags with CDN prefix
-		const styles = chunksSorted.styles.map(chunkCss =>
-			`<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`
-		).join('')
+		const styles = chunksSorted.styles
+			.map(chunkCss => `<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`)
+			.join('')
 
 		// Generate all HTML style tags with CDN prefix and defer attribute
-		const scripts = chunksSorted.scripts.map(chunkJs =>
-			`<script defer src="https://cdn.domain.com${chunkJs}"></script>`
-		).join('')
+		const scripts = chunksSorted.scripts
+			.map(chunkJs => `<script defer src="https://cdn.domain.com${chunkJs}"></script>`)
+			.join('')
 
 		return { styles, scripts }
 	}
@@ -55,17 +55,18 @@ beforeEach(() => {
 
 	compilationWebpack = {
 		assets: {},
-		chunkGroups: [{
-			chunks: [{
-				files: [
-					'css/vendors~app-a~app-b.css',
-					'js/vendors~app-a~app-b.js'
-				]
-			}],
-			options: {
-				name: 'app-a'
+		chunkGroups: [
+			{
+				chunks: [
+					{
+						files: ['css/vendors~app-a~app-b.css', 'js/vendors~app-a~app-b.js']
+					}
+				],
+				options: {
+					name: 'app-a'
+				}
 			}
-		}],
+		],
 		options: {
 			output: {
 				path: '/dist/',
@@ -233,11 +234,11 @@ describe('ChunksWebpackPlugin', () => {
 
 	it('Initialize the sortsChunksByType function with scripts only', () => {
 		const chunksSorted = chunksWebpackPlugin.sortsChunksByType({
-			chunks: [{
-				files: [
-					'css/vendors~app-a~app-b.css'
-				]
-			}],
+			chunks: [
+				{
+					files: ['css/vendors~app-a~app-b.css']
+				}
+			],
 			publicPath: chunksWebpackPlugin.getPublicPath(compilationWebpack)
 		})
 
@@ -292,15 +293,24 @@ describe('ChunksWebpackPlugin', () => {
 		})
 
 		expect(Object.keys(compilationWebpack.assets)).toEqual(['chunks-manifest.json'])
-		expect(Object.keys(compilationWebpack.assets['chunks-manifest.json'])).toEqual(['source', 'size'])
+		expect(Object.keys(compilationWebpack.assets['chunks-manifest.json'])).toEqual([
+			'source',
+			'size'
+		])
 
 		const source = compilationWebpack.assets['chunks-manifest.json'].source()
-		expect(source).toEqual(JSON.stringify({
-			'app-a': {
-				styles: ['/dist/css/vendors~app-a~app-b.css'],
-				scripts: ['/dist/js/vendors~app-a~app-b.js']
-			}
-		}, null, 2))
+		expect(source).toEqual(
+			JSON.stringify(
+				{
+					'app-a': {
+						styles: ['/dist/css/vendors~app-a~app-b.css'],
+						scripts: ['/dist/js/vendors~app-a~app-b.js']
+					}
+				},
+				null,
+				2
+			)
+		)
 
 		const size = compilationWebpack.assets['chunks-manifest.json'].size()
 		expect(size).toEqual(148)
@@ -310,13 +320,15 @@ describe('ChunksWebpackPlugin', () => {
 		chunksWebpackPlugin.updateManifest = jest.fn()
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 		const chunksSorted = chunksWebpackPlugin.sortsChunksByType({
-			chunks: [{
-				files: [
-					'css/vendors~app-a~app-b.css',
-					'js/vendors~app-a~app-b.js',
-					'js/vendors~app-a~app-b.js.map'
-				]
-			}],
+			chunks: [
+				{
+					files: [
+						'css/vendors~app-a~app-b.css',
+						'js/vendors~app-a~app-b.js',
+						'js/vendors~app-a~app-b.js.map'
+					]
+				}
+			],
 			publicPath: chunksWebpackPlugin.getPublicPath(compilationWebpack)
 		})
 		expect(chunksSorted).toEqual({
@@ -330,10 +342,35 @@ describe('ChunksWebpackPlugin', () => {
 		chunksWebpackPlugin.options.customFormatTags = ''
 		chunksWebpackPlugin.options.outputPath = 'default'
 		compilationWebpack.chunkGroups.push({
-			chunks: [{
-				files: ['js/lib-dynamic.js', 'js/lib-dynamic.js.map']
-			}],
+			chunks: [
+				{
+					files: ['js/lib-dynamic.js', 'js/lib-dynamic.js.map']
+				}
+			],
 			options: { name: null }
+		})
+		chunksWebpackPlugin.hookEmit(compilationWebpack)
+		expect(chunksWebpackPlugin.createHtmlChunksFiles).not.toHaveBeenCalledWith({
+			entry: null,
+			tagsHTML: {
+				styles: '',
+				scripts: '<script src="/dist/js/4.js"></script>'
+			},
+			outputPath: '/dist/'
+		})
+	})
+
+	it('Initialize the hookEmit function ignore dynamic import chunk (webpack v4.0.0 notation)', () => {
+		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
+		chunksWebpackPlugin.options.customFormatTags = ''
+		chunksWebpackPlugin.options.outputPath = 'default'
+		compilationWebpack.chunkGroups.push({
+			chunks: [
+				{
+					files: ['js/lib-dynamic.js', 'js/lib-dynamic.js.map']
+				}
+			],
+			name: null
 		})
 		chunksWebpackPlugin.hookEmit(compilationWebpack)
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).not.toHaveBeenCalledWith({
