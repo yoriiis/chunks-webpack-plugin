@@ -25,19 +25,25 @@ module.exports = (env, argv) => {
 			filename: 'js/[name].js'
 		},
 		module: {
-			rules: [{
-				test: /\.js$/,
-				use: [{
-					loader: 'babel-loader'
-				}]
-			}, {
-				test: /\.css$/,
-				use: [
-					MiniCssExtractPlugin.loader, {
-						loader: 'css-loader'
-					}
-				]
-			}]
+			rules: [
+				{
+					test: /\.js$/,
+					use: [
+						{
+							loader: 'babel-loader'
+						}
+					]
+				},
+				{
+					test: /\.css$/,
+					use: [
+						MiniCssExtractPlugin.loader,
+						{
+							loader: 'css-loader'
+						}
+					]
+				}
+			]
 		},
 		plugins: [
 			new MiniCssExtractPlugin({
@@ -51,14 +57,20 @@ module.exports = (env, argv) => {
 				generateChunksFiles: true,
 				customFormatTags: (chunksSorted, chunkGroup) => {
 					// Generate all HTML style tags with CDN prefix
-					const styles = chunksSorted.styles.map(chunkCss =>
-						`<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`
-					).join('')
+					const styles = chunksSorted.styles
+						.map(
+							chunkCss =>
+								`<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`
+						)
+						.join('')
 
 					// Generate all HTML style tags with CDN prefix and defer attribute
-					const scripts = chunksSorted.scripts.map(chunkJs =>
-						`<script defer src="https://cdn.domain.com${chunkJs}"></script>`
-					).join('')
+					const scripts = chunksSorted.scripts
+						.map(
+							chunkJs =>
+								`<script defer src="https://cdn.domain.com${chunkJs}"></script>`
+						)
+						.join('')
 
 					return { styles, scripts }
 				}

@@ -3,7 +3,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 3.4.5
+ * @version 3.4.6
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -53,7 +53,7 @@ module.exports = class ChunksWebpackPlugin {
     compilation.chunkGroups.forEach(chunkGroup => {
       // Check if chunkGroup contains chunks
       if (chunkGroup.chunks.length) {
-        const entryName = chunkGroup.options.name; // ignore dynamic import chunk
+        const entryName = this.getEntryName(chunkGroup); // Ignore dynamic import chunk
 
         if (entryName === null || typeof entryName === 'undefined') {
           return;
@@ -102,6 +102,28 @@ module.exports = class ChunksWebpackPlugin {
         outputPath
       });
     }
+  }
+  /**
+   * Get entry point name from chunk group
+   *
+   * @param {Object} chunkGroup Group of chunks from Webpack compilation
+   *
+   * @return {(String|null)} Entry point name
+   */
+
+
+  getEntryName(chunkGroup) {
+    let entryName;
+
+    try {
+      entryName = chunkGroup.options.name;
+    } catch (error) {
+      // Compatibility support with Webpack v4.4.0
+      // https://github.com/webpack/webpack/commit/9cb1a663173f5fcbda83b2916e0f1679c1dc642e#diff-d833826ec29decf85ce1163ac4e7972eL31
+      entryName = chunkGroup.name || null;
+    }
+
+    return entryName;
   }
   /**
    * Update the class property manifest
