@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 3.4.6
+ * @version 4.0.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -47,23 +47,19 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {Object} compilation The Webpack compilation variable
 	 */
 	hookEmit (compilation) {
+		this.compilation = compilation
+
 		// Get public and output path
-		const publicPath = this.getPublicPath(compilation)
-		const outputPath = this.getOutputPath(compilation)
+		this.publicPath = this.getPublicPath()
+		this.outputPath = this.getOutputPath()
+		const entryNames = this.getEntryNames()
 
-		compilation.chunkGroups.forEach(chunkGroup => {
+		entryNames.forEach(entryName => {
+			const files = this.getFiles(entryName)
+
 			// Check if chunkGroup contains chunks
-			if (chunkGroup.chunks.length) {
-				const entryName = this.getEntryName(chunkGroup)
-
-				// Ignore dynamic import chunk
-				if (entryName === null || typeof entryName === 'undefined') {
-					return
-				}
-				const chunksSorted = this.sortsChunksByType({
-					chunks: chunkGroup.chunks,
-					publicPath: publicPath
-				})
+			if (files.length) {
+				const chunksSorted = this.sortsChunksByType(files)
 
 				// Check if chunks files generation is enabled
 				if (this.options.generateChunksFiles) {
@@ -75,11 +71,7 @@ module.exports = class ChunksWebpackPlugin {
 						typeof this.options.customFormatTags === 'function'
 					) {
 						// Change context of the function, to allow access to this class
-						tagsHTML = this.options.customFormatTags.call(
-							this,
-							chunksSorted,
-							chunkGroup
-						)
+						tagsHTML = this.options.customFormatTags.call(this, chunksSorted, files)
 
 						// Check if datas are correctly formatted
 						if (
@@ -97,45 +89,44 @@ module.exports = class ChunksWebpackPlugin {
 					}
 
 					this.createHtmlChunksFiles({
-						entry: entryName,
-						tagsHTML: tagsHTML,
-						outputPath: outputPath
-					})
-				}
-
-				// Check if manifest option is enabled
-				if (this.options.generateChunksManifest) {
-					this.updateManifest({
 						entryName: entryName,
-						chunks: chunksSorted
+						tagsHTML: tagsHTML
 					})
+
+					// Check if manifest option is enabled
+					if (this.options.generateChunksManifest) {
+						this.updateManifest({
+							entryName: entryName,
+							chunks: chunksSorted
+						})
+					}
 				}
 			}
 		})
 
 		// Check if manifest option is enabled
 		if (this.options.generateChunksManifest) {
-			this.createChunksManifestFile({ compilation, outputPath })
+			this.createChunksManifestFile()
 		}
 	}
 
 	/**
-	 * Get entry point name from chunk group
+	 * Get entrypoint names from the compilation
 	 *
-	 * @param {Object} chunkGroup Group of chunks from Webpack compilation
-	 *
-	 * @return {(String|null)} Entry point name
+	 * @return {Array} List of entrypoint names
 	 */
-	getEntryName (chunkGroup) {
-		let entryName
-		try {
-			entryName = chunkGroup.options.name
-		} catch (error) {
-			// Compatibility support with Webpack v4.4.0
-			// https://github.com/webpack/webpack/commit/9cb1a663173f5fcbda83b2916e0f1679c1dc642e#diff-d833826ec29decf85ce1163ac4e7972eL31
-			entryName = chunkGroup.name || null
-		}
-		return entryName
+	getEntryNames () {
+		return Array.from(this.compilation.entrypoints.keys())
+	}
+
+	/**
+	 * Get files list by entrypoint name
+	 *
+	 * @param {String} entryName Entrypoint name
+	 * @return {Array} List of entrypoint names
+	 */
+	getFiles (entryName) {
+		return this.compilation.entrypoints.get(entryName).getFiles()
 	}
 
 	/**
@@ -155,12 +146,10 @@ module.exports = class ChunksWebpackPlugin {
 	 * Get the public path from Webpack configuation
 	 * and add slash at the end if necessary
 	 *
-	 * @param {Object} compilation Webpack compilation from compiler
-	 *
 	 * @return {String} The public path
 	 */
-	getPublicPath (compilation) {
-		let publicPath = compilation.options.output.publicPath || ''
+	getPublicPath () {
+		let publicPath = this.compilation.options.output.publicPath || ''
 
 		if (publicPath && publicPath.substr(-1) !== '/') {
 			publicPath = `${publicPath}/`
@@ -173,17 +162,15 @@ module.exports = class ChunksWebpackPlugin {
 	 * Get the output path from Webpack configuation
 	 * or from constructor options
 	 *
-	 * @param {Object} compilation Webpack compilation from compiler
-	 *
 	 * @return {String} The output path
 	 */
-	getOutputPath (compilation) {
+	getOutputPath () {
 		const optionsOutputPath = this.options.outputPath
 		let outputPath
 
 		if (optionsOutputPath === 'default') {
 			// Use default Webpack outputPath
-			outputPath = compilation.options.output.path || ''
+			outputPath = this.compilation.options.output.path || ''
 		} else if (optionsOutputPath !== '' && utils.isAbsolutePath(optionsOutputPath)) {
 			// Use custom outputPath (must be absolute)
 			outputPath = optionsOutputPath
@@ -197,13 +184,12 @@ module.exports = class ChunksWebpackPlugin {
 	/**
 	 * Sorts all chunks by type (styles or scripts)
 	 *
-	 * @param {Array} chunks The list of chunks of chunkGroups
-	 * @param {Array} chunks The list of chunks of chunkGroups
+	 * @param {Array} files List of files by entrypoint name
 	 *
 	 * @returns {Object} files All chunks sorted by type (extension)
 	 */
-	sortsChunksByType ({ chunks, publicPath }) {
-		const files = {
+	sortsChunksByType (files) {
+		const sortedFiles = {
 			styles: [],
 			scripts: []
 		}
@@ -212,18 +198,16 @@ module.exports = class ChunksWebpackPlugin {
 			js: 'scripts'
 		}
 
-		chunks.forEach(chunk => {
-			chunk.files.forEach(file => {
-				const extension = utils.getFileExtension(file)
-				// ignore the other files, eg: sourceMap(*.map)
-				if (!extensionKeys[extension]) {
-					return
-				}
-				files[extensionKeys[extension]].push(`${publicPath}${file}`)
-			})
+		files.forEach(file => {
+			const extension = utils.getFileExtension(file)
+			// ignore the other files, eg: sourceMap(*.map)
+			if (!extensionKeys[extension]) {
+				return
+			}
+			sortedFiles[extensionKeys[extension]].push(`${this.publicPath}${file}`)
 		})
 
-		return files
+		return sortedFiles
 	}
 
 	/**
@@ -253,20 +237,19 @@ module.exports = class ChunksWebpackPlugin {
 	/**
 	 * Create file with HTML tags for each entrypoints
 	 *
-	 * @param {String} entry Entrypoint name
+	 * @param {String} entryName Entrypoint name
 	 * @param {Object} tagsHTML Generated HTML of script and styles tags
-	 * @param {String} outputPath Output path of generated files
 	 */
-	createHtmlChunksFiles ({ entry, tagsHTML, outputPath }) {
+	createHtmlChunksFiles ({ entryName, tagsHTML }) {
 		if (tagsHTML.scripts.length) {
 			utils.writeFile({
-				outputPath: `${outputPath}/${entry}-scripts${this.options.fileExtension}`,
+				outputPath: `${this.outputPath}/${entryName}-scripts${this.options.fileExtension}`,
 				output: tagsHTML.scripts
 			})
 		}
 		if (tagsHTML.styles.length) {
 			utils.writeFile({
-				outputPath: `${outputPath}/${entry}-styles${this.options.fileExtension}`,
+				outputPath: `${this.outputPath}/${entryName}-styles${this.options.fileExtension}`,
 				output: tagsHTML.styles
 			})
 		}
@@ -275,17 +258,14 @@ module.exports = class ChunksWebpackPlugin {
 	/**
 	 * Create the chunks manifest file
 	 * Contains all scripts and styles chunks grouped by entrypoint
-	 *
-	 * @param {Object} compilation Webpack compilation from compiler
-	 * @param {String} outputPath Output path of generated files
 	 */
-	createChunksManifestFile ({ compilation, outputPath }) {
+	createChunksManifestFile () {
 		// Stringify the content of the manifest
 		const output = JSON.stringify(this.manifest, null, 2)
 
 		// Expose the manifest file into the assets compilation
 		// The file is automatically created by the compiler
-		compilation.assets['chunks-manifest.json'] = {
+		this.compilation.assets['chunks-manifest.json'] = {
 			source: () => output,
 			size: () => output.length
 		}

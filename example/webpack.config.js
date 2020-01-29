@@ -3,7 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserJSPlugin = require('terser-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const ChunksWebpackPlugin = require('../dist/index')
+const ChunksWebpackPlugin = require('../src/index')
 
 module.exports = (env, argv) => {
 	const isProduction = argv.mode === 'production'
@@ -55,7 +55,7 @@ module.exports = (env, argv) => {
 				fileExtension: '.html',
 				generateChunksManifest: true,
 				generateChunksFiles: true,
-				customFormatTags: (chunksSorted, chunkGroup) => {
+				customFormatTags: (chunksSorted, files) => {
 					// Generate all HTML style tags with CDN prefix
 					const styles = chunksSorted.styles
 						.map(
