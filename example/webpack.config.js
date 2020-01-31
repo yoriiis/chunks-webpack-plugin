@@ -1,12 +1,12 @@
-const path = require('path')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const TerserJSPlugin = require('terser-webpack-plugin')
-const ManifestPlugin = require('webpack-manifest-plugin')
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const ChunksWebpackPlugin = require('../src/index')
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserJSPlugin = require('terser-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const ChunksWebpackPlugin = require('../src/index');
 
 module.exports = (env, argv) => {
-	const isProduction = argv.mode === 'production'
+	const isProduction = argv.mode === 'production';
 
 	return {
 		watch: !isProduction,
@@ -62,7 +62,7 @@ module.exports = (env, argv) => {
 							chunkCss =>
 								`<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`
 						)
-						.join('')
+						.join('');
 
 					// Generate all HTML style tags with CDN prefix and defer attribute
 					const scripts = chunksSorted.scripts
@@ -70,9 +70,9 @@ module.exports = (env, argv) => {
 							chunkJs =>
 								`<script defer src="https://cdn.domain.com${chunkJs}"></script>`
 						)
-						.join('')
+						.join('');
 
-					return { styles, scripts }
+					return { styles, scripts };
 				}
 			}),
 			new ManifestPlugin({
@@ -114,5 +114,5 @@ module.exports = (env, argv) => {
 				name: true
 			}
 		}
-	}
-}
+	};
+};
