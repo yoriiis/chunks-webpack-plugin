@@ -47,10 +47,8 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {Object} compilation The Webpack compilation variable
 	 */
 	hookCallback (compilation) {
-		// Get public and output path
 		const publicPath = this.getPublicPath(compilation);
 		const outputPath = this.getOutputPath(compilation);
-
 		const entryNames = this.getEntryNames(compilation);
 
 		entryNames.forEach(entryName => {
