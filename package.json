@@ -1,7 +1,7 @@
 {
 	"name": "chunks-webpack-plugin",
-	"version": "3.4.6",
-	"description": "Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)",
+	"version": "4.0.0",
+	"description": "ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.",
 	"keywords": [
 		"chunks",
 		"chunks-webpack-plugin",
@@ -14,10 +14,9 @@
 	"repository": "https://github.com/yoriiis/chunks-webpack-plugin.git",
 	"license": "MIT",
 	"author": "Yoriiis aka Joris DANIEL",
-	"main": "dist/index.js",
+	"main": "src/index.js",
 	"scripts": {
 		"analyze:bundle": "webpack --config=./example/webpack.config.js --mode=production --profile --json > webpack-stats.json && webpack-bundle-analyzer ./webpack-stats.json ./ -p 1664",
-		"build": "rm -rf ./dist && babel ./src/ --out-dir ./dist/ --ignore './src/__tests__'",
 		"build:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=production",
 		"coverage": "npm run test:coverage && cat ./coverage/lcov.info | coveralls",
 		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --config=./example/webpack.config.js --mode=development --hidden=node_modules/",
@@ -32,7 +31,6 @@
 		"fs-extra": "^8.1.0"
 	},
 	"devDependencies": {
-		"@babel/cli": "7.8.3",
 		"@babel/core": "7.8.3",
 		"@babel/preset-env": "7.8.3",
 		"babel-eslint": "10.0.3",
