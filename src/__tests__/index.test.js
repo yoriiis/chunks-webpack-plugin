@@ -13,7 +13,7 @@ const options = {
 	fileExtension: '.html',
 	generateChunksManifest: true,
 	generateChunksFiles: true,
-	customFormatTags: (chunksSorted, chunkGroup) => {
+	customFormatTags: (chunksSorted, files) => {
 		// Generate all HTML style tags with CDN prefix
 		const styles = chunksSorted.styles
 			.map(chunkCss => `<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`)
@@ -32,17 +32,64 @@ const getInstance = () => new ChunksWebpackPlugin(options)
 
 const getChunksSorted = () => {
 	return chunksWebpackPlugin.sortsChunksByType({
-		chunks: compilationWebpack.chunkGroups[0].chunks,
+		files: compilationWebpack.entrypoints.get('app-a').getFiles(),
 		publicPath: chunksWebpackPlugin.getPublicPath(compilationWebpack)
 	})
 }
 
 function updateManifest () {
 	chunksWebpackPlugin.updateManifest({
-		entryName: compilationWebpack.chunkGroups[0].options.name,
+		entryName: Array.from(compilationWebpack.entrypoints.keys())[0],
 		chunks: chunksSorted
 	})
 }
+
+const entrypointsMap = new Map()
+entrypointsMap.set('app-a', {
+	chunks: {
+		files: [
+			'css/vendors~app-a~app-b~app-c.css',
+			'js/vendors~app-a~app-b~app-c.js',
+			'css/vendors~app-a~app-b~app-c.css.map',
+			'js/vendors~app-a~app-b~app-c.js.map',
+			'css/app-a.css',
+			'js/app-a.js',
+			'css/app-a.css.map',
+			'js/app-a.js.map'
+		]
+	},
+	getFiles: () => entrypointsMap.get('app-a').chunks.files
+})
+entrypointsMap.set('app-b', {
+	chunks: {
+		files: [
+			'css/vendors~app-a~app-b~app-c.css',
+			'js/vendors~app-a~app-b~app-c.js',
+			'css/vendors~app-a~app-b~app-c.css.map',
+			'js/vendors~app-a~app-b~app-c.js.map',
+			'css/app-b.css',
+			'js/app-b.js',
+			'css/app-b.css.map',
+			'js/app-b.js.map'
+		]
+	},
+	getFiles: () => entrypointsMap.get('app-b').chunks.files
+})
+entrypointsMap.set('app-c', {
+	chunks: {
+		files: [
+			'css/vendors~app-a~app-b~app-c.css',
+			'js/vendors~app-a~app-b~app-c.js',
+			'css/vendors~app-a~app-b~app-c.css.map',
+			'js/vendors~app-a~app-b~app-c.js.map',
+			'css/app-c.css',
+			'js/app-c.js',
+			'css/app-c.css.map',
+			'js/app-c.js.map'
+		]
+	},
+	getFiles: () => entrypointsMap.get('app-c').chunks.files
+})
 
 beforeEach(() => {
 	compilerWebpack = {
@@ -55,18 +102,7 @@ beforeEach(() => {
 
 	compilationWebpack = {
 		assets: {},
-		chunkGroups: [
-			{
-				chunks: [
-					{
-						files: ['css/vendors~app-a~app-b.css', 'js/vendors~app-a~app-b.js']
-					}
-				],
-				options: {
-					name: 'app-a'
-				}
-			}
-		],
+		entrypoints: entrypointsMap,
 		options: {
 			output: {
 				path: '/dist/',
@@ -114,59 +150,50 @@ describe('ChunksWebpackPlugin', () => {
 		expect(compilerWebpack.hooks.emit.tap).toHaveBeenCalled()
 	})
 
-	it('Initialize the hookEmit function', () => {
+	it('Initialize the hookCallback function', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 
-		chunksWebpackPlugin.hookEmit(compilationWebpack)
+		chunksWebpackPlugin.hookCallback(compilationWebpack)
 
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalled()
 	})
 
-	it('Initialize the hookEmit function without chunks', () => {
-		chunksWebpackPlugin.sortsChunksByType = jest.fn()
-
-		compilationWebpack.chunkGroups[0].chunks = []
-		chunksWebpackPlugin.hookEmit(compilationWebpack)
-
-		expect(chunksWebpackPlugin.sortsChunksByType).not.toHaveBeenCalled()
-	})
-
-	it('Initialize the hookEmit function without generating chunk files', () => {
+	it('Initialize the hookCallback function without generating chunk files', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 
 		chunksWebpackPlugin.options.generateChunksFiles = false
-		chunksWebpackPlugin.hookEmit(compilationWebpack)
+		chunksWebpackPlugin.hookCallback(compilationWebpack)
 
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).not.toHaveBeenCalled()
 	})
 
-	it('Initialize the hookEmit function without generating chunk manifest', () => {
+	it('Initialize the hookCallback function without generating chunk manifest', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 		chunksWebpackPlugin.updateManifest = jest.fn()
 
 		chunksWebpackPlugin.options.generateChunksManifest = false
-		chunksWebpackPlugin.hookEmit(compilationWebpack)
+		chunksWebpackPlugin.hookCallback(compilationWebpack)
 
 		expect(chunksWebpackPlugin.updateManifest).not.toHaveBeenCalled()
 	})
 
-	it('Initialize the hookEmit function with wrong returns of customFormatTags', () => {
+	it('Initialize the hookCallback function with wrong returns of customFormatTags', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 		utils.setError = jest.fn()
 
 		chunksWebpackPlugin.options.customFormatTags = (chunksSorted, chunkGroup) => ''
-		chunksWebpackPlugin.hookEmit(compilationWebpack)
+		chunksWebpackPlugin.hookCallback(compilationWebpack)
 
 		expect(utils.setError).toHaveBeenCalled()
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalled()
 	})
 
-	it('Initialize the hookEmit function with wrong declaration of customFormatTags', () => {
+	it('Initialize the hookCallback function with wrong declaration of customFormatTags', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 		chunksWebpackPlugin.generateTags = jest.fn()
 
 		chunksWebpackPlugin.options.customFormatTags = ''
-		chunksWebpackPlugin.hookEmit(compilationWebpack)
+		chunksWebpackPlugin.hookCallback(compilationWebpack)
 
 		expect(chunksWebpackPlugin.generateTags).toHaveBeenCalled()
 	})
@@ -176,8 +203,8 @@ describe('ChunksWebpackPlugin', () => {
 
 		expect(chunksWebpackPlugin.manifest).toMatchObject({
 			'app-a': {
-				styles: ['/dist/css/vendors~app-a~app-b.css'],
-				scripts: ['/dist/js/vendors~app-a~app-b.js']
+				styles: ['/dist/css/vendors~app-a~app-b~app-c.css', '/dist/css/app-a.css'],
+				scripts: ['/dist/js/vendors~app-a~app-b~app-c.js', '/dist/js/app-a.js']
 			}
 		})
 	})
@@ -227,18 +254,14 @@ describe('ChunksWebpackPlugin', () => {
 
 	it('Initialize the sortsChunksByType function', () => {
 		expect(chunksSorted).toMatchObject({
-			styles: ['/dist/css/vendors~app-a~app-b.css'],
-			scripts: ['/dist/js/vendors~app-a~app-b.js']
+			styles: ['/dist/css/vendors~app-a~app-b~app-c.css', '/dist/css/app-a.css'],
+			scripts: ['/dist/js/vendors~app-a~app-b~app-c.js', '/dist/js/app-a.js']
 		})
 	})
 
 	it('Initialize the sortsChunksByType function with scripts only', () => {
 		const chunksSorted = chunksWebpackPlugin.sortsChunksByType({
-			chunks: [
-				{
-					files: ['css/vendors~app-a~app-b.css']
-				}
-			],
+			files: ['/dist/css/vendors~app-a~app-b~app-c.css', '/dist/css/app-a.css'],
 			publicPath: chunksWebpackPlugin.getPublicPath(compilationWebpack)
 		})
 
@@ -249,8 +272,10 @@ describe('ChunksWebpackPlugin', () => {
 		const tags = chunksWebpackPlugin.generateTags(chunksSorted)
 
 		expect(tags).toMatchObject({
-			styles: '<link rel="stylesheet" href="/dist/css/vendors~app-a~app-b.css" />',
-			scripts: '<script src="/dist/js/vendors~app-a~app-b.js"></script>'
+			styles:
+				'<link rel="stylesheet" href="/dist/css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="/dist/css/app-a.css" />',
+			scripts:
+				'<script src="/dist/js/vendors~app-a~app-b~app-c.js"></script><script src="/dist/js/app-a.js"></script>'
 		})
 	})
 
@@ -260,8 +285,10 @@ describe('ChunksWebpackPlugin', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles({
 			entry: 'app-a',
 			tagsHTML: {
-				styles: '<link rel="stylesheet" href="/dist/css/vendors~app-a~app-b.css" />',
-				scripts: '<script src="/dist/js/vendors~app-a~app-b.js"></script>'
+				styles:
+					'<link rel="stylesheet" href="/dist/css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="/dist/css/app-a.css" />',
+				scripts:
+					'<script src="/dist/js/vendors~app-a~app-b~app-c.js"></script><script src="/dist/js/app-a.js"></script>'
 			},
 			outputPath: '/dist/'
 		})
@@ -286,100 +313,46 @@ describe('ChunksWebpackPlugin', () => {
 
 	it('Initialize the createChunksManifestFile function', () => {
 		updateManifest()
-
-		chunksWebpackPlugin.createChunksManifestFile({
-			compilation: compilationWebpack,
-			outputPath: chunksWebpackPlugin.getOutputPath(compilationWebpack)
-		})
+		chunksWebpackPlugin.createChunksManifestFile(compilationWebpack)
+		const source = compilationWebpack.assets['chunks-manifest.json'].source()
+		const size = compilationWebpack.assets['chunks-manifest.json'].size()
 
 		expect(Object.keys(compilationWebpack.assets)).toEqual(['chunks-manifest.json'])
 		expect(Object.keys(compilationWebpack.assets['chunks-manifest.json'])).toEqual([
 			'source',
 			'size'
 		])
-
-		const source = compilationWebpack.assets['chunks-manifest.json'].source()
 		expect(source).toEqual(
 			JSON.stringify(
 				{
 					'app-a': {
-						styles: ['/dist/css/vendors~app-a~app-b.css'],
-						scripts: ['/dist/js/vendors~app-a~app-b.js']
+						styles: ['/dist/css/vendors~app-a~app-b~app-c.css', '/dist/css/app-a.css'],
+						scripts: ['/dist/js/vendors~app-a~app-b~app-c.js', '/dist/js/app-a.js']
 					}
 				},
 				null,
 				2
 			)
 		)
-
-		const size = compilationWebpack.assets['chunks-manifest.json'].size()
-		expect(size).toEqual(148)
+		expect(size).toEqual(216)
 	})
 
 	it('Initialize sortsChunksByType function ignore source map file', () => {
 		chunksWebpackPlugin.updateManifest = jest.fn()
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
+
 		const chunksSorted = chunksWebpackPlugin.sortsChunksByType({
-			chunks: [
-				{
-					files: [
-						'css/vendors~app-a~app-b.css',
-						'js/vendors~app-a~app-b.js',
-						'js/vendors~app-a~app-b.js.map'
-					]
-				}
+			files: [
+				'css/vendors~app-a~app-b.css',
+				'js/vendors~app-a~app-b.js',
+				'js/vendors~app-a~app-b.js.map'
 			],
 			publicPath: chunksWebpackPlugin.getPublicPath(compilationWebpack)
 		})
+
 		expect(chunksSorted).toEqual({
 			styles: ['/dist/css/vendors~app-a~app-b.css'],
 			scripts: ['/dist/js/vendors~app-a~app-b.js']
-		})
-	})
-
-	it('Initialize the hookEmit function ignore dynamic import chunk', () => {
-		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
-		chunksWebpackPlugin.options.customFormatTags = ''
-		chunksWebpackPlugin.options.outputPath = 'default'
-		compilationWebpack.chunkGroups.push({
-			chunks: [
-				{
-					files: ['js/lib-dynamic.js', 'js/lib-dynamic.js.map']
-				}
-			],
-			options: { name: null }
-		})
-		chunksWebpackPlugin.hookEmit(compilationWebpack)
-		expect(chunksWebpackPlugin.createHtmlChunksFiles).not.toHaveBeenCalledWith({
-			entry: null,
-			tagsHTML: {
-				styles: '',
-				scripts: '<script src="/dist/js/4.js"></script>'
-			},
-			outputPath: '/dist/'
-		})
-	})
-
-	it('Initialize the hookEmit function ignore dynamic import chunk (webpack v4.0.0 notation)', () => {
-		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
-		chunksWebpackPlugin.options.customFormatTags = ''
-		chunksWebpackPlugin.options.outputPath = 'default'
-		compilationWebpack.chunkGroups.push({
-			chunks: [
-				{
-					files: ['js/lib-dynamic.js', 'js/lib-dynamic.js.map']
-				}
-			],
-			name: null
-		})
-		chunksWebpackPlugin.hookEmit(compilationWebpack)
-		expect(chunksWebpackPlugin.createHtmlChunksFiles).not.toHaveBeenCalledWith({
-			entry: null,
-			tagsHTML: {
-				styles: '',
-				scripts: '<script src="/dist/js/4.js"></script>'
-			},
-			outputPath: '/dist/'
 		})
 	})
 })
