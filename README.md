@@ -10,7 +10,7 @@ This option automatically generate new chunks associated with an entrypoint. For
 
 With multiple entry points, it can be difficult to identify relation between auto-generated chunks and entry points.
 
-The plugin parse the `entrypoints` map object in the Webpack compilation to get all valid entrypoints and associated files. Then, it generate HTML files which includes all assets **filtered by** entrypoint and the `chunks-manifest.json` file.
+The plugin parse the `entrypoints` [Map](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Map) object from the Webpack compilation to get all valid entrypoints and associated files. Then, it generate HTML files which includes all assets **filtered by** entrypoint and the `chunks-manifest.json` file.
 
 [Read the article about the SplitChunksPlugin on Medium](https://medium.com/@Yoriiis/the-real-power-of-webpack-4-splitchunks-plugin-fad097c45ba0).
 

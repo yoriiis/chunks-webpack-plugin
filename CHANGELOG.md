@@ -4,7 +4,7 @@
 
 ### Updates
 
-* Refacto `chunkGroups`, use `compilation.entrypoints` map to get all valid entrypoints and associated files
+* Refacto `chunkGroups`, use `compilation.entrypoints` Map object to get all valid entrypoints and associated files
 
 ## 3.4.6
 

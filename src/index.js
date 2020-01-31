@@ -3,7 +3,7 @@
  * @name ChunksWebpackPlugin
  * @version 4.0.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
- * @description: Easily create HTML files with all chunks by entrypoint (based on Webpack chunkGroups)
+ * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
  * @copyright 2020 Joris DANIEL
  **/

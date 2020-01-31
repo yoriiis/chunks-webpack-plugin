@@ -181,7 +181,7 @@ describe('ChunksWebpackPlugin', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 		utils.setError = jest.fn()
 
-		chunksWebpackPlugin.options.customFormatTags = (chunksSorted, chunkGroup) => ''
+		chunksWebpackPlugin.options.customFormatTags = (chunksSorted, files) => ''
 		chunksWebpackPlugin.hookCallback(compilationWebpack)
 
 		expect(utils.setError).toHaveBeenCalled()
