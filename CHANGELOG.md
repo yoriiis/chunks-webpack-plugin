@@ -5,6 +5,11 @@
 ### Updates
 
 * Refacto `chunkGroups`, use `compilation.entrypoints` Map object to get all valid entrypoints and associated files
+* Update ESLint config, add semicolon on all Javascript files
+
+### Removes
+
+* Remove `build` npm script, use directly `./src` directory as entry point
 
 ## 3.4.6
 
