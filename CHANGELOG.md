@@ -2,7 +2,9 @@
 
 ## 4.0.0
 
-TODO
+### Updates
+
+* Refacto `chunkGroups`, use `compilation.entrypoints` map to get all valid entrypoints and associated files
 
 ## 3.4.6
 

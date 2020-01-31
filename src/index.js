@@ -47,7 +47,7 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {Object} compilation The Webpack compilation variable
 	 */
 	hookCallback (compilation) {
-		// Declare publicPath and outputPath as class property
+		// Get public and output path
 		const publicPath = this.getPublicPath(compilation)
 		const outputPath = this.getOutputPath(compilation)
 
@@ -56,8 +56,7 @@ module.exports = class ChunksWebpackPlugin {
 		entryNames.forEach(entryName => {
 			const files = this.getFiles({ entryName: entryName, compilation: compilation })
 
-			// Check if entrypoint contains files
-			// Check if chunks files generation is enabled
+			// Check if entrypoint contains files and if chunks files generation is enabled
 			if (files.length && this.options.generateChunksFiles) {
 				const chunksSorted = this.sortsChunksByType({
 					files: files,
@@ -75,7 +74,7 @@ module.exports = class ChunksWebpackPlugin {
 					tagsHTML = this.options.customFormatTags.call(this, chunksSorted, files)
 
 					// Check if datas are correctly formatted
-					if (this.iscustomFormatTagsDatasInvalid(tagsHTML)) {
+					if (this.isCustomFormatTagsDatasInvalid(tagsHTML)) {
 						utils.setError(
 							'ChunksWebpackPlugin::customFormatTags return invalid object'
 						)
@@ -206,7 +205,7 @@ module.exports = class ChunksWebpackPlugin {
 	 *
 	 * @param {Object} tagsHTML Formatted HTML tags by styles and scripts keys
 	 */
-	iscustomFormatTagsDatasInvalid (tagsHTML) {
+	isCustomFormatTagsDatasInvalid (tagsHTML) {
 		return (
 			tagsHTML === null ||
 			typeof tagsHTML.styles === 'undefined' ||

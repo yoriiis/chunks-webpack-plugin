@@ -342,17 +342,13 @@ describe('ChunksWebpackPlugin', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn()
 
 		const chunksSorted = chunksWebpackPlugin.sortsChunksByType({
-			files: [
-				'css/vendors~app-a~app-b.css',
-				'js/vendors~app-a~app-b.js',
-				'js/vendors~app-a~app-b.js.map'
-			],
+			files: compilationWebpack.entrypoints.get('app-a').getFiles(),
 			publicPath: chunksWebpackPlugin.getPublicPath(compilationWebpack)
 		})
 
 		expect(chunksSorted).toEqual({
-			styles: ['/dist/css/vendors~app-a~app-b.css'],
-			scripts: ['/dist/js/vendors~app-a~app-b.js']
+			styles: ['/dist/css/vendors~app-a~app-b~app-c.css', '/dist/css/app-a.css'],
+			scripts: ['/dist/js/vendors~app-a~app-b~app-c.js', '/dist/js/app-a.js']
 		})
 	})
 })
