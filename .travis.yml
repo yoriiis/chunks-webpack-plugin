@@ -28,7 +28,6 @@ script:
   - npm run test:markdown
   - npm run test:eslint
   - npm run test
-  - npm run build
   - npm run build:example
 
 jobs:
@@ -39,7 +38,6 @@ jobs:
         - npm run test:markdown
         - npm run test:eslint
         - npm run test
-        - npm run build
         - npm run build:example
     - after_success:
         - npm run coverage
