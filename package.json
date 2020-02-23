@@ -54,7 +54,7 @@
 		"vlitejs": "3.0.4",
 		"webpack": "4.41.5",
 		"webpack-bundle-analyzer": "3.6.0",
-		"webpack-cli": "3.3.10",
+		"webpack-cli": "3.3.11",
 		"webpack-manifest-plugin": "2.2.0"
 	},
 	"peerDependencies": {
