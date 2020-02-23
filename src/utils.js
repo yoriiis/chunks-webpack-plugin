@@ -27,7 +27,7 @@ const isAbsolutePath = currentPath => {
  * @returns {String} Extension of the filename
  */
 const getFileExtension = file => {
-	return file.substr(file.lastIndexOf('.') + 1, file.length);
+	return path.extname(file).substr(1);
 };
 
 /**
