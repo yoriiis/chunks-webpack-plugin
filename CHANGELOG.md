@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 4.0.1
+
+### Updates
+
+* Optimize `utils.getFileExtension` with native Node.js `extname` function
+* Bumps [webpack-cli](https://github.com/webpack/webpack-cli) from 3.3.10 to 3.3.11.
+* Bumps [eslint-plugin-import](https://github.com/benmosher/eslint-plugin-import) from 2.20.0 to 2.20.1.
+* Bumps [@babel/preset-env](https://github.com/babel/babel) from 7.8.3 to 7.8.4.
+* Bumps [webpack](https://github.com/webpack/webpack) from 4.41.5 to 4.41.6.
+* Bumps [terser-webpack-plugin](https://github.com/webpack-contrib/terser-webpack-plugin) from 2.3.2 to 2.3.5.
+* Bumps [markdownlint-cli](https://github.com/igorshubovych/markdownlint-cli) from 0.21.0 to 0.22.0.
+
 ## 4.0.0
 
 ### Updates
