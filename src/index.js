@@ -64,10 +64,7 @@ module.exports = class ChunksWebpackPlugin {
 				let tagsHTML = null;
 
 				// The user prefers to generate his own HTML tags, use his object
-				if (
-					this.options.customFormatTags &&
-					typeof this.options.customFormatTags === 'function'
-				) {
+				if (this.options.customFormatTags instanceof Function) {
 					// Change context of the function, to allow access to this class
 					tagsHTML = this.options.customFormatTags.call(this, chunksSorted, files);
 

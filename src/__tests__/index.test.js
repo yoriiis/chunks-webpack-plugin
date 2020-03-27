@@ -152,10 +152,42 @@ describe('ChunksWebpackPlugin', () => {
 
 	it('Initialize the hookCallback function', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
+		chunksWebpackPlugin.updateManifest = jest.fn();
 
 		chunksWebpackPlugin.hookCallback(compilationWebpack);
 
-		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalled();
+		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalledTimes(3);
+		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalledWith({
+			entryName: 'app-a',
+			outputPath: '/dist/templates',
+			tagsHTML: {
+				styles:
+					'<link rel="stylesheet" href="https://cdn.domain.com/dist/css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/css/app-a.css" />',
+				scripts:
+					'<script defer src="https://cdn.domain.com/dist/js/vendors~app-a~app-b~app-c.js"></script><script defer src="https://cdn.domain.com/dist/js/app-a.js"></script>'
+			}
+		});
+		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalledWith({
+			entryName: 'app-b',
+			outputPath: '/dist/templates',
+			tagsHTML: {
+				styles:
+					'<link rel="stylesheet" href="https://cdn.domain.com/dist/css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/css/app-b.css" />',
+				scripts:
+					'<script defer src="https://cdn.domain.com/dist/js/vendors~app-a~app-b~app-c.js"></script><script defer src="https://cdn.domain.com/dist/js/app-b.js"></script>'
+			}
+		});
+		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalledWith({
+			entryName: 'app-c',
+			outputPath: '/dist/templates',
+			tagsHTML: {
+				styles:
+					'<link rel="stylesheet" href="https://cdn.domain.com/dist/css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/css/app-c.css" />',
+				scripts:
+					'<script defer src="https://cdn.domain.com/dist/js/vendors~app-a~app-b~app-c.js"></script><script defer src="https://cdn.domain.com/dist/js/app-c.js"></script>'
+			}
+		});
+		expect(chunksWebpackPlugin.updateManifest).toHaveBeenCalledTimes(3);
 	});
 
 	it('Initialize the hookCallback function without generating chunk files', () => {
@@ -184,7 +216,9 @@ describe('ChunksWebpackPlugin', () => {
 		chunksWebpackPlugin.options.customFormatTags = (chunksSorted, files) => '';
 		chunksWebpackPlugin.hookCallback(compilationWebpack);
 
-		expect(utils.setError).toHaveBeenCalled();
+		expect(utils.setError).toHaveBeenCalledWith(
+			'ChunksWebpackPlugin::customFormatTags return invalid object'
+		);
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalled();
 	});
 
@@ -249,7 +283,9 @@ describe('ChunksWebpackPlugin', () => {
 		chunksWebpackPlugin.options.outputPath = '';
 		chunksWebpackPlugin.getOutputPath(compilationWebpack);
 
-		expect(utils.setError).toHaveBeenCalled();
+		expect(utils.setError).toHaveBeenCalledWith(
+			'ChunksWebpackPlugin::outputPath option is invalid'
+		);
 	});
 
 	it('Initialize the sortsChunksByType function', () => {
