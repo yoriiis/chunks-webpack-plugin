@@ -26,7 +26,6 @@ script:
   - npm run test:markdown
   - npm run test:eslint
   - npm run test
-  - npm run test:mutation
   - npm run build:example
 
 jobs:
