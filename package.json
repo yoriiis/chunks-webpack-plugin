@@ -23,10 +23,67 @@
 		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development",
 		"test": "jest --verbose --coverage",
 		"test:coverage": "jest --coverage",
-		"test:eslint": "eslint -c ./.eslintrc.js .",
+		"test:eslint": "eslint -c . --ignore-pattern dist",
 		"test:markdown": "markdownlint '**/*.md' --ignore node_modules",
 		"test:mutation": "stryker run",
 		"test:watch": "jest --watch --coverage"
+	},
+	"babel": {
+		"plugins": [
+			"babel-plugin-dynamic-import-node"
+		],
+		"presets": [
+			[
+				"@babel/preset-env",
+				{
+					"targets": {
+						"node": "8.11.2"
+					}
+				}
+			]
+		]
+	},
+	"prettier": {
+		"printWidth": 100
+	},
+	"eslintConfig": {
+		"env": {
+			"browser": true,
+			"es6": true,
+			"jest": true,
+			"node": true
+		},
+		"parser": "babel-eslint",
+		"parserOptions": {
+			"ecmaFeatures": {
+				"impliedStrict": true,
+				"experimentalObjectRestSpread": true
+			},
+			"ecmaVersion": 6,
+			"sourceType": "module"
+		},
+		"extends": "standard",
+		"rules": {
+			"indent": [
+				"error",
+				"tab",
+				{
+					"ignoredNodes": [
+						"TemplateLiteral > *"
+					]
+				}
+			],
+			"no-console": 0,
+			"no-tabs": 0,
+			"semi": [
+				1,
+				"always"
+			]
+		},
+		"globals": {
+			"document": false,
+			"window": false
+		}
 	},
 	"dependencies": {
 		"fs-extra": "^8.1.0"
