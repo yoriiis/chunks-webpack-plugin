@@ -7,5 +7,10 @@ module.exports = {
 	reporters: ['html', 'clear-text', 'progress'],
 	testRunner: 'jest',
 	coverageAnalysis: 'all',
-	mutate: ['./src/**/*.js', '!./src/__tests__/**/*.js']
+	mutate: ['./src/**/*.js', '!./src/__tests__/**/*.js'],
+	thresholds: {
+		high: 80,
+		low: 60,
+		break: null
+	}
 };

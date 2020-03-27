@@ -23,7 +23,7 @@
 		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development",
 		"test": "jest --verbose --coverage",
 		"test:coverage": "jest --coverage",
-		"test:eslint": "eslint -c . --ignore-pattern dist",
+		"test:eslint": "eslint . --ignore-pattern coverage --ignore-pattern reports",
 		"test:markdown": "markdownlint '**/*.md' --ignore node_modules",
 		"test:mutation": "stryker run",
 		"test:watch": "jest --watch --coverage"
