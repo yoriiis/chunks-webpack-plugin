@@ -153,9 +153,11 @@ describe('ChunksWebpackPlugin', () => {
 	it('Initialize the hookCallback function', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
 		chunksWebpackPlugin.updateManifest = jest.fn();
+		chunksWebpackPlugin.createChunksManifestFile = jest.fn();
 
 		chunksWebpackPlugin.hookCallback(compilationWebpack);
 
+		expect(chunksWebpackPlugin.createChunksManifestFile).toHaveBeenCalled();
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalledTimes(3);
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalledWith({
 			entryName: 'app-a',
@@ -318,25 +320,37 @@ describe('ChunksWebpackPlugin', () => {
 	it('Initialize the createHtmlChunksFiles function', () => {
 		utils.writeFile = jest.fn();
 
+		// const outputPath = this.getOutputPath(compilation);
+
 		chunksWebpackPlugin.createHtmlChunksFiles({
-			entry: 'app-a',
+			entryName: 'app-a',
 			tagsHTML: {
 				styles:
 					'<link rel="stylesheet" href="/dist/css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="/dist/css/app-a.css" />',
 				scripts:
 					'<script src="/dist/js/vendors~app-a~app-b~app-c.js"></script><script src="/dist/js/app-a.js"></script>'
 			},
-			outputPath: '/dist/'
+			outputPath: '/dist/template'
 		});
 
-		expect(utils.writeFile).toHaveBeenCalled();
+		expect(utils.writeFile).toHaveBeenCalledTimes(2);
+		expect(utils.writeFile).toHaveBeenCalledWith({
+			outputPath: '/dist/template/app-a-scripts.html',
+			output:
+				'<script src="/dist/js/vendors~app-a~app-b~app-c.js"></script><script src="/dist/js/app-a.js"></script>'
+		});
+		expect(utils.writeFile).toHaveBeenCalledWith({
+			outputPath: '/dist/template/app-a-styles.html',
+			output:
+				'<link rel="stylesheet" href="/dist/css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="/dist/css/app-a.css" />'
+		});
 	});
 
 	it('Initialize the createHtmlChunksFiles function without styles and scripts', () => {
 		utils.writeFile = jest.fn();
 
 		chunksWebpackPlugin.createHtmlChunksFiles({
-			entry: 'app-a',
+			entryName: 'app-a',
 			tagsHTML: {
 				styles: '',
 				scripts: ''
@@ -371,6 +385,20 @@ describe('ChunksWebpackPlugin', () => {
 			)
 		);
 		expect(size).toEqual(216);
+	});
+
+	it('Should test the isCustomFormatTagsDatasInvalid function', () => {
+		const resultsEmpty = chunksWebpackPlugin.isCustomFormatTagsDatasValid({
+			styles: '',
+			scripts: ''
+		});
+		const resultsNotEmpty = chunksWebpackPlugin.isCustomFormatTagsDatasValid({
+			styles: '<link>',
+			scripts: '<script>'
+		});
+
+		expect(resultsEmpty).toBe(false);
+		expect(resultsNotEmpty).toBe(true);
 	});
 
 	it('Initialize sortsChunksByType function ignore source map file', () => {
