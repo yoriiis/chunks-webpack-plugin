@@ -36,6 +36,7 @@ jobs:
         - npm run test:markdown
         - npm run test:eslint
         - npm run test
+        - npm run test:mutation
         - npm run build:example
     - after_success:
         - npm run coverage

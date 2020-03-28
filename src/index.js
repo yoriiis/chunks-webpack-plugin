@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 4.0.1
+ * @version 4.0.2
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -64,15 +64,12 @@ module.exports = class ChunksWebpackPlugin {
 				let tagsHTML = null;
 
 				// The user prefers to generate his own HTML tags, use his object
-				if (
-					this.options.customFormatTags &&
-					typeof this.options.customFormatTags === 'function'
-				) {
+				if (this.options.customFormatTags instanceof Function) {
 					// Change context of the function, to allow access to this class
 					tagsHTML = this.options.customFormatTags.call(this, chunksSorted, files);
 
 					// Check if datas are correctly formatted
-					if (this.isCustomFormatTagsDatasInvalid(tagsHTML)) {
+					if (!this.customFormatTagsDatasIsValid(tagsHTML)) {
 						utils.setError(
 							'ChunksWebpackPlugin::customFormatTags return invalid object'
 						);
@@ -199,15 +196,17 @@ module.exports = class ChunksWebpackPlugin {
 	}
 
 	/**
-	 * Check if datas from customFormatTags is invalid
+	 * Check if datas from customFormatTags are valid
 	 *
 	 * @param {Object} tagsHTML Formatted HTML tags by styles and scripts keys
 	 */
-	isCustomFormatTagsDatasInvalid (tagsHTML) {
+	customFormatTagsDatasIsValid (tagsHTML) {
 		return (
-			tagsHTML === null ||
-			typeof tagsHTML.styles === 'undefined' ||
-			typeof tagsHTML.scripts === 'undefined'
+			tagsHTML !== null &&
+			typeof tagsHTML.styles !== 'undefined' &&
+			typeof tagsHTML.scripts !== 'undefined' &&
+			tagsHTML.styles !== '' &&
+			tagsHTML.scripts !== ''
 		);
 	}
 

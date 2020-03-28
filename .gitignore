@@ -1,4 +1,8 @@
 node_modules/
 webpack-stats.json
 coverage
+reports
 example/dist/
+
+# stryker temp files
+.stryker-tmp
