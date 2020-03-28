@@ -85,6 +85,16 @@
 			"window": false
 		}
 	},
+	"jest": {
+		"modulePaths": [
+			"./src"
+		],
+		"moduleFileExtensions": [
+			"js"
+		],
+		"resetModules": true,
+		"verbose": true
+	},
 	"dependencies": {
 		"fs-extra": "^8.1.0"
 	},
