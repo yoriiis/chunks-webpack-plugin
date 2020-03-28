@@ -2,10 +2,12 @@
 .vscode/
 coverage
 example/
+reports/
 src/__tests__
 .editorconfig
 .gitignore
 .markdownlint.yml
 .nvmrc
 .travis.yml
+stryker.conf.js
 webpack-stats.json
