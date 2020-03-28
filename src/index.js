@@ -69,7 +69,7 @@ module.exports = class ChunksWebpackPlugin {
 					tagsHTML = this.options.customFormatTags.call(this, chunksSorted, files);
 
 					// Check if datas are correctly formatted
-					if (!this.isCustomFormatTagsDatasValid(tagsHTML)) {
+					if (!this.customFormatTagsDatasIsValid(tagsHTML)) {
 						utils.setError(
 							'ChunksWebpackPlugin::customFormatTags return invalid object'
 						);
@@ -196,11 +196,11 @@ module.exports = class ChunksWebpackPlugin {
 	}
 
 	/**
-	 * Check if datas from customFormatTags is valid
+	 * Check if datas from customFormatTags are valid
 	 *
 	 * @param {Object} tagsHTML Formatted HTML tags by styles and scripts keys
 	 */
-	isCustomFormatTagsDatasValid (tagsHTML) {
+	customFormatTagsDatasIsValid (tagsHTML) {
 		return (
 			tagsHTML !== null &&
 			typeof tagsHTML.styles !== 'undefined' &&

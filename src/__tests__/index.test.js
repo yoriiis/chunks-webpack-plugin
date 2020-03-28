@@ -320,8 +320,6 @@ describe('ChunksWebpackPlugin', () => {
 	it('Initialize the createHtmlChunksFiles function', () => {
 		utils.writeFile = jest.fn();
 
-		// const outputPath = this.getOutputPath(compilation);
-
 		chunksWebpackPlugin.createHtmlChunksFiles({
 			entryName: 'app-a',
 			tagsHTML: {
@@ -387,12 +385,12 @@ describe('ChunksWebpackPlugin', () => {
 		expect(size).toEqual(216);
 	});
 
-	it('Should test the isCustomFormatTagsDatasInvalid function', () => {
-		const resultsEmpty = chunksWebpackPlugin.isCustomFormatTagsDatasValid({
+	it('Should test the customFormatTagsDatasIsValid function', () => {
+		const resultsEmpty = chunksWebpackPlugin.customFormatTagsDatasIsValid({
 			styles: '',
 			scripts: ''
 		});
-		const resultsNotEmpty = chunksWebpackPlugin.isCustomFormatTagsDatasValid({
+		const resultsNotEmpty = chunksWebpackPlugin.customFormatTagsDatasIsValid({
 			styles: '<link>',
 			scripts: '<script>'
 		});
