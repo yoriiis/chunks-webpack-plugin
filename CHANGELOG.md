@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 4.0.2
+
+### New features
+
+* Add Stryker mutation in the Travis CI to improve tests quality
+
+### Updates
+
+* Update `customFormatTagsDatasIsValid` function to prevent empty content
+* Simplify `customFormatTags` check (replace `typeof` and `Boolean` by `instanceof`)
+* Update Jest tests with mutation testing
+* Update dependencies
+
 ## 4.0.1
 
 ### Updates
