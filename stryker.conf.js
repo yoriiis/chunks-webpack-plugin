@@ -4,6 +4,8 @@
 module.exports = {
 	mutator: 'javascript',
 	packageManager: 'npm',
+	testRunner: 'jest',
+	coverageAnalysis: 'all',
 	reporters: ['dashboard', 'html', 'clear-text', 'progress'],
 	mutate: ['./src/**/*.js', '!./src/__tests__/**/*.js'],
 	thresholds: {
