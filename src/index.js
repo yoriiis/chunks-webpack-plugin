@@ -55,35 +55,38 @@ module.exports = class ChunksWebpackPlugin {
 			const files = this.getFiles({ entryName: entryName, compilation: compilation });
 
 			// Check if entrypoint contains files and if chunks files generation is enabled
-			if (files.length && this.options.generateChunksFiles) {
+			if (files.length) {
 				const chunksSorted = this.sortsChunksByType({
 					files: files,
 					publicPath: publicPath
 				});
 
-				let tagsHTML = null;
+				// Check if html chunk files option is enabled
+				if (this.options.generateChunksFiles) {
+					let tagsHTML = null;
 
-				// The user prefers to generate his own HTML tags, use his object
-				if (this.options.customFormatTags instanceof Function) {
-					// Change context of the function, to allow access to this class
-					tagsHTML = this.options.customFormatTags.call(this, chunksSorted, files);
+					// The user prefers to generate his own HTML tags, use his object
+					if (this.options.customFormatTags instanceof Function) {
+						// Change context of the function, to allow access to this class
+						tagsHTML = this.options.customFormatTags.call(this, chunksSorted, files);
 
-					// Check if datas are correctly formatted
-					if (!this.customFormatTagsDatasIsValid(tagsHTML)) {
-						utils.setError(
-							'ChunksWebpackPlugin::customFormatTags return invalid object'
-						);
+						// Check if datas are correctly formatted
+						if (!this.customFormatTagsDatasIsValid(tagsHTML)) {
+							utils.setError(
+								'ChunksWebpackPlugin::customFormatTags return invalid object'
+							);
+						}
+					} else {
+						// Default behavior, generate HTML tags with templateStyle and templateScript
+						tagsHTML = this.generateTags(chunksSorted);
 					}
-				} else {
-					// Default behavior, generate HTML tags with templateStyle and templateScript
-					tagsHTML = this.generateTags(chunksSorted);
-				}
 
-				this.createHtmlChunksFiles({
-					entryName: entryName,
-					tagsHTML: tagsHTML,
-					outputPath: outputPath
-				});
+					this.createHtmlChunksFiles({
+						entryName: entryName,
+						tagsHTML: tagsHTML,
+						outputPath: outputPath
+					});
+				}
 
 				// Check if manifest option is enabled
 				if (this.options.generateChunksManifest) {
