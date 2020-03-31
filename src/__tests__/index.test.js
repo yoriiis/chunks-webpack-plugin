@@ -2,6 +2,7 @@
 
 import ChunksWebpackPlugin from '../index';
 import utils from '../utils';
+import fse from 'fs-extra';
 
 let chunksWebpackPlugin;
 let chunksSorted;
@@ -92,6 +93,8 @@ entrypointsMap.set('app-c', {
 });
 
 beforeEach(() => {
+	fse.outputFileSync = jest.fn();
+
 	compilerWebpack = {
 		hooks: {
 			emit: {
@@ -142,7 +145,7 @@ describe('ChunksWebpackPlugin', () => {
 	});
 
 	it('Initialize the apply function', () => {
-		compilerWebpack.hooks.emit.tap = jest.fn();
+		jest.spyOn(compilerWebpack.hooks.emit, 'tap');
 
 		chunksWebpackPlugin.apply(compilerWebpack);
 		compilerWebpack.hooks.emit.tap();
@@ -151,9 +154,9 @@ describe('ChunksWebpackPlugin', () => {
 	});
 
 	it('Initialize the hookCallback function', () => {
-		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
-		chunksWebpackPlugin.updateManifest = jest.fn();
-		chunksWebpackPlugin.createChunksManifestFile = jest.fn();
+		jest.spyOn(chunksWebpackPlugin, 'createHtmlChunksFiles');
+		jest.spyOn(chunksWebpackPlugin, 'updateManifest');
+		jest.spyOn(chunksWebpackPlugin, 'createChunksManifestFile');
 
 		chunksWebpackPlugin.hookCallback(compilationWebpack);
 
@@ -193,7 +196,7 @@ describe('ChunksWebpackPlugin', () => {
 	});
 
 	it('Initialize the hookCallback function without generating chunk files', () => {
-		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
+		jest.spyOn(chunksWebpackPlugin, 'createHtmlChunksFiles');
 
 		chunksWebpackPlugin.options.generateChunksFiles = false;
 		chunksWebpackPlugin.hookCallback(compilationWebpack);
@@ -202,8 +205,7 @@ describe('ChunksWebpackPlugin', () => {
 	});
 
 	it('Initialize the hookCallback function without generating chunk manifest', () => {
-		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
-		chunksWebpackPlugin.updateManifest = jest.fn();
+		jest.spyOn(chunksWebpackPlugin, 'updateManifest');
 
 		chunksWebpackPlugin.options.generateChunksManifest = false;
 		chunksWebpackPlugin.hookCallback(compilationWebpack);
@@ -212,50 +214,42 @@ describe('ChunksWebpackPlugin', () => {
 	});
 
 	it('Initialize the hookCallback function with generating manifest and without generating chunk files', () => {
-		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
-		chunksWebpackPlugin.updateManifest = jest.fn();
+		jest.spyOn(chunksWebpackPlugin, 'createHtmlChunksFiles');
+		jest.spyOn(chunksWebpackPlugin, 'updateManifest');
 
-		chunksWebpackPlugin.options.generateChunksManifest = true;
 		chunksWebpackPlugin.options.generateChunksFiles = false;
 		chunksWebpackPlugin.hookCallback(compilationWebpack);
 
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).not.toHaveBeenCalled();
-		expect(chunksWebpackPlugin.updateManifest).toHaveBeenCalled();
+		expect(chunksWebpackPlugin.updateManifest).toHaveBeenCalledTimes(3);
 	});
 
 	it('Initialize the hookCallback function with generating chunk files and without generating manifest', () => {
-		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
-		chunksWebpackPlugin.updateManifest = jest.fn();
+		jest.spyOn(chunksWebpackPlugin, 'createHtmlChunksFiles');
+		jest.spyOn(chunksWebpackPlugin, 'updateManifest');
 
 		chunksWebpackPlugin.options.generateChunksManifest = false;
-		chunksWebpackPlugin.options.generateChunksFiles = true;
 		chunksWebpackPlugin.hookCallback(compilationWebpack);
 
-		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalled();
+		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalledTimes(3);
 		expect(chunksWebpackPlugin.updateManifest).not.toHaveBeenCalled();
 	});
 
 	it('Initialize the hookCallback function with wrong returns of customFormatTags', () => {
-		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
-		utils.setError = jest.fn();
-
 		chunksWebpackPlugin.options.customFormatTags = (chunksSorted, files) => '';
-		chunksWebpackPlugin.hookCallback(compilationWebpack);
 
-		expect(utils.setError).toHaveBeenCalledWith(
-			'ChunksWebpackPlugin::customFormatTags return invalid object'
-		);
-		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalled();
+		expect(() => {
+			chunksWebpackPlugin.hookCallback(compilationWebpack);
+		}).toThrow(new Error('ChunksWebpackPlugin::customFormatTags return invalid object'));
 	});
 
 	it('Initialize the hookCallback function with wrong declaration of customFormatTags', () => {
-		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
-		chunksWebpackPlugin.generateTags = jest.fn();
+		jest.spyOn(chunksWebpackPlugin, 'generateTags');
 
 		chunksWebpackPlugin.options.customFormatTags = '';
 		chunksWebpackPlugin.hookCallback(compilationWebpack);
 
-		expect(chunksWebpackPlugin.generateTags).toHaveBeenCalled();
+		expect(chunksWebpackPlugin.generateTags).toHaveBeenCalledTimes(3);
 	});
 
 	it('Initialize the updateManifest function', () => {
@@ -304,14 +298,13 @@ describe('ChunksWebpackPlugin', () => {
 	});
 
 	it('Initialize the getOutputPath function with wrong outputPath', () => {
-		utils.setError = jest.fn();
+		jest.spyOn(utils, 'setError');
 
 		chunksWebpackPlugin.options.outputPath = '';
-		chunksWebpackPlugin.getOutputPath(compilationWebpack);
 
-		expect(utils.setError).toHaveBeenCalledWith(
-			'ChunksWebpackPlugin::outputPath option is invalid'
-		);
+		expect(() => {
+			chunksWebpackPlugin.getOutputPath(compilationWebpack);
+		}).toThrow(new Error('ChunksWebpackPlugin::outputPath option is invalid'));
 	});
 
 	it('Initialize the sortsChunksByType function', () => {
@@ -342,7 +335,7 @@ describe('ChunksWebpackPlugin', () => {
 	});
 
 	it('Initialize the createHtmlChunksFiles function', () => {
-		utils.writeFile = jest.fn();
+		jest.spyOn(utils, 'writeFile');
 
 		chunksWebpackPlugin.createHtmlChunksFiles({
 			entryName: 'app-a',
@@ -424,8 +417,8 @@ describe('ChunksWebpackPlugin', () => {
 	});
 
 	it('Initialize sortsChunksByType function ignore source map file', () => {
-		chunksWebpackPlugin.updateManifest = jest.fn();
-		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
+		jest.spyOn(chunksWebpackPlugin, 'createHtmlChunksFiles');
+		jest.spyOn(chunksWebpackPlugin, 'updateManifest');
 
 		const chunksSorted = chunksWebpackPlugin.sortsChunksByType({
 			files: compilationWebpack.entrypoints.get('app-a').getFiles(),
@@ -436,5 +429,34 @@ describe('ChunksWebpackPlugin', () => {
 			styles: ['/dist/css/vendors~app-a~app-b~app-c.css', '/dist/css/app-a.css'],
 			scripts: ['/dist/js/vendors~app-a~app-b~app-c.js', '/dist/js/app-a.js']
 		});
+	});
+
+	it('Initialize the hookCallback function without chunk files', () => {
+		const entryNames = Array.from(compilationWebpack.entrypoints.keys());
+
+		entryNames.forEach(entryName => {
+			entrypointsMap.set(entryName, {
+				chunks: {
+					files: []
+				},
+				getFiles: () => entrypointsMap.get(entryName).chunks.files
+			});
+		});
+
+		jest.spyOn(chunksWebpackPlugin, 'sortsChunksByType');
+		jest.spyOn(chunksWebpackPlugin, 'customFormatTagsDatasIsValid');
+		jest.spyOn(chunksWebpackPlugin, 'generateTags');
+		jest.spyOn(chunksWebpackPlugin, 'createHtmlChunksFiles');
+		jest.spyOn(chunksWebpackPlugin, 'updateManifest');
+		jest.spyOn(chunksWebpackPlugin, 'createChunksManifestFile');
+
+		chunksWebpackPlugin.hookCallback(compilationWebpack);
+
+		expect(chunksWebpackPlugin.sortsChunksByType).not.toHaveBeenCalled();
+		expect(chunksWebpackPlugin.customFormatTagsDatasIsValid).not.toHaveBeenCalled();
+		expect(chunksWebpackPlugin.generateTags).not.toHaveBeenCalled();
+		expect(chunksWebpackPlugin.createHtmlChunksFiles).not.toHaveBeenCalled();
+		expect(chunksWebpackPlugin.updateManifest).not.toHaveBeenCalled();
+		expect(chunksWebpackPlugin.createChunksManifestFile).toHaveBeenCalledTimes(1);
 	});
 });
