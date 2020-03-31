@@ -4,7 +4,7 @@
 
 ### Fixes
 
-* Options `generateChunksManifest` and `generateChunksFiles` can now operate independently [#52](https://github.com/yoriiis/chunks-webpack-plugin/issues/52)
+* Options `generateChunksManifest` and `generateChunksFiles` can now operate independently [#53](https://github.com/yoriiis/chunks-webpack-plugin/issues/53)
 
 ### Updates
 
