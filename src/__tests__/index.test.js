@@ -211,6 +211,30 @@ describe('ChunksWebpackPlugin', () => {
 		expect(chunksWebpackPlugin.updateManifest).not.toHaveBeenCalled();
 	});
 
+	it('Initialize the hookCallback function with generating manifest and without generating chunk files', () => {
+		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
+		chunksWebpackPlugin.updateManifest = jest.fn();
+
+		chunksWebpackPlugin.options.generateChunksManifest = true;
+		chunksWebpackPlugin.options.generateChunksFiles = false;
+		chunksWebpackPlugin.hookCallback(compilationWebpack);
+
+		expect(chunksWebpackPlugin.createHtmlChunksFiles).not.toHaveBeenCalled();
+		expect(chunksWebpackPlugin.updateManifest).toHaveBeenCalled();
+	});
+
+	it('Initialize the hookCallback function with generating chunk files and without generating manifest', () => {
+		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
+		chunksWebpackPlugin.updateManifest = jest.fn();
+
+		chunksWebpackPlugin.options.generateChunksManifest = false;
+		chunksWebpackPlugin.options.generateChunksFiles = true;
+		chunksWebpackPlugin.hookCallback(compilationWebpack);
+
+		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalled();
+		expect(chunksWebpackPlugin.updateManifest).not.toHaveBeenCalled();
+	});
+
 	it('Initialize the hookCallback function with wrong returns of customFormatTags', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
 		utils.setError = jest.fn();
