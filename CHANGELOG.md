@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 4.0.3
+
+### Fixes
+
+* Options `generateChunksManifest` and `generateChunksFiles` can now operate independently [#52](https://github.com/yoriiis/chunks-webpack-plugin/issues/52)
+
+### Updates
+
+* Improve Jest tests
+
 ## 4.0.2
 
 ### New features
