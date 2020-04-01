@@ -22,7 +22,7 @@
 		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --config=./example/webpack.config.js --mode=development --hidden=node_modules/",
 		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development",
 		"test": "jest --verbose --coverage",
-		"test:coverage": "jest --coverage",
+		"test:coverage": "jest --watchAll --coverage",
 		"test:eslint": "eslint . --ignore-pattern coverage --ignore-pattern reports --ignore-pattern example/dist",
 		"test:markdown": "markdownlint '**/*.md' --ignore node_modules",
 		"test:mutation": "stryker run",
