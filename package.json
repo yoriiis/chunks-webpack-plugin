@@ -30,7 +30,7 @@
 	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "npm run test && npm run test:eslint && npm run test:markdown && npm run build:example"
+			"pre-commit": "npm run test:eslint && npm run test:markdown && npm run test"
 		}
 	},
 	"babel": {
