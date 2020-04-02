@@ -1,0 +1,32 @@
+{
+  "app-a": {
+    "styles": [
+      "css/vendors~app-a~app-b~app-c.css",
+      "css/app-a.css"
+    ],
+    "scripts": [
+      "js/vendors~app-a~app-b~app-c.js",
+      "js/app-a.js"
+    ]
+  },
+  "app-b": {
+    "styles": [
+      "css/vendors~app-a~app-b~app-c.css",
+      "css/app-b.css"
+    ],
+    "scripts": [
+      "js/vendors~app-a~app-b~app-c.js",
+      "js/app-b.js"
+    ]
+  },
+  "app-c": {
+    "styles": [
+      "css/vendors~app-a~app-b~app-c.css",
+      "css/app-c.css"
+    ],
+    "scripts": [
+      "js/vendors~app-a~app-b~app-c.js",
+      "js/app-c.js"
+    ]
+  }
+}
