@@ -2,14 +2,18 @@
 
 ## 5.0.0
 
+### New features
+
+* Add Husky `pre-commit` with `eslint`, `markdown` and `test` scripts
+
 ### Updates
 
-* Split code into small functions to facilitate testing
+* Rework and split code into small functions to facilitate testing
 * Complete rewrite of tests
 
 ### Breaking changes
 
-* Change default value of `outputPath` constructor option from `default` to `null`. If the parameter is omit or `null`, the plugin will use the [`options.output.path`](https://webpack.js.org/configuration/output/#outputpath) option from the Webpack configuration.
+* Change default value of `outputPath` constructor option from `default` to `null`. If the parameter is omit or `null`, the plugin will use the `options.output.path` option from the [Webpack configuration]((https://webpack.js.org/configuration/output/#outputpath)).
 
 ## 4.0.3
 

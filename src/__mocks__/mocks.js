@@ -5,9 +5,9 @@ import utils from '../utils';
  *
  * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
  */
-export function mockGetEntryName (chunksWebpackPlugin) {
+export function mockGetEntryNames (chunksWebpackPlugin, entryNames) {
 	chunksWebpackPlugin.getEntryNames = jest.fn().mockImplementation(() => {
-		return ['app-a', 'app-b'];
+		return entryNames;
 	});
 }
 
