@@ -1,0 +1,15 @@
+{
+  "vendors~app-a~app-b~app-c.css": "/dist/css/vendors~app-a~app-b~app-c.css",
+  "vendors~app-a~app-b~app-c.js": "/dist/js/vendors~app-a~app-b~app-c.js",
+  "vendors~app-a~app-b~app-c.js.map": "/dist/js/vendors~app-a~app-b~app-c.js.map",
+  "app-a.css": "/dist/css/app-a.css",
+  "app-a.js": "/dist/js/app-a.js",
+  "app-a.js.map": "/dist/js/app-a.js.map",
+  "app-b.css": "/dist/css/app-b.css",
+  "app-b.js": "/dist/js/app-b.js",
+  "app-b.js.map": "/dist/js/app-b.js.map",
+  "app-c.css": "/dist/css/app-c.css",
+  "app-c.js": "/dist/js/app-c.js",
+  "app-c.js.map": "/dist/js/app-c.js.map",
+  "chunks-manifest.json": "/dist/chunks-manifest.json"
+}

@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 4.0.3
+ * @version 5.0.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -19,7 +19,7 @@ module.exports = class ChunksWebpackPlugin {
 		// Merge default options with user options
 		this.options = Object.assign(
 			{
-				outputPath: 'default',
+				outputPath: null,
 				fileExtension: '.html',
 				templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
 				templateScript: '<script src="{{chunk}}"></script>',
@@ -141,22 +141,11 @@ module.exports = class ChunksWebpackPlugin {
 	 * @return {String} The output path
 	 */
 	getOutputPath () {
-		if (this.isDefaultOutputPath()) {
-			return this.compilation.options.output.path || '';
-		} else if (this.isValidOutputPath()) {
+		if (this.isValidOutputPath()) {
 			return this.options.outputPath;
 		} else {
-			utils.setError('ChunksWebpackPlugin::outputPath option is invalid');
+			return this.compilation.options.output.path || '';
 		}
-	}
-
-	/**
-	 * Check if the outputPath from options has default value
-	 *
-	 * @returns {Boolean} outputPath is default
-	 */
-	isDefaultOutputPath () {
-		return this.options.outputPath === 'default';
 	}
 
 	/**

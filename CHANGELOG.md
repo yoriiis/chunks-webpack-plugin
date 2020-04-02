@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 5.0.0
+
+### Updates
+
+* Improve Jest tests
+
+### Breaking changes
+
+* Change default value of `outputPath` from `default` to `null`
+
 ## 4.0.3
 
 ### Fixes
