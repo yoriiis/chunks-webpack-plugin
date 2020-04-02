@@ -62,12 +62,17 @@ module.exports = class ChunksWebpackPlugin {
 		}
 	}
 
+	/**
+	 * Process for each entry
+
+	 * @param {String} entryName Entrypoint name
+	 */
 	processEntry (entryName) {
 		const files = this.getFiles(entryName);
 		const chunks = this.sortsChunksByType(files);
 		const htmlTags = this.getHtmlTags({ chunks, files });
 
-		// Check if html chunk files option is enabled
+		// Check if HTML chunk files option is enabled
 		if (this.options.generateChunksFiles) {
 			this.createHtmlChunksFiles({ entryName, htmlTags });
 		}
@@ -79,40 +84,6 @@ module.exports = class ChunksWebpackPlugin {
 	}
 
 	/**
-	 * Get HTML tags from chunks
-	 *
-	 * @param {Object} chunks Chunks sorted by type (style, script)
-	 * @param {Array} files List of files associated by entrypoints
-	 *
-	 * @returns {String} HTML tags by entrypoints
-	 */
-	getHtmlTags ({ chunks, files }) {
-		// The user prefers to generate his own HTML tags, use his object
-		if (this.hasCustomFormatTags()) {
-			const htmlTags = this.options.customFormatTags(chunks, files);
-
-			// Check if datas are correctly formatted
-			if (this.isValidCustomFormatTagsDatas(htmlTags)) {
-				return htmlTags;
-			} else {
-				utils.setError('ChunksWebpackPlugin::customFormatTags return invalid object');
-			}
-		} else {
-			// Default behavior, generate HTML tags with templateStyle and templateScript
-			return this.generateTags(chunks);
-		}
-	}
-
-	/**
-	 * Check if the constructor has a customFormatTags function
-	 *
-	 * @returns {Boolean} The constructor has a customFormatTags function
-	 */
-	hasCustomFormatTags () {
-		return this.options.customFormatTags instanceof Function;
-	}
-
-	/**
 	 * Get the public path from Webpack configuation
 	 * and add slash at the end if necessary
 	 *
@@ -120,18 +91,7 @@ module.exports = class ChunksWebpackPlugin {
 	 */
 	getPublicPath () {
 		const publicPath = this.compilation.options.output.publicPath || '';
-		return `${publicPath}${this.publicPathNeedEndingSlash(publicPath) ? '/' : ''}`;
-	}
-
-	/**
-	 * Check if the publicPath need an ending slash
-	 *
-	 * @param {String} publicPath Public path
-	 *
-	 * @returns {Boolean} The public path need an ending slash
-	 */
-	publicPathNeedEndingSlash (publicPath) {
-		return publicPath && publicPath.substr(-1) !== '/';
+		return `${publicPath}${this.isPublicPathNeedsEndingSlash(publicPath) ? '/' : ''}`;
 	}
 
 	/**
@@ -146,15 +106,6 @@ module.exports = class ChunksWebpackPlugin {
 		} else {
 			return this.compilation.options.output.path || '';
 		}
-	}
-
-	/**
-	 * Check if the outputPath is valid, a string and absolute
-	 *
-	 * @returns {Boolean} outputPath is valid
-	 */
-	isValidOutputPath () {
-		return this.options.outputPath && utils.isAbsolutePath(this.options.outputPath);
 	}
 
 	/**
@@ -178,17 +129,89 @@ module.exports = class ChunksWebpackPlugin {
 	}
 
 	/**
+	 * Get HTML tags from chunks
+	 *
+	 * @param {Object} chunks Chunks sorted by type (style, script)
+	 * @param {Array} files List of files associated by entrypoints
+	 *
+	 * @returns {String} HTML tags by entrypoints
+	 */
+	getHtmlTags ({ chunks, files }) {
+		// The user prefers to generate his own HTML tags, use his object
+		if (this.hasCustomFormatTags()) {
+			const htmlTags = this.options.customFormatTags(chunks, files);
+
+			// Check if datas are correctly formatted
+			if (this.isValidCustomFormatTagsDatas(htmlTags)) {
+				return htmlTags;
+			} else {
+				utils.setError('ChunksWebpackPlugin::customFormatTags return invalid object');
+			}
+		} else {
+			// Default behavior, generate HTML tags with templateStyle and templateScript options
+			return this.formatTags(chunks);
+		}
+	}
+
+	/**
 	 * Sorts all chunks by type (styles or scripts)
 	 *
 	 * @param {Array} files List of files by entrypoint name
 	 *
-	 * @returns {Object} files All chunks sorted by type (extension)
+	 * @returns {Object} All chunks sorted by extension type
 	 */
 	sortsChunksByType (files) {
 		return {
 			styles: files.filter(file => this.isValidExtensionByType(file, 'css')),
 			scripts: files.filter(file => this.isValidExtensionByType(file, 'js'))
 		};
+	}
+
+	/**
+	 * Generate HTML styles and scripts tags for each entrypoints
+	 *
+	 * @param {Object} chunks The list of chunks of chunkGroups sorted by type
+	 *
+	 * @returns {Object} HTML tags with all assets for an entrypoint and sorted by type
+	 */
+	formatTags (chunks) {
+		return {
+			styles: chunks.styles
+				.map(chunkCSS => this.options.templateStyle.replace('{{chunk}}', chunkCSS))
+				.join(''),
+			scripts: chunks.scripts
+				.map(chunkJS => this.options.templateScript.replace('{{chunk}}', chunkJS))
+				.join('')
+		};
+	}
+
+	/**
+	 * Check if the constructor has a customFormatTags function
+	 *
+	 * @returns {Boolean} The constructor has a customFormatTags function
+	 */
+	hasCustomFormatTags () {
+		return this.options.customFormatTags instanceof Function;
+	}
+
+	/**
+	 * Check if the publicPath need an ending slash
+	 *
+	 * @param {String} publicPath Public path
+	 *
+	 * @returns {Boolean} The public path need an ending slash
+	 */
+	isPublicPathNeedsEndingSlash (publicPath) {
+		return publicPath && publicPath.substr(-1) !== '/';
+	}
+
+	/**
+	 * Check if the outputPath is valid, a string and absolute
+	 *
+	 * @returns {Boolean} outputPath is valid
+	 */
+	isValidOutputPath () {
+		return this.options.outputPath && utils.isAbsolutePath(this.options.outputPath);
 	}
 
 	/**
@@ -219,45 +242,6 @@ module.exports = class ChunksWebpackPlugin {
 	}
 
 	/**
-	 * Generate HTML styles and scripts tags for each entrypoints
-	 *
-	 * @param {Object} chunks The list of chunks of chunkGroups sorted by type
-	 *
-	 * @returns {Object} html HTML tags with all assets chunks
-	 */
-	generateTags (chunks) {
-		return {
-			styles: chunks.styles
-				.map(chunkCSS => this.options.templateStyle.replace('{{chunk}}', chunkCSS))
-				.join(''),
-			scripts: chunks.scripts
-				.map(chunkJS => this.options.templateScript.replace('{{chunk}}', chunkJS))
-				.join('')
-		};
-	}
-
-	/**
-	 * Create file with HTML tags for each entrypoints
-	 *
-	 * @param {String} entryName Entrypoint name
-	 * @param {Object} htmlTags Generated HTML of script and styles tags
-	 */
-	createHtmlChunksFiles ({ entryName, htmlTags }) {
-		if (htmlTags.scripts.length) {
-			utils.writeFile({
-				outputPath: `${this.outputPath}/${entryName}-scripts${this.options.fileExtension}`,
-				output: htmlTags.scripts
-			});
-		}
-		if (htmlTags.styles.length) {
-			utils.writeFile({
-				outputPath: `${this.outputPath}/${entryName}-styles${this.options.fileExtension}`,
-				output: htmlTags.styles
-			});
-		}
-	}
-
-	/**
 	 * Update the class property manifest
 	 * which contains all chunks informations by entrypoint
 	 *
@@ -285,5 +269,26 @@ module.exports = class ChunksWebpackPlugin {
 			source: () => output,
 			size: () => output.length
 		};
+	}
+
+	/**
+	 * Create file with HTML tags for each entrypoints
+	 *
+	 * @param {String} entryName Entrypoint name
+	 * @param {Object} htmlTags Generated HTML of script and styles tags
+	 */
+	createHtmlChunksFiles ({ entryName, htmlTags }) {
+		if (htmlTags.scripts.length) {
+			utils.writeFile({
+				outputPath: `${this.outputPath}/${entryName}-scripts${this.options.fileExtension}`,
+				output: htmlTags.scripts
+			});
+		}
+		if (htmlTags.styles.length) {
+			utils.writeFile({
+				outputPath: `${this.outputPath}/${entryName}-styles${this.options.fileExtension}`,
+				output: htmlTags.styles
+			});
+		}
 	}
 };

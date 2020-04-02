@@ -4,6 +4,7 @@ coverage
 example/
 reports/
 src/__tests__
+src/__mocks__
 .editorconfig
 .gitignore
 .markdownlint.yml

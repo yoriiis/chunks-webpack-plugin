@@ -10,7 +10,7 @@ import {
 	mockSortsChunksByType,
 	mockCustomFormatTags,
 	mockIsValidOutputPath,
-	mockPublicPathNeedEndingSlash,
+	mockIsPublicPathNeedsEndingSlash,
 	mockIsValidCustomFormatTagsDatas,
 	mockIsAbsolutePath
 } from '../__mocks__/mocks';
@@ -146,6 +146,23 @@ describe('ChunksWebpackPlugin constructor', () => {
 	});
 });
 
+describe('ChunksWebpackPlugin apply', () => {
+	it('Should call the apply function', () => {
+		const compilerWebpack = {
+			hooks: {
+				emit: {
+					tap: () => {}
+				}
+			}
+		};
+		compilerWebpack.hooks.emit.tap = jest.fn();
+
+		chunksWebpackPlugin.apply(compilerWebpack);
+
+		expect(compilerWebpack.hooks.emit.tap).toHaveBeenCalled();
+	});
+});
+
 describe('ChunksWebpackPlugin hookCallback', () => {
 	it('Should call the hookCallback function', () => {
 		chunksWebpackPlugin.getPublicPath = jest.fn();
@@ -223,82 +240,31 @@ describe('ChunksWebpackPlugin processEntry', () => {
 	});
 });
 
-describe('ChunksWebpackPlugin getHtmlTags', () => {
-	it('Should call the getHtmlTags function with default generate tag', () => {
-		chunksWebpackPlugin.hasCustomFormatTags = jest.fn();
-		chunksWebpackPlugin.generateTags = jest.fn();
-
-		chunksWebpackPlugin.getHtmlTags({ chunks, files });
-
-		expect(chunksWebpackPlugin.hasCustomFormatTags).toHaveBeenCalled();
-		expect(chunksWebpackPlugin.generateTags).toHaveBeenCalled();
-	});
-
-	it('Should call the getHtmlTags function with customFormatTags', () => {
-		mockHasCustomFormatTags(chunksWebpackPlugin, chunks);
-		mockCustomFormatTags(chunksWebpackPlugin, htmlTags);
-		mockIsValidCustomFormatTagsDatas(chunksWebpackPlugin, true);
-
-		chunksWebpackPlugin.getHtmlTags({ chunks, files });
-
-		expect(chunksWebpackPlugin.hasCustomFormatTags).toHaveBeenCalled();
-		expect(chunksWebpackPlugin.options.customFormatTags).toHaveBeenCalledWith(chunks, files);
-		expect(chunksWebpackPlugin.isValidCustomFormatTagsDatas).toHaveBeenCalledWith(htmlTags);
-	});
-
-	it('Should call the getHtmlTags function with customFormatTags and invalid return', () => {
-		mockHasCustomFormatTags(chunksWebpackPlugin, chunks);
-		mockCustomFormatTags(chunksWebpackPlugin, htmlTags);
-		utils.setError = jest.fn();
-		mockIsValidCustomFormatTagsDatas(chunksWebpackPlugin, false);
-
-		chunksWebpackPlugin.getHtmlTags({ chunks, files });
-
-		expect(chunksWebpackPlugin.hasCustomFormatTags).toHaveBeenCalled();
-		expect(chunksWebpackPlugin.isValidCustomFormatTagsDatas).toHaveBeenCalledWith(htmlTags);
-		expect(utils.setError).toHaveBeenCalledWith(
-			'ChunksWebpackPlugin::customFormatTags return invalid object'
-		);
-	});
-});
-
-describe('ChunksWebpackPlugin hasCustomFormatTags', () => {
-	it('Should call the hasCustomFormatTags function', () => {
-		expect(chunksWebpackPlugin.hasCustomFormatTags()).toBe(true);
-	});
-
-	it('Should call the hasCustomFormatTags function without customFormatTags', () => {
-		chunksWebpackPlugin.options.customFormatTags = false;
-
-		expect(chunksWebpackPlugin.hasCustomFormatTags()).toBe(false);
-	});
-});
-
 describe('ChunksWebpackPlugin getPublicPath', () => {
 	it('Should call the getPublicPath function', () => {
-		chunksWebpackPlugin.publicPathNeedEndingSlash = jest.fn();
+		chunksWebpackPlugin.isPublicPathNeedsEndingSlash = jest.fn();
 
 		chunksWebpackPlugin.compilation = compilationWebpack;
 
 		expect(chunksWebpackPlugin.getPublicPath()).toBe('/dist');
-		expect(chunksWebpackPlugin.publicPathNeedEndingSlash).toHaveBeenCalledWith(
+		expect(chunksWebpackPlugin.isPublicPathNeedsEndingSlash).toHaveBeenCalledWith(
 			compilationWebpack.options.output.publicPath
 		);
 	});
 
 	it('Should call the getPublicPath function and update the publicPath', () => {
-		mockPublicPathNeedEndingSlash(chunksWebpackPlugin, true);
+		mockIsPublicPathNeedsEndingSlash(chunksWebpackPlugin, true);
 
 		chunksWebpackPlugin.compilation = compilationWebpack;
 
 		expect(chunksWebpackPlugin.getPublicPath()).toBe('/dist/');
-		expect(chunksWebpackPlugin.publicPathNeedEndingSlash).toHaveBeenCalledWith(
+		expect(chunksWebpackPlugin.isPublicPathNeedsEndingSlash).toHaveBeenCalledWith(
 			compilationWebpack.options.output.publicPath
 		);
 	});
 
 	it('Should call the getPublicPath function with empty string', () => {
-		chunksWebpackPlugin.publicPathNeedEndingSlash = jest.fn();
+		chunksWebpackPlugin.isPublicPathNeedsEndingSlash = jest.fn();
 
 		chunksWebpackPlugin.compilation = compilationWebpack;
 		chunksWebpackPlugin.compilation.options.output.publicPath = undefined;
@@ -339,64 +305,6 @@ describe('ChunksWebpackPlugin getOutputPath', () => {
 	});
 });
 
-describe('ChunksWebpackPlugin isValidOutputPath', () => {
-	it('Should call the isValidOutputPath function with absolute path', () => {
-		mockIsAbsolutePath(true);
-
-		expect(chunksWebpackPlugin.isValidOutputPath()).toBe(true);
-		expect(utils.isAbsolutePath).toHaveBeenCalledWith(chunksWebpackPlugin.options.outputPath);
-	});
-
-	it('Should call the isValidOutputPath function without absolute path', () => {
-		mockIsAbsolutePath(false);
-
-		expect(chunksWebpackPlugin.isValidOutputPath()).toBe(false);
-	});
-});
-
-describe('ChunksWebpackPlugin generateTags', () => {
-	it('Should call the generateTags function', () => {
-		expect(chunksWebpackPlugin.generateTags(chunks)).toEqual({
-			styles:
-				'<link rel="stylesheet" href="css/app-a.css" /><link rel="stylesheet" href="css/app-b.css" />',
-			scripts: '<script src="js/app-a.js"></script><script src="js/app-b.js"></script>'
-		});
-	});
-
-	it('Should call the generateTags function with custom templateScript', () => {
-		chunksWebpackPlugin.options.templateScript = '<script defer src="{{chunk}}"></script>';
-
-		expect(chunksWebpackPlugin.generateTags(chunks)).toEqual({
-			styles:
-				'<link rel="stylesheet" href="css/app-a.css" /><link rel="stylesheet" href="css/app-b.css" />',
-			scripts:
-				'<script defer src="js/app-a.js"></script><script defer src="js/app-b.js"></script>'
-		});
-	});
-});
-
-describe('ChunksWebpackPlugin apply', () => {
-	it('Should call the apply function', () => {
-		const compilerWebpack = {
-			hooks: {
-				emit: {
-					tap: () => {}
-				}
-			}
-		};
-		compilerWebpack.hooks.emit.tap = jest.fn();
-
-		chunksWebpackPlugin.apply(compilerWebpack);
-
-		expect(compilerWebpack.hooks.emit.tap).toHaveBeenCalled();
-	});
-});
-
-describe('ChunksWebpackPlugin publicPathNeedEndingSlash', () => {
-	it('Should call the publicPathNeedEndingSlash function', () => {
-		expect(chunksWebpackPlugin.publicPathNeedEndingSlash('/dist')).toBe(true);
-	});
-});
 describe('ChunksWebpackPlugin getEntryNames', () => {
 	it('Should call the getEntryNames function', () => {
 		chunksWebpackPlugin.compilation = compilationWebpack;
@@ -422,12 +330,109 @@ describe('ChunksWebpackPlugin getFiles', () => {
 	});
 });
 
+describe('ChunksWebpackPlugin getHtmlTags', () => {
+	it('Should call the getHtmlTags function with default generate tag', () => {
+		chunksWebpackPlugin.hasCustomFormatTags = jest.fn();
+		chunksWebpackPlugin.formatTags = jest.fn();
+
+		chunksWebpackPlugin.getHtmlTags({ chunks, files });
+
+		expect(chunksWebpackPlugin.hasCustomFormatTags).toHaveBeenCalled();
+		expect(chunksWebpackPlugin.formatTags).toHaveBeenCalled();
+	});
+
+	it('Should call the getHtmlTags function with customFormatTags', () => {
+		mockHasCustomFormatTags(chunksWebpackPlugin, true);
+		mockCustomFormatTags(chunksWebpackPlugin, htmlTags);
+		mockIsValidCustomFormatTagsDatas(chunksWebpackPlugin, true);
+
+		chunksWebpackPlugin.getHtmlTags({ chunks, files });
+
+		expect(chunksWebpackPlugin.hasCustomFormatTags).toHaveBeenCalled();
+		expect(chunksWebpackPlugin.options.customFormatTags).toHaveBeenCalledWith(chunks, files);
+		expect(chunksWebpackPlugin.isValidCustomFormatTagsDatas).toHaveBeenCalledWith(htmlTags);
+	});
+
+	it('Should call the getHtmlTags function with customFormatTags and invalid return', () => {
+		mockHasCustomFormatTags(chunksWebpackPlugin, true);
+		mockCustomFormatTags(chunksWebpackPlugin, htmlTags);
+		utils.setError = jest.fn();
+		mockIsValidCustomFormatTagsDatas(chunksWebpackPlugin, false);
+
+		chunksWebpackPlugin.getHtmlTags({ chunks, files });
+
+		expect(chunksWebpackPlugin.hasCustomFormatTags).toHaveBeenCalled();
+		expect(chunksWebpackPlugin.isValidCustomFormatTagsDatas).toHaveBeenCalledWith(htmlTags);
+		expect(utils.setError).toHaveBeenCalledWith(
+			'ChunksWebpackPlugin::customFormatTags return invalid object'
+		);
+	});
+});
+
 describe('ChunksWebpackPlugin sortsChunksByType', () => {
 	it('Should call the sortsChunksByType function', () => {
 		expect(chunksWebpackPlugin.sortsChunksByType(files)).toEqual({
 			scripts: ['js/app-a.js', 'js/app-b.js'],
 			styles: ['css/app-a.css', 'css/app-b.css']
 		});
+	});
+});
+
+describe('ChunksWebpackPlugin formatTags', () => {
+	it('Should call the formatTags function', () => {
+		expect(chunksWebpackPlugin.formatTags(chunks)).toEqual({
+			styles:
+				'<link rel="stylesheet" href="css/app-a.css" /><link rel="stylesheet" href="css/app-b.css" />',
+			scripts: '<script src="js/app-a.js"></script><script src="js/app-b.js"></script>'
+		});
+	});
+
+	it('Should call the formatTags function with custom templateScript', () => {
+		chunksWebpackPlugin.options.templateScript = '<script defer src="{{chunk}}"></script>';
+
+		expect(chunksWebpackPlugin.formatTags(chunks)).toEqual({
+			styles:
+				'<link rel="stylesheet" href="css/app-a.css" /><link rel="stylesheet" href="css/app-b.css" />',
+			scripts:
+				'<script defer src="js/app-a.js"></script><script defer src="js/app-b.js"></script>'
+		});
+	});
+});
+
+describe('ChunksWebpackPlugin hasCustomFormatTags', () => {
+	it('Should call the hasCustomFormatTags function', () => {
+		expect(chunksWebpackPlugin.hasCustomFormatTags()).toBe(true);
+	});
+
+	it('Should call the hasCustomFormatTags function without customFormatTags', () => {
+		chunksWebpackPlugin.options.customFormatTags = false;
+
+		expect(chunksWebpackPlugin.hasCustomFormatTags()).toBe(false);
+	});
+});
+
+describe('ChunksWebpackPlugin isPublicPathNeedsEndingSlash', () => {
+	it('Should call the isPublicPathNeedsEndingSlash function without ending slash', () => {
+		expect(chunksWebpackPlugin.isPublicPathNeedsEndingSlash('/dist')).toBe(true);
+	});
+
+	it('Should call the isPublicPathNeedsEndingSlash function with ending slash', () => {
+		expect(chunksWebpackPlugin.isPublicPathNeedsEndingSlash('/dist/')).toBe(false);
+	});
+});
+
+describe('ChunksWebpackPlugin isValidOutputPath', () => {
+	it('Should call the isValidOutputPath function with absolute path', () => {
+		mockIsAbsolutePath(true);
+
+		expect(chunksWebpackPlugin.isValidOutputPath()).toBe(true);
+		expect(utils.isAbsolutePath).toHaveBeenCalledWith(chunksWebpackPlugin.options.outputPath);
+	});
+
+	it('Should call the isValidOutputPath function without absolute path', () => {
+		mockIsAbsolutePath(false);
+
+		expect(chunksWebpackPlugin.isValidOutputPath()).toBe(false);
 	});
 });
 
@@ -445,43 +450,6 @@ describe('ChunksWebpackPlugin isValidExtensionByType', () => {
 describe('ChunksWebpackPlugin isValidCustomFormatTagsDatas', () => {
 	it('Should call the isValidCustomFormatTagsDatas function', () => {
 		expect(chunksWebpackPlugin.isValidCustomFormatTagsDatas(htmlTags)).toBe(true);
-	});
-});
-
-describe('ChunksWebpackPlugin createHtmlChunksFiles', () => {
-	it('Should call the createHtmlChunksFiles function', () => {
-		utils.writeFile = jest.fn();
-
-		chunksWebpackPlugin.outputPath = '/dist/templates';
-		chunksWebpackPlugin.createHtmlChunksFiles({
-			entryName: 'app-a',
-			htmlTags: {
-				styles: '',
-				scripts: ''
-			}
-		});
-
-		expect(utils.writeFile).not.toHaveBeenCalled();
-	});
-
-	it('Should call the createHtmlChunksFiles function without scripts and styles', () => {
-		utils.writeFile = jest.fn();
-
-		chunksWebpackPlugin.outputPath = '/dist/templates';
-		chunksWebpackPlugin.createHtmlChunksFiles({
-			entryName: 'app-a',
-			htmlTags
-		});
-
-		expect(utils.writeFile).toHaveBeenCalledTimes(2);
-		expect(utils.writeFile).toHaveBeenCalledWith({
-			outputPath: '/dist/templates/app-a-scripts.html',
-			output: htmlTags.scripts
-		});
-		expect(utils.writeFile).toHaveBeenCalledWith({
-			outputPath: '/dist/templates/app-a-styles.html',
-			output: htmlTags.styles
-		});
 	});
 });
 
@@ -520,5 +488,42 @@ describe('ChunksWebpackPlugin createChunksManifestFile', () => {
 		expect(chunksWebpackPlugin.compilation.assets['chunks-manifest.json'].size()).toBe(
 			output.length
 		);
+	});
+});
+
+describe('ChunksWebpackPlugin createHtmlChunksFiles', () => {
+	it('Should call the createHtmlChunksFiles function', () => {
+		utils.writeFile = jest.fn();
+
+		chunksWebpackPlugin.outputPath = '/dist/templates';
+		chunksWebpackPlugin.createHtmlChunksFiles({
+			entryName: 'app-a',
+			htmlTags: {
+				styles: '',
+				scripts: ''
+			}
+		});
+
+		expect(utils.writeFile).not.toHaveBeenCalled();
+	});
+
+	it('Should call the createHtmlChunksFiles function without scripts and styles', () => {
+		utils.writeFile = jest.fn();
+
+		chunksWebpackPlugin.outputPath = '/dist/templates';
+		chunksWebpackPlugin.createHtmlChunksFiles({
+			entryName: 'app-a',
+			htmlTags
+		});
+
+		expect(utils.writeFile).toHaveBeenCalledTimes(2);
+		expect(utils.writeFile).toHaveBeenCalledWith({
+			outputPath: '/dist/templates/app-a-scripts.html',
+			output: htmlTags.scripts
+		});
+		expect(utils.writeFile).toHaveBeenCalledWith({
+			outputPath: '/dist/templates/app-a-styles.html',
+			output: htmlTags.styles
+		});
 	});
 });
