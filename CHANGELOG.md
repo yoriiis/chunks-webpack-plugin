@@ -4,11 +4,12 @@
 
 ### Updates
 
-* Improve Jest tests
+* Split code into small functions to facilitate testing
+* Complete rewrite of tests
 
 ### Breaking changes
 
-* Change default value of `outputPath` from `default` to `null`
+* Change default value of `outputPath` constructor option from `default` to `null`. If the parameter is omit or `null`, the plugin will use the [`options.output.path`](https://webpack.js.org/configuration/output/#outputpath) option from the Webpack configuration.
 
 ## 4.0.3
 

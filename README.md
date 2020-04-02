@@ -83,9 +83,9 @@ You can pass configuration options to `ChunksWebpackPlugin`. Allowed values are 
 
 ### `outputPath`
 
-`string = 'default'`
+`string = null`
 
-Tells plugin whether to personalize the output path of generated files (need absolute path). By default the plugin will use `output.path` from the Webpack configuration.
+Tells plugin whether to personalize the output path of generated files (need absolute path). By default the plugin will use `options.output.path` from the [Webpack configuration](https://webpack.js.org/configuration/output/#outputpath).
 
 ```javascript
 new ChunksWebpackPlugin({
