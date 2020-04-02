@@ -238,12 +238,12 @@ module.exports = class ChunksWebpackPlugin {
 	 */
 	generateTags (chunks) {
 		return {
-			styles: chunks.styles.map(chunkCSS =>
-				this.options.templateStyle.replace('{{chunk}}', chunkCSS)
-			),
-			scripts: chunks.scripts.map(chunkJS =>
-				this.options.templateScript.replace('{{chunk}}', chunkJS)
-			)
+			styles: chunks.styles
+				.map(chunkCSS => this.options.templateStyle.replace('{{chunk}}', chunkCSS))
+				.join(''),
+			scripts: chunks.scripts
+				.map(chunkJS => this.options.templateScript.replace('{{chunk}}', chunkJS))
+				.join('')
 		};
 	}
 
