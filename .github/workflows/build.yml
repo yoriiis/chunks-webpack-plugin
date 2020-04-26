@@ -48,4 +48,4 @@ jobs:
       - name: Build
         run: |
           npm run build:tsc
-          npm run build:examples
+          npm run build:example
