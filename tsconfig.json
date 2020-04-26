@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "outDir": "./lib",
+        "allowJs": true,
+        "target": "es5",
+        "lib": ["es6"],
+        "strict": true,
+        "strictNullChecks": true,
+        "moduleResolution": "node"
+    },
+    "types": ["node"],
+    "include": [
+        "./src/**/*"
+    ],
+    "exclude": [
+        "./src/__tests__/**/*.js",
+        "./src/__mocks__/**/*.js"
+    ]
+}

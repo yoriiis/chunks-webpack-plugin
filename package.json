@@ -14,10 +14,12 @@
 	"repository": "https://github.com/yoriiis/chunks-webpack-plugin.git",
 	"license": "MIT",
 	"author": "Yoriiis aka Joris DANIEL",
-	"main": "src/index.js",
+	"main": "./lib/index.js",
+	"types": "./src/index.d.ts",
 	"scripts": {
 		"analyze:bundle": "webpack --config=./example/webpack.config.js --mode=production --profile --json > webpack-stats.json && webpack-bundle-analyzer ./webpack-stats.json ./ -p 1664",
 		"build:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=production",
+		"build:tsc": "tsc",
 		"coverage": "npm run test:coverage && cat ./coverage/lcov.info | coveralls",
 		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --config=./example/webpack.config.js --mode=development --hidden=node_modules/",
 		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development",
@@ -45,11 +47,24 @@
 						"node": "8.11.2"
 					}
 				}
+			],
+			[
+				"@babel/preset-typescript"
 			]
 		]
 	},
 	"prettier": {
-		"printWidth": 100
+		"printWidth": 100,
+		"overrides": [
+			{
+				"files": "*.md",
+				"options": {
+					"proseWrap": "preserve",
+					"tabWidth": 2,
+					"useTabs": false
+				}
+			}
+		]
 	},
 	"eslintConfig": {
 		"env": {
@@ -92,7 +107,8 @@
 	},
 	"jest": {
 		"moduleFileExtensions": [
-			"js"
+			"js",
+			"ts"
 		],
 		"modulePaths": [
 			"./src"
@@ -106,11 +122,15 @@
 	"devDependencies": {
 		"@babel/core": "^7.9.0",
 		"@babel/preset-env": "^7.9.0",
+		"@babel/preset-typescript": "^7.9.0",
 		"@stryker-mutator/babel-transpiler": "^3.0.2",
 		"@stryker-mutator/core": "^3.0.2",
 		"@stryker-mutator/javascript-mutator": "^3.0.2",
 		"@stryker-mutator/jest-runner": "^3.0.2",
 		"@stryker-mutator/webpack-transpiler": "^3.0.2",
+		"@types/node": "^13.13.2",
+		"@types/tapable": "^1.0.5",
+		"@types/webpack": "^4.41.12",
 		"babel-eslint": "^10.1.0",
 		"babel-loader": "^8.1.0",
 		"babel-plugin-dynamic-import-node": "^2.3.0",
@@ -130,6 +150,7 @@
 		"prettier-eslint": "^9.0.1",
 		"sanitize.css": "^11.0.0",
 		"terser-webpack-plugin": "^2.3.5",
+		"typescript": "^3.8.3",
 		"vlitejs": "^3.0.4",
 		"webpack": "^4.42.1",
 		"webpack-bundle-analyzer": "^3.6.1",
