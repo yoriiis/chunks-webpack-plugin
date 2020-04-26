@@ -1,6 +1,6 @@
 'use strict';
 
-import utils from '../utils';
+import * as utils from '../utils';
 import fse from 'fs-extra';
 import path from 'path';
 

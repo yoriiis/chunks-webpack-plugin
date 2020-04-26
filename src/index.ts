@@ -170,7 +170,7 @@ module.exports = class ChunksWebpackPlugin {
 	 */
 	getHtmlTags({ chunks, files }: { chunks: Chunks; files: Array<string> }): undefined | HtmlTags {
 		// The user prefers to generate his own HTML tags, use his object
-		if (this.options.customFormatTags instanceof Function) {
+		if (typeof this.options.customFormatTags === 'function') {
 			const htmlTags = this.options.customFormatTags(chunks, files);
 
 			// Check if datas are correctly formatted

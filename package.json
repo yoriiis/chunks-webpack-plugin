@@ -25,7 +25,7 @@
 		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development",
 		"test": "jest --verbose --coverage",
 		"test:coverage": "jest --coverage",
-		"test:eslint": "eslint . --ignore-pattern coverage --ignore-pattern reports --ignore-pattern example/dist",
+		"test:eslint": "eslint . --ignore-pattern coverage --ignore-pattern reports --ignore-pattern example/dist --ignore-pattern lib",
 		"test:markdown": "markdownlint '**/*.md' --ignore node_modules",
 		"test:mutation": "stryker run",
 		"test:watch": "jest --watchAll --coverage"
@@ -128,6 +128,7 @@
 		"@stryker-mutator/javascript-mutator": "^3.0.2",
 		"@stryker-mutator/jest-runner": "^3.0.2",
 		"@stryker-mutator/webpack-transpiler": "^3.0.2",
+		"@types/fs-extra": "^8.1.0",
 		"@types/node": "^13.13.2",
 		"@types/tapable": "^1.0.5",
 		"@types/webpack": "^4.41.12",

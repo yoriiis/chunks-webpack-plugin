@@ -1,5 +1,5 @@
-const path = require('path');
-const fse = require('fs-extra');
+import path from 'path';
+import fse from 'fs-extra';
 
 /**
  * Throw an error
@@ -43,11 +43,6 @@ const writeFile = ({ outputPath, output }: { outputPath: string; output: string 
 /**
  * Export all functions as an object
  */
-declare let utils: object;
+// declare let utils: object;
 
-module.exports = {
-	setError,
-	isAbsolutePath,
-	getFileExtension,
-	writeFile
-};
+export { setError, isAbsolutePath, getFileExtension, writeFile };

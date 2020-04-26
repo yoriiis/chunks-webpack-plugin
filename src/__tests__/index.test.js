@@ -1,7 +1,7 @@
 'use strict';
 
 import ChunksWebpackPlugin from '../index';
-import utils from '../utils';
+import * as utils from '../utils';
 import {
 	mockGetEntryNames,
 	mockGetFiles,
@@ -345,6 +345,7 @@ describe('ChunksWebpackPlugin getHtmlTags', () => {
 	it('Should call the getHtmlTags function with default generate tag', () => {
 		chunksWebpackPlugin.formatTags = jest.fn();
 
+		chunksWebpackPlugin.options.customFormatTags = false;
 		chunksWebpackPlugin.getHtmlTags({ chunks, files });
 
 		expect(chunksWebpackPlugin.formatTags).toHaveBeenCalled();
