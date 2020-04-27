@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 5.0.0
+ * @version 6.0.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -70,7 +70,7 @@ export = class ChunksWebpackPlugin {
 	 *
 	 * @param {Object} compiler The Webpack compiler variable
 	 */
-	apply(compiler: Compiler) {
+	apply(compiler: Compiler): void {
 		compiler.hooks.emit.tap('ChunksWebpackPlugin', this.hookCallback.bind(this));
 	}
 
@@ -79,7 +79,7 @@ export = class ChunksWebpackPlugin {
 	 *
 	 * @param {Object} compilation The Webpack compilation variable
 	 */
-	hookCallback(compilation: object) {
+	hookCallback(compilation: object): void {
 		this.compilation = compilation;
 		this.publicPath = this.getPublicPath();
 		this.outputPath = this.getOutputPath();
@@ -100,7 +100,7 @@ export = class ChunksWebpackPlugin {
 
 	 * @param {String} entryName Entrypoint name
 	 */
-	processEntry(entryName: string) {
+	processEntry(entryName: string): void {
 		const files = this.getFiles(entryName);
 		const chunks = this.sortsChunksByType(files);
 		const htmlTags = this.getHtmlTags({ chunks, files });
@@ -274,7 +274,7 @@ export = class ChunksWebpackPlugin {
 	 * @param {String} entryName Entrypoint name
 	 * @param {Object} chunks List of styles and scripts chunks by entrypoint
 	 */
-	updateManifest({ entryName, chunks }: { entryName: string; chunks: Chunks }) {
+	updateManifest({ entryName, chunks }: { entryName: string; chunks: Chunks }): void {
 		this.manifest[entryName] = {
 			styles: chunks.styles,
 			scripts: chunks.scripts
@@ -285,7 +285,7 @@ export = class ChunksWebpackPlugin {
 	 * Create the chunks manifest file
 	 * Contains all scripts and styles chunks grouped by entrypoint
 	 */
-	createChunksManifestFile() {
+	createChunksManifestFile(): void {
 		// Stringify the content of the manifest
 		const output = JSON.stringify(this.manifest, null, 2);
 
@@ -303,7 +303,13 @@ export = class ChunksWebpackPlugin {
 	 * @param {String} entryName Entrypoint name
 	 * @param {Object} htmlTags Generated HTML of script and styles tags
 	 */
-	createHtmlChunksFiles({ entryName, htmlTags }: { entryName: string; htmlTags: HtmlTags }) {
+	createHtmlChunksFiles({
+		entryName,
+		htmlTags
+	}: {
+		entryName: string;
+		htmlTags: HtmlTags;
+	}): void {
 		if (htmlTags.scripts.length) {
 			utils.writeFile({
 				outputPath: `${this.outputPath}/${entryName}-scripts${this.options.fileExtension}`,
