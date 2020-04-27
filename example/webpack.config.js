@@ -3,7 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserJSPlugin = require('terser-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const ChunksWebpackPlugin = require('../src/index');
+const ChunksWebpackPlugin = require('../lib/index.js');
 
 module.exports = (env, argv) => {
 	const isProduction = argv.mode === 'production';

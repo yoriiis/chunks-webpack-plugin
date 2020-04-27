@@ -1,6 +1,6 @@
 # ChunksWebpackPlugin
 
-![Chunks Webpack Plugin](https://img.shields.io/badge/chunks--webpack--plugin-v5.0.0-546e7a.svg?style=for-the-badge) [![TravisCI](https://img.shields.io/travis/com/yoriiis/chunks-webpack-plugin/master?style=for-the-badge)](https://travis-ci.com/yoriiis/chunks-webpack-plugin) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master) [![Mutation testing badge](https://img.shields.io/endpoint?style=for-the-badge&url=https://badge-api.stryker-mutator.io/github.com/yoriiis/chunks-webpack-plugin/master)](https://dashboard.stryker-mutator.io/reports/github.com/yoriiis/chunks-webpack-plugin/master) ![Node.js](https://img.shields.io/node/v/chunks-webpack-plugin?style=for-the-badge) [![Bundlephobia](https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge)](https://bundlephobia.com/result?p=fela@latest) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin) [![Chat on Discord](https://img.shields.io/badge/chat-on%20discord-7289da.svg?style=for-the-badge)](https://discordapp.com/invite/uC8FkDn)
+![Chunks Webpack Plugin](https://img.shields.io/badge/chunks--webpack--plugin-v6.0.0-546e7a.svg?style=for-the-badge) [![TravisCI](https://img.shields.io/travis/com/yoriiis/chunks-webpack-plugin/master?style=for-the-badge)](https://travis-ci.com/yoriiis/chunks-webpack-plugin) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master) [![Mutation testing badge](https://img.shields.io/endpoint?style=for-the-badge&url=https://badge-api.stryker-mutator.io/github.com/yoriiis/chunks-webpack-plugin/master)](https://dashboard.stryker-mutator.io/reports/github.com/yoriiis/chunks-webpack-plugin/master) ![Node.js](https://img.shields.io/node/v/chunks-webpack-plugin?style=for-the-badge) [![Bundlephobia](https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge)](https://bundlephobia.com/result?p=fela@latest) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin) [![Chat on Discord](https://img.shields.io/badge/chat-on%20discord-7289da.svg?style=for-the-badge)](https://discordapp.com/invite/uC8FkDn)
 
 The `ChunksWebpackPlugin` create HTML files to serve your webpack bundles. It is very convenient with multiple entry points and it works without configuration.
 
@@ -42,26 +42,24 @@ The project includes a minimalist example in the `./example` directory. Run the 
 
 The plugin will generate for you two HTML5 files for each entry points. Each filename contains the entrypoint name, `{{entry}}` is dynamically replace.
 
-* `{{entry}}-styles.html`: contains all HTML `<link>` tags
-* `{{entry}}-scripts.html`: contains all HTML `<script>` tags
+- `{{entry}}-styles.html`: contains all HTML `<link>` tags
+- `{{entry}}-scripts.html`: contains all HTML `<script>` tags
 
 You are free to call where you want, each HTML files in the associated templates corresponding to an entrypoint.
 
 Just add the plugin to your webpack config as follows:
 
 ```javascript
-var ChunksWebpackPlugin = require('chunks-webpack-plugin');
-var path = require('path');
+var ChunksWebpackPlugin = require("chunks-webpack-plugin");
+var path = require("path");
 
 module.exports = {
-  entry: 'main.js',
+  entry: "main.js",
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: 'main.js'
+    path: path.resolve(__dirname, "./dist"),
+    filename: "main.js"
   },
-  plugins: [
-    new ChunksWebpackPlugin()
-  ]
+  plugins: [new ChunksWebpackPlugin()]
 };
 ```
 
@@ -69,7 +67,7 @@ This will generate the following HTML files in the `./dist/` directory. Defaut `
 
 ```html
 <!--main-styles.html-->
-<link rel="stylesheet" href="main.css"/>
+<link rel="stylesheet" href="main.css" />
 ```
 
 ```html
@@ -89,8 +87,8 @@ Tells plugin whether to personalize the output path of generated files (need abs
 
 ```javascript
 new ChunksWebpackPlugin({
-    outputPath: path.resolve(__dirname, `./templates`)
-})
+  outputPath: path.resolve(__dirname, `./templates`)
+});
 ```
 
 ### `fileExtension`
@@ -101,8 +99,8 @@ Tells plugin whether to personalize the extension of generated files.
 
 ```javascript
 new ChunksWebpackPlugin({
-    fileExtension: '.php'
-})
+  fileExtension: ".php"
+});
 ```
 
 ### `templateStyle`
@@ -111,12 +109,12 @@ new ChunksWebpackPlugin({
 
 Tells plugin whether to personalize the default template for HTML `<style>` tags. Add attributes, a CDN prefix or something else.
 
->Keep `{{chunk}}` placeholder, it is automatically replace by the Webpack public path and chunk filename.
+> Keep `{{chunk}}` placeholder, it is automatically replace by the Webpack public path and chunk filename.
 
 ```javascript
 new ChunksWebpackPlugin({
-    templateStyle: `<link rel="stylesheet" href="{{chunk}}" />`
-})
+  templateStyle: `<link rel="stylesheet" href="{{chunk}}" />`
+});
 ```
 
 ### `templateScript`
@@ -125,17 +123,17 @@ new ChunksWebpackPlugin({
 
 Tells plugin whether to personalize the default template for HTML `<script>` tags. Add attributes, a CDN prefix or something else.
 
->Keep `{{chunk}}` placeholder, it is automatically replace by the Webpack public path and chunk filename.
+> Keep `{{chunk}}` placeholder, it is automatically replace by the Webpack public path and chunk filename.
 
 ```javascript
 new ChunksWebpackPlugin({
-    templateScript: `<script src="{{chunk}}"></script>`
-})
+  templateScript: `<script src="{{chunk}}"></script>`
+});
 ```
 
 ### `customFormatTags`
 
-`false || function (chunksSorted, chunkGroup)`
+`false || function (chunksSorted, files)`
 
 Tells plugin whether to personalize the default behavior for generate your own templates. The function is called for each entry points. Custom behavior can also be add for a specific entrypoint if necessary. The arrow function syntax allow you to access the class properties.
 
@@ -147,17 +145,17 @@ The `customFormatTags` function has two parameters:
 
 List of chunks sorted by type: `styles` and `scripts`.
 
-#### `chunkGroup`
+#### `files`
 
-`object`
+`Array`
 
-Webpack `chunkGroup` object for each entry points.
+List of files unsorted for each entry points.
 
 > This function overrides the default behavior, you need to generate yourself your templates, like the example below:
 
 ```javascript
 new ChunksWebpackPlugin({
-    customFormatTags: (chunksSorted, chunkGroup) => {
+    customFormatTags: (chunksSorted, files) => {
         // Generate all HTML style tags with CDN prefix
         const styles = chunksSorted.styles..map(chunkCss =>
           `<link rel="stylesheet" href="https://cdn.domain.com/${chunkCss}" />`
@@ -177,8 +175,8 @@ The function need to return an object with the following format:
 
 ```json
 {
-    "styles": "",
-    "scripts": ""
+  "styles": "",
+  "scripts": ""
 }
 ```
 
@@ -190,8 +188,8 @@ Tells plugin whether to generate the `chunks-manifest.json` file which contains 
 
 ```javascript
 new ChunksWebpackPlugin({
-    generateChunksManifest: false
-})
+  generateChunksManifest: false
+});
 ```
 
 Example of the output of `chunks-manifest.json` file:
@@ -199,24 +197,12 @@ Example of the output of `chunks-manifest.json` file:
 ```json
 {
   "app-a": {
-    "styles": [
-      "/dist/css/vendors~app-a~app-b.css",
-      "/dist/css/app-a.css"
-    ],
-    "scripts": [
-      "/dist/js/vendors~app-a~app-b.js",
-      "/dist/js/app-a.js"
-    ]
+    "styles": ["/dist/css/vendors~app-a~app-b.css", "/dist/css/app-a.css"],
+    "scripts": ["/dist/js/vendors~app-a~app-b.js", "/dist/js/app-a.js"]
   },
   "app-b": {
-    "styles": [
-      "/dist/css/vendors~app-a~app-b.css",
-      "/dist/css/app-b.css"
-    ],
-    "scripts": [
-      "/dist/js/vendors~app-a~app-b.js",
-      "/dist/js/app-b.js"
-    ]
+    "styles": ["/dist/css/vendors~app-a~app-b.css", "/dist/css/app-b.css"],
+    "scripts": ["/dist/js/vendors~app-a~app-b.js", "/dist/js/app-b.js"]
   }
 }
 ```
@@ -229,8 +215,8 @@ Tells plugin whether to generate HTML files which contains styles and scripts ta
 
 ```javascript
 new ChunksWebpackPlugin({
-    generateChunksManifest: true
-})
+  generateChunksManifest: true
+});
 ```
 
 ### Caching
@@ -238,14 +224,14 @@ new ChunksWebpackPlugin({
 With [Webpack caching](https://webpack.js.org/guides/caching) option, it is very convenient to generate HTML files which includes path with hash.
 
 ```javascript
-var ChunksWebpackPlugin = require('chunks-webpack-plugin');
-var path = require('path');
+var ChunksWebpackPlugin = require("chunks-webpack-plugin");
+var path = require("path");
 
 module.exports = {
-  entry: 'main.js',
+  entry: "main.js",
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.[contenthash].js'
+    path: path.resolve(__dirname, "./dist"),
+    filename: "bundle.[contenthash].js"
   },
   plugins: [new ChunksWebpackPlugin()]
 };
@@ -255,7 +241,7 @@ This will generate the following HTML files in `./dist/` folder:
 
 ```html
 <!--main-styles.html-->
-<link rel="stylesheet" href="main.72dd90acdd3d4a4a1fd4.css"/>
+<link rel="stylesheet" href="main.72dd90acdd3d4a4a1fd4.css" />
 ```
 
 ```html
@@ -268,17 +254,17 @@ This will generate the following HTML files in `./dist/` folder:
 Example of Webpack configuration with multiple entry points which share common codes:
 
 ```javascript
-var ChunksWebpackPlugin = require('chunks-webpack-plugin');
-var path = require('path');
+var ChunksWebpackPlugin = require("chunks-webpack-plugin");
+var path = require("path");
 
 module.exports = {
   entry: {
-      home: 'home.js',
-      news: 'news.js'
+    home: "home.js",
+    news: "news.js"
   },
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.js'
+    path: path.resolve(__dirname, "./dist"),
+    filename: "bundle.js"
   },
   plugins: [new ChunksWebpackPlugin()]
 };
@@ -288,8 +274,8 @@ The plugin will generate all files in `./dist/` folder:
 
 ```html
 <!--home-styles.html-->
-<link rel="stylesheet" href="vendors~home~news.css"/>
-<link rel="stylesheet" href="home.css"/>
+<link rel="stylesheet" href="vendors~home~news.css" />
+<link rel="stylesheet" href="home.css" />
 ```
 
 ```html
@@ -300,8 +286,8 @@ The plugin will generate all files in `./dist/` folder:
 
 ```html
 <!--news-styles.html-->
-<link rel="stylesheet" href="vendors~home~news.css"/>
-<link rel="stylesheet" href="news.css"/>
+<link rel="stylesheet" href="vendors~home~news.css" />
+<link rel="stylesheet" href="news.css" />
 ```
 
 ```html

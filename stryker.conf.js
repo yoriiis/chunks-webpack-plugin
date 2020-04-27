@@ -2,12 +2,18 @@
  * @type {import('@stryker-mutator/api/core').StrykerOptions}
  */
 module.exports = {
-	mutator: 'javascript',
+	mutator: 'typescript',
 	packageManager: 'npm',
 	testRunner: 'jest',
-	coverageAnalysis: 'all',
+	coverageAnalysis: 'off',
+	tsconfigFile: 'tsconfig.json',
 	reporters: ['dashboard', 'html', 'clear-text', 'progress'],
-	mutate: ['./src/**/*.js', '!./src/__tests__/**/*.js', '!./src/__mocks__/**/*.js'],
+	mutate: [
+		'./src/**/*.js',
+		'./src/**/*.ts',
+		'!./src/__tests__/**/*.js',
+		'!./src/__mocks__/**/*.js'
+	],
 	thresholds: {
 		high: 80,
 		low: 60,

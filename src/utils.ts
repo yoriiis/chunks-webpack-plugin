@@ -1,12 +1,12 @@
-const path = require('path');
-const fse = require('fs-extra');
+import path = require('path');
+import fse = require('fs-extra');
 
 /**
  * Throw an error
  *
  * @param {String} message Text to display in the error
  */
-const setError = message => {
+const setError = (message: string): never => {
 	throw new Error(message);
 };
 
@@ -15,7 +15,7 @@ const setError = message => {
  *
  * @param {String} currentPath Path
  */
-const isAbsolutePath = currentPath => {
+const isAbsolutePath = (currentPath: string): boolean => {
 	return path.isAbsolute(currentPath);
 };
 
@@ -26,7 +26,7 @@ const isAbsolutePath = currentPath => {
  *
  * @returns {String} Extension of the filename
  */
-const getFileExtension = file => {
+const getFileExtension = (file: string): string => {
 	return path.extname(file).substr(1);
 };
 
@@ -36,16 +36,11 @@ const getFileExtension = file => {
  * @param {String} outputPath The output path of the file
  * @param {String} output The output of the file
  */
-const writeFile = ({ outputPath, output }) => {
+const writeFile = ({ outputPath, output }: { outputPath: string; output: string }) => {
 	fse.outputFileSync(outputPath, output);
 };
 
 /**
  * Export all functions as an object
  */
-module.exports = {
-	setError,
-	isAbsolutePath,
-	getFileExtension,
-	writeFile
-};
+export = { setError, isAbsolutePath, getFileExtension, writeFile };

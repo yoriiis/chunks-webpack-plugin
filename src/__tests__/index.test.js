@@ -343,12 +343,11 @@ describe('ChunksWebpackPlugin getFiles', () => {
 
 describe('ChunksWebpackPlugin getHtmlTags', () => {
 	it('Should call the getHtmlTags function with default generate tag', () => {
-		chunksWebpackPlugin.hasCustomFormatTags = jest.fn();
 		chunksWebpackPlugin.formatTags = jest.fn();
 
+		chunksWebpackPlugin.options.customFormatTags = false;
 		chunksWebpackPlugin.getHtmlTags({ chunks, files });
 
-		expect(chunksWebpackPlugin.hasCustomFormatTags).toHaveBeenCalled();
 		expect(chunksWebpackPlugin.formatTags).toHaveBeenCalled();
 	});
 
@@ -359,7 +358,6 @@ describe('ChunksWebpackPlugin getHtmlTags', () => {
 
 		chunksWebpackPlugin.getHtmlTags({ chunks, files });
 
-		expect(chunksWebpackPlugin.hasCustomFormatTags).toHaveBeenCalled();
 		expect(chunksWebpackPlugin.options.customFormatTags).toHaveBeenCalledWith(chunks, files);
 		expect(chunksWebpackPlugin.isValidCustomFormatTagsDatas).toHaveBeenCalledWith(htmlTags);
 	});
@@ -372,7 +370,6 @@ describe('ChunksWebpackPlugin getHtmlTags', () => {
 
 		chunksWebpackPlugin.getHtmlTags({ chunks, files });
 
-		expect(chunksWebpackPlugin.hasCustomFormatTags).toHaveBeenCalled();
 		expect(chunksWebpackPlugin.isValidCustomFormatTagsDatas).toHaveBeenCalledWith(htmlTags);
 		expect(utils.setError).toHaveBeenCalledWith(
 			'ChunksWebpackPlugin::customFormatTags return invalid object'
@@ -411,18 +408,6 @@ describe('ChunksWebpackPlugin formatTags', () => {
 			scripts:
 				'<script defer src="https://cdn.domain.com/js/app-a.js"></script><script defer src="https://cdn.domain.com/js/app-b.js"></script><script defer src="https://cdn.domain.com/js/app-c.js"></script>'
 		});
-	});
-});
-
-describe('ChunksWebpackPlugin hasCustomFormatTags', () => {
-	it('Should call the hasCustomFormatTags function', () => {
-		expect(chunksWebpackPlugin.hasCustomFormatTags()).toBe(true);
-	});
-
-	it('Should call the hasCustomFormatTags function without customFormatTags', () => {
-		chunksWebpackPlugin.options.customFormatTags = false;
-
-		expect(chunksWebpackPlugin.hasCustomFormatTags()).toBe(false);
 	});
 });
 
