@@ -9,6 +9,14 @@
 		"split chunks",
 		"webpack"
 	],
+	"files": [
+		"src/index.ts",
+		"src/utils.ts",
+		"lib/index.d.ts",
+		"lib/utils.d.ts",
+		"lib/index.js",
+		"lib/utils.js"
+	],
 	"homepage": "https://github.com/yoriiis/chunks-webpack-plugin",
 	"bugs": "https://github.com/yoriiis/chunks-webpack-plugin/issues",
 	"repository": "https://github.com/yoriiis/chunks-webpack-plugin.git",
