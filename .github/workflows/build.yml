@@ -4,10 +4,14 @@ on:
   - push
   - pull_request
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      matrix:
+        node-version: [8.x, 12.x]
     steps:
       - uses: actions/checkout@v2
 
@@ -25,7 +29,7 @@ jobs:
 
       - uses: actions/setup-node@v1
         with:
-          node-version: 12.14.0
+          node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
         run: npm ci
@@ -45,7 +49,37 @@ jobs:
       - name: Test Mutation
         run: npm run test:mutation
 
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v1
+        # if: github.ref == 'refs/heads/master' &&
+        #     github.repository == 'yoriiis/tumblr-builder' &&
+        #     github.event_name != 'pull_request'
+        with:
+          name: coverage
+          path: coverage
+
       - name: Build
         run: |
           npm run build:tsc
           npm run build:example
+
+  deploy-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    # if: success() &&
+    #     github.ref == 'refs/heads/master' &&
+    #     github.repository == 'yoriiis/tumblr-builder' &&
+    #     github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: coverage
+
+      - name: Deploy coveralls
+        run: |
+          npm i -g coveralls
+          coveralls < coverage/lcov.info
