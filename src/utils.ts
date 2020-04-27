@@ -1,5 +1,5 @@
-import path from 'path';
-import fse from 'fs-extra';
+import path = require('path');
+import fse = require('fs-extra');
 
 /**
  * Throw an error
@@ -45,4 +45,4 @@ const writeFile = ({ outputPath, output }: { outputPath: string; output: string 
  */
 // declare let utils: object;
 
-export { setError, isAbsolutePath, getFileExtension, writeFile };
+export = { setError, isAbsolutePath, getFileExtension, writeFile };

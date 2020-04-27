@@ -9,7 +9,7 @@
  **/
 
 import { Compiler } from 'webpack';
-import * as utils from './utils';
+import utils = require('./utils');
 
 interface Chunks {
 	styles: Array<string>;
@@ -28,7 +28,7 @@ interface Manifest {
 	};
 }
 
-module.exports = class ChunksWebpackPlugin {
+export = class ChunksWebpackPlugin {
 	options: {
 		outputPath: null | string;
 		fileExtension: string;
@@ -48,18 +48,19 @@ module.exports = class ChunksWebpackPlugin {
 	 * @param {options}
 	 */
 	constructor(options = {}) {
-		const userOptions = options || {};
-
-		const defaultOptions = {
-			outputPath: null,
-			fileExtension: '.html',
-			templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
-			templateScript: '<script src="{{chunk}}"></script>',
-			customFormatTags: false,
-			generateChunksManifest: false,
-			generateChunksFiles: true
-		};
-		this.options = Object.assign(defaultOptions, userOptions);
+		// Merge default options with user options
+		this.options = Object.assign(
+			{
+				outputPath: null,
+				fileExtension: '.html',
+				templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
+				templateScript: '<script src="{{chunk}}"></script>',
+				customFormatTags: false,
+				generateChunksManifest: false,
+				generateChunksFiles: true
+			},
+			options
+		);
 
 		this.manifest = {};
 	}

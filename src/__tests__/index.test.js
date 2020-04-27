@@ -1,7 +1,7 @@
 'use strict';
 
 import ChunksWebpackPlugin from '../index';
-import * as utils from '../utils';
+import utils from '../utils';
 import {
 	mockGetEntryNames,
 	mockGetFiles,

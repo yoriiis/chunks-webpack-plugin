@@ -1,4 +1,4 @@
-import * as utils from '../utils';
+import utils from '../utils';
 
 /**
  * Mock implementation of getEntryNames function

@@ -114,7 +114,8 @@
 			"./src"
 		],
 		"resetModules": true,
-		"verbose": true
+		"verbose": true,
+		"preset": "ts-jest/presets/js-with-babel"
 	},
 	"dependencies": {
 		"fs-extra": "^8.1.0"
@@ -130,6 +131,7 @@
 		"@stryker-mutator/typescript": "^3.1.0",
 		"@stryker-mutator/webpack-transpiler": "^3.0.2",
 		"@types/fs-extra": "^8.1.0",
+		"@types/jest": "^25.2.1",
 		"@types/node": "^13.13.2",
 		"@types/tapable": "^1.0.5",
 		"@types/webpack": "^4.41.12",
@@ -152,6 +154,7 @@
 		"prettier-eslint": "^9.0.1",
 		"sanitize.css": "^11.0.0",
 		"terser-webpack-plugin": "^2.3.5",
+		"ts-jest": "^25.4.0",
 		"typescript": "^3.8.3",
 		"vlitejs": "^3.0.4",
 		"webpack": "^4.42.1",
