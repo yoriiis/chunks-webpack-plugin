@@ -43,6 +43,4 @@ const writeFile = ({ outputPath, output }: { outputPath: string; output: string 
 /**
  * Export all functions as an object
  */
-// declare let utils: object;
-
 export = { setError, isAbsolutePath, getFileExtension, writeFile };

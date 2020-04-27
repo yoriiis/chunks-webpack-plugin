@@ -50,9 +50,9 @@ jobs:
 
       - name: Upload coverage artifacts
         uses: actions/upload-artifact@v1
-        # if: github.ref == 'refs/heads/master' &&
-        #     github.repository == 'yoriiis/tumblr-builder' &&
-        #     github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/master' &&
+            github.repository == 'yoriiis/chunks-webpack-plugin' &&
+            github.event_name != 'pull_request'
         with:
           name: coverage
           path: coverage
@@ -66,10 +66,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: build
-    # if: success() &&
-    #     github.ref == 'refs/heads/master' &&
-    #     github.repository == 'yoriiis/tumblr-builder' &&
-    #     github.event_name != 'pull_request'
+    if: success() &&
+        github.ref == 'refs/heads/master' &&
+        github.repository == 'yoriiis/chunks-webpack-plugin' &&
+        github.event_name != 'pull_request'
     steps:
       - uses: actions/checkout@v2
 
