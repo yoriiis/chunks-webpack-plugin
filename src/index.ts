@@ -11,16 +11,19 @@
 import { Compiler } from 'webpack';
 import utils = require('./utils');
 
+// Describe the shape of the Chunks object
 interface Chunks {
 	styles: Array<string>;
 	scripts: Array<string>;
 }
 
+// Describe the shape of the HtmlTags object
 interface HtmlTags {
 	styles: string;
 	scripts: string;
 }
 
+// Describe the shape of the Manifest object
 interface Manifest {
 	[key: string]: {
 		styles: Array<string>;
@@ -105,7 +108,7 @@ export = class ChunksWebpackPlugin {
 		const chunks = this.sortsChunksByType(files);
 		const htmlTags = this.getHtmlTags({ chunks, files });
 
-		// Check if HTML chunk files option is enabled
+		// Check if HTML chunk files option is enabled and htmlTags valid
 		if (this.options.generateChunksFiles && htmlTags) {
 			this.createHtmlChunksFiles({ entryName, htmlTags });
 		}

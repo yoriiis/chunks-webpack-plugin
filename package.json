@@ -113,9 +113,9 @@
 		"modulePaths": [
 			"./src"
 		],
+		"preset": "ts-jest/presets/js-with-babel",
 		"resetModules": true,
-		"verbose": true,
-		"preset": "ts-jest/presets/js-with-babel"
+		"verbose": true
 	},
 	"dependencies": {
 		"fs-extra": "^8.1.0"
