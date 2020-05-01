@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 6.0.0
+ * @version 6.0.1
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -198,8 +198,12 @@ export = class ChunksWebpackPlugin {
 	 */
 	sortsChunksByType(files: Array<string>): Chunks {
 		return {
-			styles: files.filter(file => this.isValidExtensionByType(file, 'css')),
-			scripts: files.filter(file => this.isValidExtensionByType(file, 'js'))
+			styles: files
+				.filter(file => this.isValidExtensionByType(file, 'css'))
+				.map(file => `${this.publicPath}${file}`),
+			scripts: files
+				.filter(file => this.isValidExtensionByType(file, 'js'))
+				.map(file => `${this.publicPath}${file}`)
 		};
 	}
 
