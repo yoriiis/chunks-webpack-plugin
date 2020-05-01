@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 6.0.1
+
+### Fixes
+
+- Fix missing `publicPath`
+
 ## 6.0.0
 
 ### New features

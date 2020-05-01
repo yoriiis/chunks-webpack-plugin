@@ -379,9 +379,15 @@ describe('ChunksWebpackPlugin getHtmlTags', () => {
 
 describe('ChunksWebpackPlugin sortsChunksByType', () => {
 	it('Should call the sortsChunksByType function', () => {
+		let publicPath = compilationWebpack.options.output.publicPath;
+		if (publicPath.substr(-1) !== '/') {
+			publicPath = `${publicPath}/`;
+		}
+		chunksWebpackPlugin.publicPath = publicPath;
+
 		expect(chunksWebpackPlugin.sortsChunksByType(files)).toEqual({
-			scripts: ['js/app-a.js', 'js/app-b.js', 'js/app-c.js'],
-			styles: ['css/app-a.css', 'css/app-b.css', 'css/app-c.css']
+			scripts: ['/dist/js/app-a.js', '/dist/js/app-b.js', '/dist/js/app-c.js'],
+			styles: ['/dist/css/app-a.css', '/dist/css/app-b.css', '/dist/css/app-c.css']
 		});
 	});
 });
