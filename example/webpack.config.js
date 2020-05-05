@@ -55,7 +55,7 @@ module.exports = (env, argv) => {
 				fileExtension: '.html',
 				generateChunksManifest: true,
 				generateChunksFiles: true,
-				customFormatTags: (chunksSorted, files) => {
+				customFormatTags: (chunksSorted, Entrypoint) => {
 					// Generate all HTML style tags with CDN prefix
 					const styles = chunksSorted.styles
 						.map(

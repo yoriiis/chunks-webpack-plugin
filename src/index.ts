@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 6.0.1
+ * @version 6.1.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -37,7 +37,7 @@ export = class ChunksWebpackPlugin {
 		fileExtension: string;
 		templateStyle: string;
 		templateScript: string;
-		customFormatTags: boolean | ((chunksSorted: Chunks, files: Array<string>) => HtmlTags);
+		customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: Object) => HtmlTags);
 		generateChunksManifest: boolean;
 		generateChunksFiles: boolean;
 	};
@@ -106,7 +106,8 @@ export = class ChunksWebpackPlugin {
 	processEntry(entryName: string): void {
 		const files = this.getFiles(entryName);
 		const chunks = this.sortsChunksByType(files);
-		const htmlTags = this.getHtmlTags({ chunks, files });
+		const Entrypoint = this.compilation.entrypoints.get(entryName);
+		const htmlTags = this.getHtmlTags({ chunks, Entrypoint });
 
 		// Check if HTML chunk files option is enabled and htmlTags valid
 		if (this.options.generateChunksFiles && htmlTags) {
@@ -168,14 +169,20 @@ export = class ChunksWebpackPlugin {
 	 * Get HTML tags from chunks
 	 *
 	 * @param {Object} chunks Chunks sorted by type (style, script)
-	 * @param {Array} files List of files associated by entrypoints
+	 * @param {Object} Entrypoint Entrypoint object part of a single ChunkGroup
 	 *
 	 * @returns {String} HTML tags by entrypoints
 	 */
-	getHtmlTags({ chunks, files }: { chunks: Chunks; files: Array<string> }): undefined | HtmlTags {
+	getHtmlTags({
+		chunks,
+		Entrypoint
+	}: {
+		chunks: Chunks;
+		Entrypoint: Object;
+	}): undefined | HtmlTags {
 		// The user prefers to generate his own HTML tags, use his object
 		if (typeof this.options.customFormatTags === 'function') {
-			const htmlTags = this.options.customFormatTags(chunks, files);
+			const htmlTags = this.options.customFormatTags(chunks, Entrypoint);
 
 			// Check if datas are correctly formatted
 			if (this.isValidCustomFormatTagsDatas(htmlTags)) {
@@ -268,9 +275,7 @@ export = class ChunksWebpackPlugin {
 		return (
 			htmlTags !== null &&
 			typeof htmlTags.styles !== 'undefined' &&
-			typeof htmlTags.scripts !== 'undefined' &&
-			htmlTags.styles !== '' &&
-			htmlTags.scripts !== ''
+			typeof htmlTags.scripts !== 'undefined'
 		);
 	}
 

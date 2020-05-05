@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 6.1.0
+
+### Fixes
+
+- Fix `isValidCustomFormatTagsDatas` function too strict, `styles` and `scripts` keys can now be empty if no chunks are found.
+
+> HTML files will not be written on the disk for empty chunks
+
+### Updates
+
+- Update the second parameter of the function `customFormatTags`. `files` is replaced by `Entrypoint`. See the dedicated section in the [README](README.md#Entrypoint).
+
 ## 6.0.1
 
 ### Fixes

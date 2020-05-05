@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 6.0.1
+ * @version 6.1.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -29,7 +29,7 @@ declare const _default: {
             fileExtension: string;
             templateStyle: string;
             templateScript: string;
-            customFormatTags: boolean | ((chunksSorted: Chunks, files: string[]) => HtmlTags);
+            customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: Object) => HtmlTags);
             generateChunksManifest: boolean;
             generateChunksFiles: boolean;
         };
@@ -88,13 +88,13 @@ declare const _default: {
          * Get HTML tags from chunks
          *
          * @param {Object} chunks Chunks sorted by type (style, script)
-         * @param {Array} files List of files associated by entrypoints
+         * @param {Object} Entrypoint Entrypoint object part of a single ChunkGroup
          *
          * @returns {String} HTML tags by entrypoints
          */
-        getHtmlTags({ chunks, files }: {
+        getHtmlTags({ chunks, Entrypoint }: {
             chunks: Chunks;
-            files: string[];
+            Entrypoint: Object;
         }): HtmlTags | undefined;
         /**
          * Sorts all chunks by type (styles or scripts)

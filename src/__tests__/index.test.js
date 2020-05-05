@@ -21,6 +21,7 @@ let entryNames;
 let files;
 let chunks;
 let htmlTags;
+let Entrypoint;
 
 const options = {
 	outputPath: '/dist/templates',
@@ -92,18 +93,12 @@ entrypointsMap.set('app-c', {
 });
 
 beforeEach(() => {
+	Entrypoint = entrypointsMap.get('app-a');
 	entryNames = ['app-a', 'app-b', 'app-c'];
-	files = [
-		'css/app-a.css',
-		'js/app-a.js',
-		'css/app-b.css',
-		'js/app-b.js',
-		'css/app-c.css',
-		'js/app-c.js'
-	];
+	files = entrypointsMap.get('app-a').chunks.files;
 	chunks = {
-		styles: ['css/app-a.css', 'css/app-b.css', 'css/app-c.css'],
-		scripts: ['js/app-a.js', 'js/app-b.js', 'js/app-c.js']
+		styles: ['css/vendors~app-a~app-b~app-c.css', 'css/app-a.css'],
+		scripts: ['js/vendors~app-a~app-b~app-c.js', 'js/app-a.js']
 	};
 	htmlTags = {
 		styles:
@@ -220,11 +215,18 @@ describe('ChunksWebpackPlugin processEntry', () => {
 		chunksWebpackPlugin.createHtmlChunksFiles = jest.fn();
 		chunksWebpackPlugin.updateManifest = jest.fn();
 
+		chunksWebpackPlugin.compilation = compilationWebpack;
+		jest.spyOn(chunksWebpackPlugin.compilation.entrypoints, 'get');
+
 		chunksWebpackPlugin.processEntry('app-a');
 
 		expect(chunksWebpackPlugin.getFiles).toHaveBeenCalledWith('app-a');
 		expect(chunksWebpackPlugin.sortsChunksByType).toHaveBeenCalledWith(files);
-		expect(chunksWebpackPlugin.getHtmlTags).toHaveBeenCalledWith({ chunks, files });
+		expect(chunksWebpackPlugin.compilation.entrypoints.get).toHaveBeenCalledWith('app-a');
+		expect(chunksWebpackPlugin.getHtmlTags).toHaveBeenCalledWith({
+			chunks,
+			Entrypoint
+		});
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalledWith({
 			entryName: 'app-a',
 			htmlTags: htmlTags
@@ -244,6 +246,7 @@ describe('ChunksWebpackPlugin processEntry', () => {
 
 		chunksWebpackPlugin.options.generateChunksFiles = false;
 		chunksWebpackPlugin.options.generateChunksManifest = false;
+		chunksWebpackPlugin.compilation = compilationWebpack;
 		chunksWebpackPlugin.processEntry('app-a');
 
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).not.toHaveBeenCalled();
@@ -356,9 +359,12 @@ describe('ChunksWebpackPlugin getHtmlTags', () => {
 		mockCustomFormatTags(chunksWebpackPlugin, htmlTags);
 		mockIsValidCustomFormatTagsDatas(chunksWebpackPlugin, true);
 
-		chunksWebpackPlugin.getHtmlTags({ chunks, files });
+		chunksWebpackPlugin.getHtmlTags({ chunks, Entrypoint });
 
-		expect(chunksWebpackPlugin.options.customFormatTags).toHaveBeenCalledWith(chunks, files);
+		expect(chunksWebpackPlugin.options.customFormatTags).toHaveBeenCalledWith(
+			chunks,
+			Entrypoint
+		);
 		expect(chunksWebpackPlugin.isValidCustomFormatTagsDatas).toHaveBeenCalledWith(htmlTags);
 	});
 
@@ -368,7 +374,7 @@ describe('ChunksWebpackPlugin getHtmlTags', () => {
 		utils.setError = jest.fn();
 		mockIsValidCustomFormatTagsDatas(chunksWebpackPlugin, false);
 
-		chunksWebpackPlugin.getHtmlTags({ chunks, files });
+		chunksWebpackPlugin.getHtmlTags({ chunks, Entrypoint });
 
 		expect(chunksWebpackPlugin.isValidCustomFormatTagsDatas).toHaveBeenCalledWith(htmlTags);
 		expect(utils.setError).toHaveBeenCalledWith(
@@ -386,8 +392,8 @@ describe('ChunksWebpackPlugin sortsChunksByType', () => {
 		chunksWebpackPlugin.publicPath = publicPath;
 
 		expect(chunksWebpackPlugin.sortsChunksByType(files)).toEqual({
-			scripts: ['/dist/js/app-a.js', '/dist/js/app-b.js', '/dist/js/app-c.js'],
-			styles: ['/dist/css/app-a.css', '/dist/css/app-b.css', '/dist/css/app-c.css']
+			scripts: ['/dist/js/vendors~app-a~app-b~app-c.js', '/dist/js/app-a.js'],
+			styles: ['/dist/css/vendors~app-a~app-b~app-c.css', '/dist/css/app-a.css']
 		});
 	});
 });
@@ -396,9 +402,9 @@ describe('ChunksWebpackPlugin formatTags', () => {
 	it('Should call the formatTags function', () => {
 		expect(chunksWebpackPlugin.formatTags(chunks)).toEqual({
 			styles:
-				'<link rel="stylesheet" href="css/app-a.css" /><link rel="stylesheet" href="css/app-b.css" /><link rel="stylesheet" href="css/app-c.css" />',
+				'<link rel="stylesheet" href="css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="css/app-a.css" />',
 			scripts:
-				'<script src="js/app-a.js"></script><script src="js/app-b.js"></script><script src="js/app-c.js"></script>'
+				'<script src="js/vendors~app-a~app-b~app-c.js"></script><script src="js/app-a.js"></script>'
 		});
 	});
 
@@ -410,9 +416,9 @@ describe('ChunksWebpackPlugin formatTags', () => {
 
 		expect(chunksWebpackPlugin.formatTags(chunks)).toEqual({
 			styles:
-				'<link rel="stylesheet" href="https://cdn.domain.com/css/app-a.css" /><link rel="stylesheet" href="https://cdn.domain.com/css/app-b.css" /><link rel="stylesheet" href="https://cdn.domain.com/css/app-c.css" />',
+				'<link rel="stylesheet" href="https://cdn.domain.com/css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="https://cdn.domain.com/css/app-a.css" />',
 			scripts:
-				'<script defer src="https://cdn.domain.com/js/app-a.js"></script><script defer src="https://cdn.domain.com/js/app-b.js"></script><script defer src="https://cdn.domain.com/js/app-c.js"></script>'
+				'<script defer src="https://cdn.domain.com/js/vendors~app-a~app-b~app-c.js"></script><script defer src="https://cdn.domain.com/js/app-a.js"></script>'
 		});
 	});
 });
