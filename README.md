@@ -149,7 +149,7 @@ List of chunks sorted by type: `styles` and `scripts`.
 
 `Object`
 
-Entrypoint object part of a single ChunkGroup. Use this variable only for complete customization if the `chunksSorted` variable does not meet your needs. The variable contains all information about the current entrypoint, log it on the console for more details.
+Entrypoint object part of a single ChunkGroup. Use this variable only for full customization if the `chunksSorted` variable does not meet your needs. The variable contains all information about the current entrypoint, log it on the console for more details.
 
 > This function overrides the default behavior, you need to generate yourself your templates, like the example below:
 
