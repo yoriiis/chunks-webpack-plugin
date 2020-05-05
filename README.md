@@ -1,6 +1,6 @@
 # ChunksWebpackPlugin
 
-![Chunks Webpack Plugin](https://img.shields.io/badge/chunks--webpack--plugin-v6.0.1-546e7a.svg?style=for-the-badge) [![TravisCI](https://img.shields.io/travis/com/yoriiis/chunks-webpack-plugin/master?style=for-the-badge)](https://travis-ci.com/yoriiis/chunks-webpack-plugin) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master) [![Mutation testing badge](https://img.shields.io/endpoint?style=for-the-badge&url=https://badge-api.stryker-mutator.io/github.com/yoriiis/chunks-webpack-plugin/master)](https://dashboard.stryker-mutator.io/reports/github.com/yoriiis/chunks-webpack-plugin/master) ![Node.js](https://img.shields.io/node/v/chunks-webpack-plugin?style=for-the-badge) [![Bundlephobia](https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge)](https://bundlephobia.com/result?p=fela@latest) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin) [![Chat on Discord](https://img.shields.io/badge/chat-on%20discord-7289da.svg?style=for-the-badge)](https://discordapp.com/invite/uC8FkDn)
+![Chunks Webpack Plugin](https://img.shields.io/badge/chunks--webpack--plugin-v6.1.0-546e7a.svg?style=for-the-badge) [![TravisCI](https://img.shields.io/travis/com/yoriiis/chunks-webpack-plugin/master?style=for-the-badge)](https://travis-ci.com/yoriiis/chunks-webpack-plugin) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master) [![Mutation testing badge](https://img.shields.io/endpoint?style=for-the-badge&url=https://badge-api.stryker-mutator.io/github.com/yoriiis/chunks-webpack-plugin/master)](https://dashboard.stryker-mutator.io/reports/github.com/yoriiis/chunks-webpack-plugin/master) ![Node.js](https://img.shields.io/node/v/chunks-webpack-plugin?style=for-the-badge) [![Bundlephobia](https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge)](https://bundlephobia.com/result?p=fela@latest) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin) [![Chat on Discord](https://img.shields.io/badge/chat-on%20discord-7289da.svg?style=for-the-badge)](https://discordapp.com/invite/uC8FkDn)
 
 The `ChunksWebpackPlugin` create HTML files to serve your webpack bundles. It is very convenient with multiple entry points and it works without configuration.
 
@@ -145,17 +145,17 @@ The `customFormatTags` function has two parameters:
 
 List of chunks sorted by type: `styles` and `scripts`.
 
-#### `files`
+#### `Entrypoint`
 
-`Array`
+`Object`
 
-List of files unsorted for each entry points.
+Entrypoint object part of a single ChunkGroup. Use this variable only for complete customization if the `chunksSorted` variable not fit your need. The variable contains all information about the current entrypoint, log it on the console for more details.
 
 > This function overrides the default behavior, you need to generate yourself your templates, like the example below:
 
 ```javascript
 new ChunksWebpackPlugin({
-    customFormatTags: (chunksSorted, files) => {
+    customFormatTags: (chunksSorted, Entrypoint) => {
         // Generate all HTML style tags with CDN prefix
         const styles = chunksSorted.styles..map(chunkCss =>
           `<link rel="stylesheet" href="https://cdn.domain.com/${chunkCss}" />`
