@@ -1,7 +1,7 @@
 {
 	"name": "chunks-webpack-plugin",
 	"version": "6.1.0",
-	"description": "ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.",
+	"description": "Create HTML files with entrypoints and chunks relations to serve your bundles",
 	"keywords": [
 		"chunks",
 		"chunks-webpack-plugin",
