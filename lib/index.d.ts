@@ -25,7 +25,7 @@ interface Manifest {
 declare const _default: {
     new (options?: {}): {
         options: {
-            outputPath: string | null;
+            outputPath: null | string;
             fileExtension: string;
             templateStyle: string;
             templateScript: string;
@@ -35,9 +35,9 @@ declare const _default: {
         };
         manifest: Manifest;
         compilation: any;
-        entryNames: string[];
+        entryNames: Array<string>;
         publicPath: string;
-        outputPath: string | null;
+        outputPath: null | string;
         /**
          * Apply function is automatically called by the Webpack main compiler
          *
@@ -75,7 +75,7 @@ declare const _default: {
          *
          * @return {Array} List of entrypoint names
          */
-        getEntryNames(): string[];
+        getEntryNames(): Array<string>;
         /**
          * Get files list by entrypoint name
          *
@@ -83,7 +83,7 @@ declare const _default: {
          *
          * @return {Array} List of entrypoint names
          */
-        getFiles(entryName: string): string[];
+        getFiles(entryName: string): Array<string>;
         /**
          * Get HTML tags from chunks
          *
@@ -95,7 +95,7 @@ declare const _default: {
         getHtmlTags({ chunks, Entrypoint }: {
             chunks: Chunks;
             Entrypoint: Object;
-        }): HtmlTags | undefined;
+        }): undefined | HtmlTags;
         /**
          * Sorts all chunks by type (styles or scripts)
          *
@@ -103,7 +103,7 @@ declare const _default: {
          *
          * @returns {Object} All chunks sorted by extension type
          */
-        sortsChunksByType(files: string[]): Chunks;
+        sortsChunksByType(files: Array<string>): Chunks;
         /**
          * Generate HTML styles and scripts tags for each entrypoints
          *
