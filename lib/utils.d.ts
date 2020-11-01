@@ -1,8 +1,14 @@
+interface Fs {
+    existsSync: Function;
+    mkdirSync: Function;
+    writeFileSync: Function;
+}
 declare const _default: {
     setError: (message: string) => never;
     isAbsolutePath: (currentPath: string) => boolean;
     getFileExtension: (file: string) => string;
-    writeFile: ({ outputPath, output }: {
+    writeFile: ({ fs, outputPath, output }: {
+        fs: Fs;
         outputPath: string;
         output: string;
     }) => void;

@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 6.1.0
+ * @version 7.0.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -43,6 +43,8 @@ export = class ChunksWebpackPlugin {
 	};
 	manifest: Manifest;
 	compilation: any;
+	webpack: any;
+	fs: any;
 	entryNames!: Array<string>;
 	publicPath!: string;
 	outputPath!: null | string;
@@ -74,7 +76,7 @@ export = class ChunksWebpackPlugin {
 	 * @param {Object} compiler The Webpack compiler variable
 	 */
 	apply(compiler: Compiler): void {
-		compiler.hooks.emit.tap('ChunksWebpackPlugin', this.hookCallback.bind(this));
+		compiler.hooks.thisCompilation.tap('ChunksWebpackPlugin', this.hookCallback.bind(this));
 	}
 
 	/**
@@ -84,18 +86,30 @@ export = class ChunksWebpackPlugin {
 	 */
 	hookCallback(compilation: object): void {
 		this.compilation = compilation;
-		this.publicPath = this.getPublicPath();
-		this.outputPath = this.getOutputPath();
-		this.entryNames = this.getEntryNames();
+		this.webpack = this.compilation.compiler.webpack;
+		this.fs = this.compilation.compiler.inputFileSystem.fileSystem;
 
-		this.entryNames
-			.filter((entryName: string) => this.getFiles(entryName).length)
-			.map((entryName: string) => this.processEntry(entryName));
+		this.compilation.hooks.processAssets.tap(
+			{
+				name: 'ChunksWebpackPlugin',
+				stage: this.compilation.compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
+			},
+			() => {
+				this.publicPath = this.getPublicPath();
+				this.outputPath = this.getOutputPath();
 
-		// Check if manifest option is enabled
-		if (this.options.generateChunksManifest) {
-			this.createChunksManifestFile();
-		}
+				this.entryNames = this.getEntryNames();
+
+				this.entryNames
+					.filter((entryName: string) => this.getFiles(entryName).length)
+					.map((entryName: string) => this.processEntry(entryName));
+
+				// Check if manifest option is enabled
+				if (this.options.generateChunksManifest) {
+					this.createChunksManifestFile();
+				}
+			}
+		);
 	}
 
 	/**
@@ -206,11 +220,11 @@ export = class ChunksWebpackPlugin {
 	sortsChunksByType(files: Array<string>): Chunks {
 		return {
 			styles: files
-				.filter(file => this.isValidExtensionByType(file, 'css'))
-				.map(file => `${this.publicPath}${file}`),
+				.filter((file) => this.isValidExtensionByType(file, 'css'))
+				.map((file) => `${this.publicPath}${file}`),
 			scripts: files
-				.filter(file => this.isValidExtensionByType(file, 'js'))
-				.map(file => `${this.publicPath}${file}`)
+				.filter((file) => this.isValidExtensionByType(file, 'js'))
+				.map((file) => `${this.publicPath}${file}`)
 		};
 	}
 
@@ -303,10 +317,10 @@ export = class ChunksWebpackPlugin {
 
 		// Expose the manifest file into the assets compilation
 		// The file is automatically created by the compiler
-		this.compilation.assets['chunks-manifest.json'] = {
-			source: () => output,
-			size: () => output.length
-		};
+		this.compilation.emitAsset(
+			'chunks-manifest.json',
+			new this.webpack.sources.RawSource(output, false)
+		);
 	}
 
 	/**
@@ -324,12 +338,14 @@ export = class ChunksWebpackPlugin {
 	}): void {
 		if (htmlTags.scripts.length) {
 			utils.writeFile({
+				fs: this.fs,
 				outputPath: `${this.outputPath}/${entryName}-scripts${this.options.fileExtension}`,
 				output: htmlTags.scripts
 			});
 		}
 		if (htmlTags.styles.length) {
 			utils.writeFile({
+				fs: this.fs,
 				outputPath: `${this.outputPath}/${entryName}-styles${this.options.fileExtension}`,
 				output: htmlTags.styles
 			});

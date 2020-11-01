@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 6.1.0
+ * @version 7.0.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -35,6 +35,8 @@ declare const _default: {
         };
         manifest: Manifest;
         compilation: any;
+        webpack: any;
+        fs: any;
         entryNames: Array<string>;
         publicPath: string;
         outputPath: null | string;

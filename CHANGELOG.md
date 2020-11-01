@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 7.0.0
+
+### Updates
+
+- Add the webpack `v5` compatibility
+- Use the `processAssets` compilation hook to create the `chunks-manifest.json` file
+
+### Removes
+
+- Remove the `fs-extra` package in favor of the file system exposed by the webpack compiler. It use the `graceful-fs` package.
+
 ## 6.1.0
 
 ### Fixes

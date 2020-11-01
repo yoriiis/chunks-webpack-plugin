@@ -1,6 +1,6 @@
 # ChunksWebpackPlugin
 
-![Chunks Webpack Plugin](https://img.shields.io/badge/chunks--webpack--plugin-v6.1.0-546e7a.svg?style=for-the-badge) [![TravisCI](https://img.shields.io/travis/com/yoriiis/chunks-webpack-plugin/master?style=for-the-badge)](https://travis-ci.com/yoriiis/chunks-webpack-plugin) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master) [![Mutation testing badge](https://img.shields.io/endpoint?style=for-the-badge&url=https://badge-api.stryker-mutator.io/github.com/yoriiis/chunks-webpack-plugin/master)](https://dashboard.stryker-mutator.io/reports/github.com/yoriiis/chunks-webpack-plugin/master) ![Node.js](https://img.shields.io/node/v/chunks-webpack-plugin?style=for-the-badge) [![Bundlephobia](https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge)](https://bundlephobia.com/result?p=fela@latest) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin) [![Chat on Discord](https://img.shields.io/badge/chat-on%20discord-7289da.svg?style=for-the-badge)](https://discordapp.com/invite/uC8FkDn)
+![Chunks Webpack Plugin](https://img.shields.io/badge/chunks--webpack--plugin-v7.0.0-546e7a.svg?style=for-the-badge) [![TravisCI](https://img.shields.io/travis/com/yoriiis/chunks-webpack-plugin/master?style=for-the-badge)](https://travis-ci.com/yoriiis/chunks-webpack-plugin) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master) [![Mutation testing badge](https://img.shields.io/endpoint?style=for-the-badge&url=https://badge-api.stryker-mutator.io/github.com/yoriiis/chunks-webpack-plugin/master)](https://dashboard.stryker-mutator.io/reports/github.com/yoriiis/chunks-webpack-plugin/master) ![Node.js](https://img.shields.io/node/v/chunks-webpack-plugin?style=for-the-badge) [![Bundlephobia](https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge)](https://bundlephobia.com/result?p=fela@latest) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin) [![Chat on Discord](https://img.shields.io/badge/chat-on%20discord-7289da.svg?style=for-the-badge)](https://discordapp.com/invite/uC8FkDn)
 
 The `ChunksWebpackPlugin` creates HTML files with entry points and chunks relations to serve your webpack bundles. It is suitable with multi-page applications that contains multiple entry points.
 
@@ -32,6 +32,8 @@ yarn add chunks-webpack-plugin --dev
 
 `ChunksWebpackPlugin` was built for Node.js `>=8.11.2` and webpack `>=4.x`.
 
+The plugin is also compatible with the webpack `v5`, more details in the [CHANGELOG](CHANGELOG.md).
+
 ## Example
 
 The project includes a minimalist example in the `./example` directory. Run the `npm run build:example` command to execute the Webpack example and see ChunksWebpackPlugin implementation in action with SplitChunks.
@@ -46,17 +48,17 @@ The project includes a minimalist example in the `./example` directory. Run the 
 First, let's add the plugin to the webpack configuration.
 
 ```javascript
-const ChunksWebpackPlugin = require("chunks-webpack-plugin");
-const path = require("path");
+const ChunksWebpackPlugin = require('chunks-webpack-plugin')
+const path = require('path')
 
 module.exports = {
-  entry: "main.js",
+  entry: 'main.js',
   output: {
-    filename: "main.js",
-    path: path.resolve(__dirname, "./dist")
+    filename: 'main.js',
+    path: path.resolve(__dirname, './dist')
   },
   plugins: [new ChunksWebpackPlugin()]
-};
+}
 ```
 
 HTML files are built in the output path directory with the rest of the webpack output.
@@ -90,7 +92,7 @@ Tells the plugin whether to personalize the output path of the generated files.
 ```javascript
 new ChunksWebpackPlugin({
   outputPath: path.resolve(__dirname, `./templates`)
-});
+})
 ```
 
 > By default, plugin will use the [`output.path` option](/configuration/output/#outputpath) value.
@@ -105,8 +107,8 @@ Tells the plugin whether to personalize the extension of the generated files.
 
 ```javascript
 new ChunksWebpackPlugin({
-  fileExtension: ".html"
-});
+  fileExtension: '.html'
+})
 ```
 
 ### `templateStyle`
@@ -118,7 +120,7 @@ Tells the plugin whether to personalize the default template for the HTML `<styl
 ```javascript
 new ChunksWebpackPlugin({
   templateStyle: `<link rel="stylesheet" href="{{chunk}}" />`
-});
+})
 ```
 
 > Keep the `{{chunk}}` placeholder, it is automatically replaced by the concatenation of the webpack public path and the chunk filename.
@@ -132,7 +134,7 @@ Tells the plugin whether to personalize the default template for the HTML `<scri
 ```javascript
 new ChunksWebpackPlugin({
   templateScript: `<script src="{{chunk}}"></script>`
-});
+})
 ```
 
 > Keep the `{{chunk}}` placeholder, it is automatically replaced by the concatenation of the webpack public path and the chunk filename.
@@ -148,17 +150,17 @@ new ChunksWebpackPlugin({
   customFormatTags: (chunksSorted, Entrypoint) => {
     // Generate all HTML style tags with a CDN prefix
     const styles = chunksSorted.styles
-      .map(chunkCss => `<link rel="stylesheet" href="https://cdn.domain.com/${chunkCss}" />`)
-      .join("");
+      .map((chunkCss) => `<link rel="stylesheet" href="https://cdn.domain.com/${chunkCss}" />`)
+      .join('')
 
     // Generate all HTML style tags with CDN prefix and defer attribute
     const scripts = chunksSorted.scripts
-      .map(chunkJs => `<script defer src="https://cdn.domain.com/${chunkJs}"></script>`)
-      .join("");
+      .map((chunkJs) => `<script defer src="https://cdn.domain.com/${chunkJs}"></script>`)
+      .join('')
 
-    return { styles, scripts };
+    return { styles, scripts }
   }
-});
+})
 ```
 
 > The arrow function syntax allow you to access the class properties.
@@ -169,9 +171,9 @@ The function must return an object with the following format:
 
 ```js
 return {
-  styles: "",
-  scripts: ""
-};
+  styles: '',
+  scripts: ''
+}
 ```
 
 #### `chunksSorted`
@@ -197,7 +199,7 @@ Tells the plugin whether to generate the `chunks-manifest.json`. The file contai
 ```javascript
 new ChunksWebpackPlugin({
   generateChunksManifest: true
-});
+})
 ```
 
 Example of the output of the `chunks-manifest.json` file:
@@ -224,7 +226,7 @@ Tells the plugin whether to generate the HTML files.
 ```javascript
 new ChunksWebpackPlugin({
   generateChunksManifest: false
-});
+})
 ```
 
 > When set to `false`, HTML files will not be generated. It can only be useful together with `generateChunksManifest` option set to `true` for custom generation of the HTML files.
@@ -234,17 +236,17 @@ new ChunksWebpackPlugin({
 The [webpack caching](https://webpack.js.org/guides/caching) feature allows you to generate HTML files that include hash in the filename.
 
 ```javascript
-const ChunksWebpackPlugin = require("chunks-webpack-plugin");
-const path = require("path");
+const ChunksWebpackPlugin = require('chunks-webpack-plugin')
+const path = require('path')
 
 module.exports = {
-  entry: "main.js",
+  entry: 'main.js',
   output: {
-    filename: "bundle.[contenthash].js",
-    path: path.resolve(__dirname, "./dist")
+    filename: 'bundle.[contenthash].js',
+    path: path.resolve(__dirname, './dist')
   },
   plugins: [new ChunksWebpackPlugin()]
-};
+}
 ```
 
 This will generate the following HTML files with hash in the filename.
@@ -266,25 +268,25 @@ This will generate the following HTML files with hash in the filename.
 Example of the webpack configuration with multiple entry points which share common code with the `splitChunks` option.
 
 ```javascript
-const ChunksWebpackPlugin = require("chunks-webpack-plugin");
-const path = require("path");
+const ChunksWebpackPlugin = require('chunks-webpack-plugin')
+const path = require('path')
 
 module.exports = {
   entry: {
-    home: "home.js",
-    news: "news.js"
+    home: 'home.js',
+    news: 'news.js'
   },
   output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "./dist")
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, './dist')
   },
   plugins: [new ChunksWebpackPlugin()],
   optimization: {
     splitChunks: {
-      chunks: "all"
+      chunks: 'all'
     }
   }
-};
+}
 ```
 
 The plugin will generate all files in the `./dist/` directory:
