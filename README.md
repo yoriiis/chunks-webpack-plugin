@@ -48,17 +48,17 @@ The project includes a minimalist example in the `./example` directory. Run the 
 First, let's add the plugin to the webpack configuration.
 
 ```javascript
-const ChunksWebpackPlugin = require('chunks-webpack-plugin')
-const path = require('path')
+const ChunksWebpackPlugin = require("chunks-webpack-plugin");
+const path = require("path");
 
 module.exports = {
-  entry: 'main.js',
+  entry: "main.js",
   output: {
-    filename: 'main.js',
-    path: path.resolve(__dirname, './dist')
+    filename: "main.js",
+    path: path.resolve(__dirname, "./dist")
   },
   plugins: [new ChunksWebpackPlugin()]
-}
+};
 ```
 
 HTML files are built in the output path directory with the rest of the webpack output.
@@ -92,7 +92,7 @@ Tells the plugin whether to personalize the output path of the generated files.
 ```javascript
 new ChunksWebpackPlugin({
   outputPath: path.resolve(__dirname, `./templates`)
-})
+});
 ```
 
 > By default, plugin will use the [`output.path` option](/configuration/output/#outputpath) value.
@@ -107,8 +107,8 @@ Tells the plugin whether to personalize the extension of the generated files.
 
 ```javascript
 new ChunksWebpackPlugin({
-  fileExtension: '.html'
-})
+  fileExtension: ".html"
+});
 ```
 
 ### `templateStyle`
@@ -120,7 +120,7 @@ Tells the plugin whether to personalize the default template for the HTML `<styl
 ```javascript
 new ChunksWebpackPlugin({
   templateStyle: `<link rel="stylesheet" href="{{chunk}}" />`
-})
+});
 ```
 
 > Keep the `{{chunk}}` placeholder, it is automatically replaced by the concatenation of the webpack public path and the chunk filename.
@@ -134,7 +134,7 @@ Tells the plugin whether to personalize the default template for the HTML `<scri
 ```javascript
 new ChunksWebpackPlugin({
   templateScript: `<script src="{{chunk}}"></script>`
-})
+});
 ```
 
 > Keep the `{{chunk}}` placeholder, it is automatically replaced by the concatenation of the webpack public path and the chunk filename.
@@ -151,16 +151,16 @@ new ChunksWebpackPlugin({
     // Generate all HTML style tags with a CDN prefix
     const styles = chunksSorted.styles
       .map((chunkCss) => `<link rel="stylesheet" href="https://cdn.domain.com/${chunkCss}" />`)
-      .join('')
+      .join("");
 
     // Generate all HTML style tags with CDN prefix and defer attribute
     const scripts = chunksSorted.scripts
       .map((chunkJs) => `<script defer src="https://cdn.domain.com/${chunkJs}"></script>`)
-      .join('')
+      .join("");
 
-    return { styles, scripts }
+    return { styles, scripts };
   }
-})
+});
 ```
 
 > The arrow function syntax allow you to access the class properties.
@@ -171,9 +171,9 @@ The function must return an object with the following format:
 
 ```js
 return {
-  styles: '',
-  scripts: ''
-}
+  styles: "",
+  scripts: ""
+};
 ```
 
 #### `chunksSorted`
@@ -199,7 +199,7 @@ Tells the plugin whether to generate the `chunks-manifest.json`. The file contai
 ```javascript
 new ChunksWebpackPlugin({
   generateChunksManifest: true
-})
+});
 ```
 
 Example of the output of the `chunks-manifest.json` file:
@@ -226,7 +226,7 @@ Tells the plugin whether to generate the HTML files.
 ```javascript
 new ChunksWebpackPlugin({
   generateChunksManifest: false
-})
+});
 ```
 
 > When set to `false`, HTML files will not be generated. It can only be useful together with `generateChunksManifest` option set to `true` for custom generation of the HTML files.
@@ -236,17 +236,17 @@ new ChunksWebpackPlugin({
 The [webpack caching](https://webpack.js.org/guides/caching) feature allows you to generate HTML files that include hash in the filename.
 
 ```javascript
-const ChunksWebpackPlugin = require('chunks-webpack-plugin')
-const path = require('path')
+const ChunksWebpackPlugin = require("chunks-webpack-plugin");
+const path = require("path");
 
 module.exports = {
-  entry: 'main.js',
+  entry: "main.js",
   output: {
-    filename: 'bundle.[contenthash].js',
-    path: path.resolve(__dirname, './dist')
+    filename: "bundle.[contenthash].js",
+    path: path.resolve(__dirname, "./dist")
   },
   plugins: [new ChunksWebpackPlugin()]
-}
+};
 ```
 
 This will generate the following HTML files with hash in the filename.
@@ -268,25 +268,25 @@ This will generate the following HTML files with hash in the filename.
 Example of the webpack configuration with multiple entry points which share common code with the `splitChunks` option.
 
 ```javascript
-const ChunksWebpackPlugin = require('chunks-webpack-plugin')
-const path = require('path')
+const ChunksWebpackPlugin = require("chunks-webpack-plugin");
+const path = require("path");
 
 module.exports = {
   entry: {
-    home: 'home.js',
-    news: 'news.js'
+    home: "home.js",
+    news: "news.js"
   },
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, './dist')
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "./dist")
   },
   plugins: [new ChunksWebpackPlugin()],
   optimization: {
     splitChunks: {
-      chunks: 'all'
+      chunks: "all"
     }
   }
-}
+};
 ```
 
 The plugin will generate all files in the `./dist/` directory:

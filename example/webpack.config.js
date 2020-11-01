@@ -6,7 +6,6 @@ const ChunksWebpackPlugin = require('../lib/index.js');
 
 module.exports = (env, argv) => {
 	const isProduction = argv.mode === 'production';
-	const CssMinimizerInstance = new CssMinimizerPlugin();
 
 	return {
 		entry: {
@@ -95,7 +94,7 @@ module.exports = (env, argv) => {
 				}),
 				new CssMinimizerPlugin()
 			],
-			chunkIds: 'deterministic', // named
+			chunkIds: 'deterministic', // or 'named'
 			removeAvailableModules: true,
 			removeEmptyChunks: true,
 			mergeDuplicateChunks: true,
