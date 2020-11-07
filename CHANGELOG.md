@@ -2,12 +2,16 @@
 
 ## 7.0.0
 
+### New features
+
+- Add the `filename` parameter.
+
 ### Updates
 
 - Add the webpack `v5` compatibility.
 - Use the `processAssets` compilation hook to create templates and the `chunks-manifest.json` file.
-- Add the `filename` parameter.
-- The plugin requires at least Node.js `10.13.0` (LTS). The `enngines.node` is updated
+- The plugin requires at least Node.js `10.13.0` (LTS). The `engines.node` is updated in the `package.json`.
+- Update the nodeJS version in the Github Action
 
 ### Removes
 
