@@ -1,8 +1,8 @@
 {
   "app-a": {
     "styles": [
-      "/dist/css/733.css",
-      "/dist/css/app-a.css"
+      "/dist/css/733.7684229116fb2df0c1f6.css",
+      "/dist/css/app-a.de61cc1a0db815aa2f84.css"
     ],
     "scripts": [
       "/dist/js/733.56efa0b701f36b23ab64.js",
@@ -11,8 +11,8 @@
   },
   "app-b": {
     "styles": [
-      "/dist/css/733.css",
-      "/dist/css/app-b.css"
+      "/dist/css/733.7684229116fb2df0c1f6.css",
+      "/dist/css/app-b.df99780965ab1abf3f40.css"
     ],
     "scripts": [
       "/dist/js/733.56efa0b701f36b23ab64.js",
@@ -21,8 +21,8 @@
   },
   "app-c": {
     "styles": [
-      "/dist/css/733.css",
-      "/dist/css/app-c.css"
+      "/dist/css/733.7684229116fb2df0c1f6.css",
+      "/dist/css/app-c.3b4962393349d48672bc.css"
     ],
     "scripts": [
       "/dist/js/733.56efa0b701f36b23ab64.js",

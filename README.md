@@ -83,33 +83,19 @@ Then, include the HTML files in the wanted pages.
 
 You can pass a configuration object to `ChunksWebpackPlugin` to override the default settings.
 
-### `outputPath`
+### `filename`
 
-`string = null`
+`string = '[name]-[type].html'`
 
-Tells the plugin whether to personalize the output path of the generated files.
-
-```javascript
-new ChunksWebpackPlugin({
-  outputPath: path.resolve(__dirname, `./templates`)
-});
-```
-
-> By default, plugin will use the [`output.path` option](/configuration/output/#outputpath) value.
->
-> The `outputPath` must be an absolute path.
-
-### `fileExtension`
-
-`string = '.html'`
-
-Tells the plugin whether to personalize the extension of the generated files.
+Tells the plugin whether to personalize the filename of the generated files.
 
 ```javascript
 new ChunksWebpackPlugin({
-  fileExtension: ".html"
+  filename: "templates/[name]-[type].html"
 });
 ```
+
+> `[name]` is automatically replaced by the entrypoint name and `[type]` by `styles|scripts`.
 
 ### `templateStyle`
 

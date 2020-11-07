@@ -1,5 +1,3 @@
-import utils from '../utils';
-
 /**
  * Mock implementation of getEntryNames function
  *
@@ -84,18 +82,6 @@ export function mockSortsChunksByType(chunksWebpackPlugin, chunks) {
 }
 
 /**
- * Mock implementation of isPublicPathNeedsEndingSlash function
- *
- * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
- * @param {Boolean} status Status of the return of the function
- */
-export function mockIsPublicPathNeedsEndingSlash(chunksWebpackPlugin, status) {
-	chunksWebpackPlugin.isPublicPathNeedsEndingSlash = jest.fn().mockImplementation(() => {
-		return status;
-	});
-}
-
-/**
  * Mock implementation of isValidOutputPath function
  *
  * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
@@ -103,17 +89,6 @@ export function mockIsPublicPathNeedsEndingSlash(chunksWebpackPlugin, status) {
  */
 export function mockIsValidOutputPath(chunksWebpackPlugin, status) {
 	chunksWebpackPlugin.isValidOutputPath = jest.fn().mockImplementation(() => {
-		return status;
-	});
-}
-
-/**
- * Mock implementation of utils.isAbsolutePath function
- *
- * @param {Boolean} status Status of the return of the function
- */
-export function mockIsAbsolutePath(status) {
-	utils.isAbsolutePath = jest.fn().mockImplementation(() => {
 		return status;
 	});
 }

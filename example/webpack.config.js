@@ -45,12 +45,10 @@ module.exports = (env, argv) => {
 		},
 		plugins: [
 			new MiniCssExtractPlugin({
-				filename: 'css/[name].css',
-				chunkFilename: 'css/[name].css'
+				filename: `css/[name]${isProduction ? '.[contenthash]' : ''}.css`
 			}),
 			new ChunksWebpackPlugin({
-				outputPath: path.resolve(__dirname, 'dist/templates'),
-				fileExtension: '.html',
+				filename: 'templates/[name]-[type].html',
 				generateChunksManifest: true,
 				generateChunksFiles: true,
 				customFormatTags: (chunksSorted, Entrypoint) => {

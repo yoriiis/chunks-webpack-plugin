@@ -25,8 +25,7 @@ interface Manifest {
 declare const _default: {
     new (options?: {}): {
         options: {
-            outputPath: null | string;
-            fileExtension: string;
+            filename: string;
             templateStyle: string;
             templateScript: string;
             customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: Object) => HtmlTags);
@@ -36,7 +35,6 @@ declare const _default: {
         manifest: Manifest;
         compilation: any;
         webpack: any;
-        fs: any;
         entryNames: Array<string>;
         publicPath: string;
         outputPath: null | string;
@@ -52,6 +50,11 @@ declare const _default: {
          * @param {Object} compilation The Webpack compilation variable
          */
         hookCallback(compilation: object): void;
+        /**
+         * Process assets
+         * The hook is triggered by webpack
+         */
+        processAssets(): void;
         /**
          * Process for each entry
     
@@ -123,12 +126,6 @@ declare const _default: {
          */
         isPublicPathNeedsEndingSlash(publicPath: string): boolean;
         /**
-         * Check if the outputPath is valid, a string and absolute
-         *
-         * @returns {Boolean} outputPath is valid
-         */
-        isValidOutputPath(): boolean;
-        /**
          * Check if file extension correspond to the type parameter
          *
          * @param {String} file File path
@@ -169,6 +166,12 @@ declare const _default: {
             entryName: string;
             htmlTags: HtmlTags;
         }): void;
+        /**
+         * Throw an error
+         *
+         * @param {String} message Text to display in the error
+         */
+        setError(message: string): void;
     };
 };
 export = _default;
