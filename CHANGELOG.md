@@ -4,12 +4,16 @@
 
 ### Updates
 
-- Add the webpack `v5` compatibility
-- Use the `processAssets` compilation hook to create the `chunks-manifest.json` file
+- Add the webpack `v5` compatibility.
+- Use the `processAssets` compilation hook to create templates and the `chunks-manifest.json` file.
+- Add the `filename` parameter.
 
 ### Removes
 
+- Remove the `outputPath` parameter. Templates are generated in the the webpack output path. Use the `filename` to customize the output directory.
+- Remove the `fileExtension` parameter.
 - Remove the `fs-extra` package in favor of the file system exposed by the webpack compiler. It use the `graceful-fs` package.
+- Remove the utils and move useful functions into the main file
 
 ## 6.1.0
 
