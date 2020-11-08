@@ -72,7 +72,7 @@
 					"proseWrap": "preserve",
 					"tabWidth": 2,
 					"useTabs": false,
-					"singleQuote": false
+					"singleQuote": true
 				}
 			}
 		]
