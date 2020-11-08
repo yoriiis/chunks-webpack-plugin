@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 6.1.0
+ * @version 7.0.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -25,8 +25,7 @@ interface Manifest {
 declare const _default: {
     new (options?: {}): {
         options: {
-            outputPath: string | null;
-            fileExtension: string;
+            filename: string;
             templateStyle: string;
             templateScript: string;
             customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: Object) => HtmlTags);
@@ -35,9 +34,10 @@ declare const _default: {
         };
         manifest: Manifest;
         compilation: any;
-        entryNames: string[];
+        isWebpack4: Boolean;
+        entryNames: Array<string>;
         publicPath: string;
-        outputPath: string | null;
+        outputPath: null | string;
         /**
          * Apply function is automatically called by the Webpack main compiler
          *
@@ -50,6 +50,11 @@ declare const _default: {
          * @param {Object} compilation The Webpack compilation variable
          */
         hookCallback(compilation: object): void;
+        /**
+         * Add assets
+         * The hook is triggered by webpack
+         */
+        addAssets(): void;
         /**
          * Process for each entry
     
@@ -75,7 +80,7 @@ declare const _default: {
          *
          * @return {Array} List of entrypoint names
          */
-        getEntryNames(): string[];
+        getEntryNames(): Array<string>;
         /**
          * Get files list by entrypoint name
          *
@@ -83,7 +88,7 @@ declare const _default: {
          *
          * @return {Array} List of entrypoint names
          */
-        getFiles(entryName: string): string[];
+        getFiles(entryName: string): Array<string>;
         /**
          * Get HTML tags from chunks
          *
@@ -95,7 +100,7 @@ declare const _default: {
         getHtmlTags({ chunks, Entrypoint }: {
             chunks: Chunks;
             Entrypoint: Object;
-        }): HtmlTags | undefined;
+        }): undefined | HtmlTags;
         /**
          * Sorts all chunks by type (styles or scripts)
          *
@@ -103,7 +108,7 @@ declare const _default: {
          *
          * @returns {Object} All chunks sorted by extension type
          */
-        sortsChunksByType(files: string[]): Chunks;
+        sortsChunksByType(files: Array<string>): Chunks;
         /**
          * Generate HTML styles and scripts tags for each entrypoints
          *
@@ -120,12 +125,6 @@ declare const _default: {
          * @returns {Boolean} The public path need an ending slash
          */
         isPublicPathNeedsEndingSlash(publicPath: string): boolean;
-        /**
-         * Check if the outputPath is valid, a string and absolute
-         *
-         * @returns {Boolean} outputPath is valid
-         */
-        isValidOutputPath(): boolean;
         /**
          * Check if file extension correspond to the type parameter
          *
@@ -167,6 +166,12 @@ declare const _default: {
             entryName: string;
             htmlTags: HtmlTags;
         }): void;
+        /**
+         * Throw an error
+         *
+         * @param {String} message Text to display in the error
+         */
+        setError(message: string): void;
     };
 };
 export = _default;

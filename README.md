@@ -1,38 +1,38 @@
 # ChunksWebpackPlugin
 
-![Chunks Webpack Plugin](https://img.shields.io/badge/chunks--webpack--plugin-v6.1.0-546e7a.svg?style=for-the-badge) [![TravisCI](https://img.shields.io/travis/com/yoriiis/chunks-webpack-plugin/master?style=for-the-badge)](https://travis-ci.com/yoriiis/chunks-webpack-plugin) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master) [![Mutation testing badge](https://img.shields.io/endpoint?style=for-the-badge&url=https://badge-api.stryker-mutator.io/github.com/yoriiis/chunks-webpack-plugin/master)](https://dashboard.stryker-mutator.io/reports/github.com/yoriiis/chunks-webpack-plugin/master) ![Node.js](https://img.shields.io/node/v/chunks-webpack-plugin?style=for-the-badge) [![Bundlephobia](https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge)](https://bundlephobia.com/result?p=fela@latest) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin) [![Chat on Discord](https://img.shields.io/badge/chat-on%20discord-7289da.svg?style=for-the-badge)](https://discordapp.com/invite/uC8FkDn)
+![Chunks Webpack Plugin](https://img.shields.io/badge/chunks--webpack--plugin-v7.0.0-546e7a.svg?style=for-the-badge) [![TravisCI](https://img.shields.io/travis/com/yoriiis/chunks-webpack-plugin/master?style=for-the-badge)](https://travis-ci.com/yoriiis/chunks-webpack-plugin) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master) [![Mutation testing badge](https://img.shields.io/endpoint?style=for-the-badge&url=https://badge-api.stryker-mutator.io/github.com/yoriiis/chunks-webpack-plugin/master)](https://dashboard.stryker-mutator.io/reports/github.com/yoriiis/chunks-webpack-plugin/master) ![Node.js](https://img.shields.io/node/v/chunks-webpack-plugin?style=for-the-badge) [![Bundlephobia](https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge)](https://bundlephobia.com/result?p=fela@latest) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin) [![Chat on Discord](https://img.shields.io/badge/chat-on%20discord-7289da.svg?style=for-the-badge)](https://discordapp.com/invite/uC8FkDn)
 
-The `ChunksWebpackPlugin` create HTML files to serve your webpack bundles. It is very convenient with multiple entry points and it works without configuration.
+The `ChunksWebpackPlugin` creates HTML files with entry points and chunks relations to serve your webpack bundles. It is suitable with multi-page applications that contain multiple entry points.
 
-Since Webpack 4, [SplitChunksPlugin](https://webpack.js.org/plugins/split-chunks-plugin) offer the possibility to optimizes all chunks. It can be particularly powerful, because it means that chunks can be shared even between async and non-async chunks. See Webpack documentation for [`splitChunks.chunks`](https://webpack.js.org/plugins/split-chunks-plugin/#splitchunkschunks).
+Since webpack 4, `SplitChunksPlugin` offers the possibility to optimizes all chunks. It can be particularly powerful, because it means that chunks can be shared even between async and non-async chunks. See the webpack documentation of [`splitChunks.chunks`](https://webpack.js.org/plugins/split-chunks-plugin/#splitchunkschunks) for details.
 
-This option automatically generate new chunks associated with an entrypoint. For example, entry points `a.js` and `b.js` share common codes with `vendors~a~b.js`.
+`splitChunks.chunks` option can be set to automatically generate new chunks associated with an entry point. For example, entry points `a.js` and `b.js` share common code with the file `vendors~a~b.js`.
 
-With multiple entry points, it can be difficult to identify relation between auto-generated chunks and entry points.
+With multiple entry points, it can be difficult to identify relation between the auto-generated chunks and entry points.
 
-The plugin parse the `entrypoints` [Map](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Map) object from the Webpack compilation to get all valid entrypoints and associated files. Then, it generate HTML files which includes all assets **filtered by** entrypoint and the `chunks-manifest.json` file.
+`ChunksWebpackPlugin` parses the `entrypoints` [Map](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Map) from the webpack compilation to get all valid entry points and associated files. Then, it generates HTML files which include all assets filtered by an entry point and the `chunks-manifest.json` file.
 
-[Read the article about the SplitChunksPlugin on Medium](https://medium.com/@Yoriiis/the-real-power-of-webpack-4-splitchunks-plugin-fad097c45ba0).
+## Zero configuration
 
-## Zero config
-
-The `chunks-webpack-plugin` works without configuration.
+It works without configuration. For advanced usage, see the [using configuration section](#using-a-configuration).
 
 ## Installation
 
-The plugin is available as the `chunks-webpack-plugin` package name on [npm](https://www.npmjs.com/package/chunks-webpack-plugin) and [Github](https://github.com/yoriiis/chunks-webpack-plugin).
+`ChunksWebpackPlugin` is available on npm as [`chunks-webpack-plugin`](https://www.npmjs.com/package/chunks-webpack-plugin) and as [`chunks-webpack-plugin` on GitHub](https://github.com/yoriiis/chunks-webpack-plugin).
 
 ```bash
-npm i --save-dev chunks-webpack-plugin
+npm install chunks-webpack-plugin --save-dev
 ```
 
 ```bash
-yarn add --dev chunks-webpack-plugin
+yarn add chunks-webpack-plugin --dev
 ```
 
 ## Environment
 
-`ChunksWebpackPlugin` was built for Node.js `>=8.11.2` and Webpack `>=4.x`.
+`ChunksWebpackPlugin` was built for Node.js `>=10.13.0` and webpack `^4 || ^5`.
+
+The plugin is compatible with the webpack `v4` and `v5`, more details in the [CHANGELOG](CHANGELOG.md).
 
 ## Example
 
@@ -40,159 +40,155 @@ The project includes a minimalist example in the `./example` directory. Run the 
 
 ## Basic usage
 
-The plugin will generate for you two HTML5 files for each entry points. Each filename contains the entrypoint name, `{{entry}}` is dynamically replace.
+`ChunksWebpackPlugin` will generate two HTML files for each entry point. Each filename contains the entry point name, the `{{entry}}` placeholder is automatically replaced.
 
 - `{{entry}}-styles.html`: contains all HTML `<link>` tags
 - `{{entry}}-scripts.html`: contains all HTML `<script>` tags
 
-You are free to call where you want, each HTML files in the associated templates corresponding to an entrypoint.
+First, let's add the plugin to the webpack configuration.
 
-Just add the plugin to your webpack config as follows:
-
-```javascript
-var ChunksWebpackPlugin = require("chunks-webpack-plugin");
-var path = require("path");
+```js
+const ChunksWebpackPlugin = require('chunks-webpack-plugin');
+const path = require('path');
 
 module.exports = {
-  entry: "main.js",
+  entry: 'main.js',
   output: {
-    path: path.resolve(__dirname, "./dist"),
-    filename: "main.js"
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, './dist')
   },
   plugins: [new ChunksWebpackPlugin()]
 };
 ```
 
-This will generate the following HTML files in the `./dist/` directory. Defaut `output.path` is used.
+HTML files are built in the output path directory with the rest of the webpack output.
+
+Now you can include the outputted HTML files into your HTML page templates. You can do it with e.g. Twig.
+
+**main-styles.html**
 
 ```html
-<!--main-styles.html-->
 <link rel="stylesheet" href="main.css" />
 ```
 
+**main-scripts.html**
+
 ```html
-<!--main-scripts.html-->
 <script src="main.js"></script>
 ```
 
+---
+
 ## Using a configuration
 
-You can pass configuration options to `ChunksWebpackPlugin`. Allowed values are as follows:
+You can pass a configuration object to `ChunksWebpackPlugin` to override the default settings.
 
-### `outputPath`
+### `filename`
 
-`string = null`
+`string = '[name]-[type].html'`
 
-Tells plugin whether to personalize the output path of generated files (need absolute path). By default the plugin will use `options.output.path` from the [Webpack configuration](https://webpack.js.org/configuration/output/#outputpath).
+Tells the plugin whether to personalize the filename of the generated files.
 
-```javascript
+```js
 new ChunksWebpackPlugin({
-  outputPath: path.resolve(__dirname, `./templates`)
+  filename: 'templates/[name]-[type].html'
 });
 ```
 
-### `fileExtension`
-
-`string = '.html'`
-
-Tells plugin whether to personalize the extension of generated files.
-
-```javascript
-new ChunksWebpackPlugin({
-  fileExtension: ".php"
-});
-```
+> `[name]` is automatically replaced by the entrypoint name and `[type]` by `styles|scripts`.
 
 ### `templateStyle`
 
 `string = '<link rel="stylesheet" href="{{chunk}}" />'`
 
-Tells plugin whether to personalize the default template for HTML `<style>` tags. Add attributes, a CDN prefix or something else.
+Tells the plugin whether to personalize the default template for the HTML `<style>` tags. For example, add additional attributes or a CDN prefix.
 
-> Keep `{{chunk}}` placeholder, it is automatically replace by the Webpack public path and chunk filename.
-
-```javascript
+```js
 new ChunksWebpackPlugin({
-  templateStyle: `<link rel="stylesheet" href="{{chunk}}" />`
+  templateStyle: '<link rel="stylesheet" href="https://cdn.domain.com/{{chunk}}" />'
 });
 ```
+
+> Keep the `{{chunk}}` placeholder, it is automatically replaced by the concatenation of the webpack public path and the chunk filename.
 
 ### `templateScript`
 
 `string = '<script src="{{chunk}}"></script>'`
 
-Tells plugin whether to personalize the default template for HTML `<script>` tags. Add attributes, a CDN prefix or something else.
+Tells the plugin whether to personalize the default template for the HTML `<script>` tags. For example, add additional attributes or a CDN prefix.
 
-> Keep `{{chunk}}` placeholder, it is automatically replace by the Webpack public path and chunk filename.
-
-```javascript
+```js
 new ChunksWebpackPlugin({
-  templateScript: `<script src="{{chunk}}"></script>`
+  templateScript: '<script defer src="{{chunk}}"></script>'
 });
 ```
 
+> Keep the `{{chunk}}` placeholder, it is automatically replaced by the concatenation of the webpack public path and the chunk filename.
+
 ### `customFormatTags`
 
-`false || function (chunksSorted, files)`
+`boolean: false` `function (chunksSorted, Entrypoint) => object`
 
-Tells plugin whether to personalize the default behavior for generate your own templates. The function is called for each entry points. Custom behavior can also be add for a specific entrypoint if necessary. The arrow function syntax allow you to access the class properties.
+Tells the plugin whether to personalize the default behavior for generating your own templates. The function is called for each entry point. Can be used to add a custom behavior for a specific entry point.
 
-The `customFormatTags` function has two parameters:
+```js
+new ChunksWebpackPlugin({
+  customFormatTags: (chunksSorted, Entrypoint) => {
+    // Generate all HTML style tags with a CDN prefix
+    const styles = chunksSorted.styles
+      .map((chunkCss) => `<link rel="stylesheet" href="https://cdn.domain.com/${chunkCss}" />`)
+      .join('');
+
+    // Generate all HTML style tags with CDN prefix and defer attribute
+    const scripts = chunksSorted.scripts
+      .map((chunkJs) => `<script defer src="https://cdn.domain.com/${chunkJs}"></script>`)
+      .join('');
+
+    return { styles, scripts };
+  }
+});
+```
+
+> The arrow function syntax allow you to access the class properties.
+>
+> The function provides more flexibility by replacing the default behavior. Follow the example above to make sure it works.
+
+The function must return an object with the following format:
+
+```js
+return {
+  styles: '',
+  scripts: ''
+};
+```
 
 #### `chunksSorted`
 
 `object`
 
-List of chunks sorted by type: `styles` and `scripts`.
+The list of the chunks sorted by type: `styles` and `scripts`.
 
 #### `Entrypoint`
 
-`Object`
+`object`
 
-Entrypoint object part of a single ChunkGroup. Use this variable only for full customization if the `chunksSorted` variable does not meet your needs. The variable contains all information about the current entrypoint, log it on the console for more details.
+The object is included in every single ChunkGroup. The variable contains all information about the current entry point; log it on the console for more details.
 
-> This function overrides the default behavior, you need to generate yourself your templates, like the example below:
-
-```javascript
-new ChunksWebpackPlugin({
-    customFormatTags: (chunksSorted, Entrypoint) => {
-        // Generate all HTML style tags with CDN prefix
-        const styles = chunksSorted.styles..map(chunkCss =>
-          `<link rel="stylesheet" href="https://cdn.domain.com/${chunkCss}" />`
-        ).join('')
-
-        // Generate all HTML style tags with CDN prefix and defer attribute
-        const scripts = chunksSorted.scripts..map(chunkJs =>
-          `<script defer src="https://cdn.domain.com/${chunkJs}"></script>`
-        ).join('')
-
-        return { styles, scripts }
-    }
-})
-```
-
-The function need to return an object with the following format:
-
-```json
-{
-  "styles": "",
-  "scripts": ""
-}
-```
+> Use this variable only for a full customization if the `chunksSorted` variable does not meet your needs.
 
 ### `generateChunksManifest`
 
 `boolean = false`
 
-Tells plugin whether to generate the `chunks-manifest.json` file which contains a list of chunks grouped by entry points. This file can be particulary usefull if you need the list of chunks associated by entry point in your application (like Symfony with `assets` function or others).
+Tells the plugin whether to generate the `chunks-manifest.json`. The file contains the list of all chunks grouped by entry points.
 
-```javascript
+```js
 new ChunksWebpackPlugin({
-  generateChunksManifest: false
+  generateChunksManifest: true
 });
 ```
 
-Example of the output of `chunks-manifest.json` file:
+Example of the output of the `chunks-manifest.json` file:
 
 ```json
 {
@@ -211,87 +207,98 @@ Example of the output of `chunks-manifest.json` file:
 
 `boolean = true`
 
-Tells plugin whether to generate HTML files which contains styles and scripts tag of chunks by entry points. This option can be particulary usefull only with addition of `generateChunksManifest` option.
+Tells the plugin whether to generate the HTML files.
 
-```javascript
+```js
 new ChunksWebpackPlugin({
-  generateChunksManifest: true
+  generateChunksFiles: false
 });
 ```
 
+> When set to `false`, HTML files will not be generated. It can only be useful together with `generateChunksManifest` option set to `true` for custom generation of the HTML files.
+
 ### Caching
 
-With [Webpack caching](https://webpack.js.org/guides/caching) option, it is very convenient to generate HTML files which includes path with hash.
+The [webpack caching](https://webpack.js.org/guides/caching) feature allows you to generate HTML files that include hash in the filename.
 
-```javascript
-var ChunksWebpackPlugin = require("chunks-webpack-plugin");
-var path = require("path");
+```js
+const ChunksWebpackPlugin = require('chunks-webpack-plugin');
+const path = require('path');
 
 module.exports = {
-  entry: "main.js",
+  entry: 'main.js',
   output: {
-    path: path.resolve(__dirname, "./dist"),
-    filename: "bundle.[contenthash].js"
+    filename: 'bundle.[contenthash].js',
+    path: path.resolve(__dirname, './dist')
   },
   plugins: [new ChunksWebpackPlugin()]
 };
 ```
 
-This will generate the following HTML files in `./dist/` folder:
+This will generate the following HTML files with hash in the filename.
+
+**main-styles.html**
 
 ```html
-<!--main-styles.html-->
 <link rel="stylesheet" href="main.72dd90acdd3d4a4a1fd4.css" />
 ```
 
+**main-scripts.html**
+
 ```html
-<!--main-scripts.html-->
 <script src="main.72dd90acdd3d4a4a1fd4.js"></script>
 ```
 
 ### Multiple entry points
 
-Example of Webpack configuration with multiple entry points which share common codes:
+Example of the webpack configuration with multiple entry points which share common code with the `splitChunks` option.
 
-```javascript
-var ChunksWebpackPlugin = require("chunks-webpack-plugin");
-var path = require("path");
+```js
+const ChunksWebpackPlugin = require('chunks-webpack-plugin');
+const path = require('path');
 
 module.exports = {
   entry: {
-    home: "home.js",
-    news: "news.js"
+    home: 'home.js',
+    news: 'news.js'
   },
   output: {
-    path: path.resolve(__dirname, "./dist"),
-    filename: "bundle.js"
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, './dist')
   },
-  plugins: [new ChunksWebpackPlugin()]
+  plugins: [new ChunksWebpackPlugin()],
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
+  }
 };
 ```
 
-The plugin will generate all files in `./dist/` folder:
+The plugin will generate all files in the `./dist/` directory:
+
+**home-styles.html**
 
 ```html
-<!--home-styles.html-->
-<link rel="stylesheet" href="vendors~home~news.css" />
-<link rel="stylesheet" href="home.css" />
+<link rel="stylesheet" href="vendors~home~news.css" /> <link rel="stylesheet" href="home.css" />
 ```
 
+**home-scripts.html**
+
 ```html
-<!--home-scripts.html-->
 <script src="vendors~home~news.js"></script>
 <script src="home.js"></script>
 ```
 
-```html
-<!--news-styles.html-->
-<link rel="stylesheet" href="vendors~home~news.css" />
-<link rel="stylesheet" href="news.css" />
-```
+**news-styles.html**
 
 ```html
-<!--news-scripts.html-->
+<link rel="stylesheet" href="vendors~home~news.css" /> <link rel="stylesheet" href="news.css" />
+```
+
+**news-scripts.html**
+
+```html
 <script src="vendors~home~news.js"></script>
 <script src="news.js"></script>
 ```

@@ -1,7 +1,7 @@
 {
 	"name": "chunks-webpack-plugin",
-	"version": "6.1.0",
-	"description": "ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.",
+	"version": "7.0.0",
+	"description": "Create HTML files with entrypoints and chunks relations to serve your bundles",
 	"keywords": [
 		"chunks",
 		"chunks-webpack-plugin",
@@ -11,11 +11,8 @@
 	],
 	"files": [
 		"src/index.ts",
-		"src/utils.ts",
 		"lib/index.d.ts",
-		"lib/utils.d.ts",
-		"lib/index.js",
-		"lib/utils.js"
+		"lib/index.js"
 	],
 	"homepage": "https://github.com/yoriiis/chunks-webpack-plugin",
 	"bugs": "https://github.com/yoriiis/chunks-webpack-plugin/issues",
@@ -29,8 +26,8 @@
 		"build:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=production",
 		"build:tsc": "tsc",
 		"coverage": "npm run test:coverage && cat ./coverage/lcov.info | coveralls",
-		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --config=./example/webpack.config.js --mode=development --hidden=node_modules/",
-		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development",
+		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --config=./example/webpack.config.js --mode=development",
+		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development --watch",
 		"test": "jest --verbose --coverage",
 		"test:coverage": "jest --coverage",
 		"test:eslint": "eslint . --ignore-pattern coverage --ignore-pattern reports --ignore-pattern example/dist --ignore-pattern lib",
@@ -63,13 +60,19 @@
 	},
 	"prettier": {
 		"printWidth": 100,
+		"useTabs": true,
+		"semi": true,
+		"trailingComma": "none",
+		"singleQuote": true,
+		"arrowParens": "always",
 		"overrides": [
 			{
 				"files": "*.md",
 				"options": {
 					"proseWrap": "preserve",
 					"tabWidth": 2,
-					"useTabs": false
+					"useTabs": false,
+					"singleQuote": true
 				}
 			}
 		]
@@ -106,6 +109,14 @@
 			"semi": [
 				1,
 				"always"
+			],
+			"space-before-function-paren": [
+				"error",
+				{
+					"anonymous": "never",
+					"named": "never",
+					"asyncArrow": "always"
+				}
 			]
 		},
 		"globals": {
@@ -125,55 +136,52 @@
 		"resetModules": true,
 		"verbose": true
 	},
-	"dependencies": {
-		"fs-extra": "^8.1.0"
-	},
+	"dependencies": {},
 	"devDependencies": {
-		"@babel/core": "^7.9.0",
-		"@babel/preset-env": "^7.9.0",
-		"@babel/preset-typescript": "^7.9.0",
-		"@stryker-mutator/babel-transpiler": "^3.0.2",
-		"@stryker-mutator/core": "^3.0.2",
-		"@stryker-mutator/javascript-mutator": "^3.0.2",
-		"@stryker-mutator/jest-runner": "^3.0.2",
-		"@stryker-mutator/typescript": "^3.1.0",
-		"@stryker-mutator/webpack-transpiler": "^3.0.2",
-		"@types/fs-extra": "^8.1.0",
-		"@types/jest": "^25.2.1",
-		"@types/node": "^13.13.2",
-		"@types/tapable": "^1.0.5",
-		"@types/webpack": "^4.41.12",
+		"@babel/core": "^7.12.3",
+		"@babel/preset-env": "^7.12.1",
+		"@babel/preset-typescript": "^7.12.1",
+		"@stryker-mutator/babel-transpiler": "^4.0.0",
+		"@stryker-mutator/core": "^4.1.0",
+		"@stryker-mutator/javascript-mutator": "^4.0.0",
+		"@stryker-mutator/jest-runner": "^4.1.0",
+		"@stryker-mutator/typescript": "^4.0.0",
+		"@stryker-mutator/webpack-transpiler": "^4.0.0",
+		"@types/fs-extra": "^9.0.2",
+		"@types/jest": "^26.0.15",
+		"@types/node": "^14.14.6",
+		"@types/tapable": "^1.0.6",
+		"@types/webpack": "^4.41.24",
 		"babel-eslint": "^10.1.0",
 		"babel-loader": "^8.1.0",
-		"babel-plugin-dynamic-import-node": "^2.3.0",
-		"coveralls": "^3.0.11",
-		"css-loader": "^3.4.2",
-		"eslint": "^6.8.0",
-		"eslint-config-standard": "^14.1.1",
-		"eslint-plugin-import": "^2.20.1",
-		"eslint-plugin-node": "^11.0.0",
+		"babel-plugin-dynamic-import-node": "^2.3.3",
+		"coveralls": "^3.1.0",
+		"css-loader": "^5.0.0",
+		"css-minimizer-webpack-plugin": "^1.1.5",
+		"eslint": "^7.12.1",
+		"eslint-config-standard": "^16.0.1",
+		"eslint-plugin-import": "^2.22.1",
+		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-promise": "^4.2.1",
-		"eslint-plugin-standard": "^4.0.1",
-		"husky": "^4.2.3",
-		"jest": "^25.2.3",
-		"markdownlint-cli": "^0.22.0",
-		"mini-css-extract-plugin": "^0.9.0",
-		"optimize-css-assets-webpack-plugin": "^5.0.3",
-		"prettier-eslint": "^9.0.1",
-		"sanitize.css": "^11.0.0",
-		"terser-webpack-plugin": "^2.3.5",
-		"ts-jest": "^25.4.0",
-		"typescript": "^3.8.3",
+		"eslint-plugin-standard": "^4.0.2",
+		"husky": "^4.3.0",
+		"jest": "^26.6.3",
+		"markdownlint-cli": "^0.24.0",
+		"mini-css-extract-plugin": "^1.2.1",
+		"prettier-eslint": "^11.0.0",
+		"sanitize.css": "^12.0.1",
+		"terser-webpack-plugin": "^5.0.3",
+		"ts-jest": "^26.4.3",
+		"typescript": "^4.0.5",
 		"vlitejs": "^3.0.4",
-		"webpack": "^4.42.1",
-		"webpack-bundle-analyzer": "^3.6.1",
-		"webpack-cli": "^3.3.11",
-		"webpack-manifest-plugin": "^2.2.0"
+		"webpack": "^5.4.0",
+		"webpack-bundle-analyzer": "^3.9.0",
+		"webpack-cli": "^4.1.0"
 	},
 	"peerDependencies": {
 		"webpack": "^4.0.0"
 	},
 	"engines": {
-		"node": ">=8.11.2"
+		"node": ">=10.13.0"
 	}
 }

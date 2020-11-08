@@ -1,11 +1,9 @@
-import utils from '../utils';
-
 /**
  * Mock implementation of getEntryNames function
  *
  * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
  */
-export function mockGetEntryNames (chunksWebpackPlugin, entryNames) {
+export function mockGetEntryNames(chunksWebpackPlugin, entryNames) {
 	chunksWebpackPlugin.getEntryNames = jest.fn().mockImplementation(() => {
 		return entryNames;
 	});
@@ -17,7 +15,7 @@ export function mockGetEntryNames (chunksWebpackPlugin, entryNames) {
  * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
  * @param {Array} files List of entrypoint names
  */
-export function mockGetFiles (chunksWebpackPlugin, files) {
+export function mockGetFiles(chunksWebpackPlugin, files) {
 	chunksWebpackPlugin.getFiles = jest.fn().mockImplementation(() => {
 		return files;
 	});
@@ -29,7 +27,7 @@ export function mockGetFiles (chunksWebpackPlugin, files) {
  * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
  * @param {Boolean} status Status of the return of the function
  */
-export function mockHasCustomFormatTags (chunksWebpackPlugin, status) {
+export function mockHasCustomFormatTags(chunksWebpackPlugin, status) {
 	chunksWebpackPlugin.hasCustomFormatTags = jest.fn().mockImplementation(() => {
 		return status;
 	});
@@ -41,7 +39,7 @@ export function mockHasCustomFormatTags (chunksWebpackPlugin, status) {
  * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
  * @param {Object} htmlTags HTML tags with all assets for an entrypoint and sorted by type
  */
-export function mockGetHtmlTags (chunksWebpackPlugin, htmlTags) {
+export function mockGetHtmlTags(chunksWebpackPlugin, htmlTags) {
 	chunksWebpackPlugin.getHtmlTags = jest.fn().mockImplementation(() => {
 		return htmlTags;
 	});
@@ -53,7 +51,7 @@ export function mockGetHtmlTags (chunksWebpackPlugin, htmlTags) {
  * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
  * @param {Object} htmlTags HTML tags with all assets for an entrypoint and sorted by type
  */
-export function mockCustomFormatTags (chunksWebpackPlugin, htmlTags) {
+export function mockCustomFormatTags(chunksWebpackPlugin, htmlTags) {
 	chunksWebpackPlugin.options.customFormatTags = jest.fn().mockImplementation(() => {
 		return htmlTags;
 	});
@@ -65,7 +63,7 @@ export function mockCustomFormatTags (chunksWebpackPlugin, htmlTags) {
  * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
  * @param {Boolean} status Status of the return of the function
  */
-export function mockIsValidCustomFormatTagsDatas (chunksWebpackPlugin, status) {
+export function mockIsValidCustomFormatTagsDatas(chunksWebpackPlugin, status) {
 	chunksWebpackPlugin.isValidCustomFormatTagsDatas = jest.fn().mockImplementation(() => {
 		return status;
 	});
@@ -77,21 +75,9 @@ export function mockIsValidCustomFormatTagsDatas (chunksWebpackPlugin, status) {
  * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
  * @param {Object} chunks All chunks sorted by extension type
  */
-export function mockSortsChunksByType (chunksWebpackPlugin, chunks) {
+export function mockSortsChunksByType(chunksWebpackPlugin, chunks) {
 	chunksWebpackPlugin.sortsChunksByType = jest.fn().mockImplementation(() => {
 		return chunks;
-	});
-}
-
-/**
- * Mock implementation of isPublicPathNeedsEndingSlash function
- *
- * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
- * @param {Boolean} status Status of the return of the function
- */
-export function mockIsPublicPathNeedsEndingSlash (chunksWebpackPlugin, status) {
-	chunksWebpackPlugin.isPublicPathNeedsEndingSlash = jest.fn().mockImplementation(() => {
-		return status;
 	});
 }
 
@@ -101,19 +87,8 @@ export function mockIsPublicPathNeedsEndingSlash (chunksWebpackPlugin, status) {
  * @param {Class} chunksWebpackPlugin Instance of chunksWebpackPlugin
  * @param {Boolean} status Status of the return of the function
  */
-export function mockIsValidOutputPath (chunksWebpackPlugin, status) {
+export function mockIsValidOutputPath(chunksWebpackPlugin, status) {
 	chunksWebpackPlugin.isValidOutputPath = jest.fn().mockImplementation(() => {
-		return status;
-	});
-}
-
-/**
- * Mock implementation of utils.isAbsolutePath function
- *
- * @param {Boolean} status Status of the return of the function
- */
-export function mockIsAbsolutePath (status) {
-	utils.isAbsolutePath = jest.fn().mockImplementation(() => {
 		return status;
 	});
 }

@@ -1,32 +1,32 @@
 {
   "app-a": {
     "styles": [
-      "/dist/css/vendors~app-a~app-b~app-c.css",
-      "/dist/css/app-a.css"
+      "/dist/css/733.7684229116fb2df0c1f6.css",
+      "/dist/css/app-a.de61cc1a0db815aa2f84.css"
     ],
     "scripts": [
-      "/dist/js/vendors~app-a~app-b~app-c.js",
-      "/dist/js/app-a.js"
+      "/dist/js/733.56efa0b701f36b23ab64.js",
+      "/dist/js/app-a.4a359e01cb4ae40331bd.js"
     ]
   },
   "app-b": {
     "styles": [
-      "/dist/css/vendors~app-a~app-b~app-c.css",
-      "/dist/css/app-b.css"
+      "/dist/css/733.7684229116fb2df0c1f6.css",
+      "/dist/css/app-b.df99780965ab1abf3f40.css"
     ],
     "scripts": [
-      "/dist/js/vendors~app-a~app-b~app-c.js",
-      "/dist/js/app-b.js"
+      "/dist/js/733.56efa0b701f36b23ab64.js",
+      "/dist/js/app-b.7e91ec4f13493a7e25e5.js"
     ]
   },
   "app-c": {
     "styles": [
-      "/dist/css/vendors~app-a~app-b~app-c.css",
-      "/dist/css/app-c.css"
+      "/dist/css/733.7684229116fb2df0c1f6.css",
+      "/dist/css/app-c.3b4962393349d48672bc.css"
     ],
     "scripts": [
-      "/dist/js/vendors~app-a~app-b~app-c.js",
-      "/dist/js/app-c.js"
+      "/dist/js/733.56efa0b701f36b23ab64.js",
+      "/dist/js/app-c.9a70cc71efd73187adc8.js"
     ]
   }
 }

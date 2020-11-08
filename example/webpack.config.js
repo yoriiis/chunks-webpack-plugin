@@ -1,15 +1,13 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserJSPlugin = require('terser-webpack-plugin');
-const ManifestPlugin = require('webpack-manifest-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ChunksWebpackPlugin = require('../lib/index.js');
 
 module.exports = (env, argv) => {
 	const isProduction = argv.mode === 'production';
 
 	return {
-		watch: !isProduction,
 		entry: {
 			'app-a': `${path.resolve(__dirname, './src/js/app-a.js')}`,
 			'app-b': `${path.resolve(__dirname, './src/js/app-b.js')}`,
@@ -18,11 +16,11 @@ module.exports = (env, argv) => {
 		watchOptions: {
 			ignored: /node_modules/
 		},
-		devtool: 'nosources-source-map',
+		devtool: isProduction ? false : 'nosources-source-map',
 		output: {
 			path: path.resolve(__dirname, './dist'),
 			publicPath: '/dist/',
-			filename: 'js/[name].js'
+			filename: `js/[name]${isProduction ? '.[contenthash]' : ''}.js`
 		},
 		module: {
 			rules: [
@@ -47,19 +45,17 @@ module.exports = (env, argv) => {
 		},
 		plugins: [
 			new MiniCssExtractPlugin({
-				filename: 'css/[name].css',
-				chunkFilename: 'css/[name].css'
+				filename: `css/[name]${isProduction ? '.[contenthash]' : ''}.css`
 			}),
 			new ChunksWebpackPlugin({
-				outputPath: path.resolve(__dirname, 'dist/templates'),
-				fileExtension: '.html',
+				filename: 'templates/[name]-[type].html',
 				generateChunksManifest: true,
 				generateChunksFiles: true,
 				customFormatTags: (chunksSorted, Entrypoint) => {
 					// Generate all HTML style tags with CDN prefix
 					const styles = chunksSorted.styles
 						.map(
-							chunkCss =>
+							(chunkCss) =>
 								`<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`
 						)
 						.join('');
@@ -67,17 +63,13 @@ module.exports = (env, argv) => {
 					// Generate all HTML style tags with CDN prefix and defer attribute
 					const scripts = chunksSorted.scripts
 						.map(
-							chunkJs =>
+							(chunkJs) =>
 								`<script defer src="https://cdn.domain.com${chunkJs}"></script>`
 						)
 						.join('');
 
 					return { styles, scripts };
 				}
-			}),
-			new ManifestPlugin({
-				writeToFileEmit: true,
-				fileName: 'manifest.json'
 			})
 		],
 		stats: {
@@ -98,20 +90,17 @@ module.exports = (env, argv) => {
 				new TerserJSPlugin({
 					extractComments: false
 				}),
-				new OptimizeCSSAssetsPlugin({})
+				new CssMinimizerPlugin()
 			],
-			namedChunks: false,
-			namedModules: false,
+			chunkIds: 'deterministic', // or 'named'
 			removeAvailableModules: true,
 			removeEmptyChunks: true,
 			mergeDuplicateChunks: true,
-			occurrenceOrder: true,
 			providedExports: false,
 			mangleWasmImports: true,
 			splitChunks: {
 				chunks: 'all',
-				minSize: 0,
-				name: true
+				minSize: 0
 			}
 		}
 	};

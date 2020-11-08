@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 6.1.0
+ * @version 7.0.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -9,7 +9,13 @@
  **/
 
 import { Compiler } from 'webpack';
-import utils = require('./utils');
+const webpack = require('webpack');
+
+// webpack v4/v5 compatibility:
+// https://github.com/webpack/webpack/issues/11425#issuecomment-686607633
+const { RawSource } = webpack.sources || require('webpack-sources');
+
+import path = require('path');
 
 // Describe the shape of the Chunks object
 interface Chunks {
@@ -33,8 +39,7 @@ interface Manifest {
 
 export = class ChunksWebpackPlugin {
 	options: {
-		outputPath: null | string;
-		fileExtension: string;
+		filename: string;
 		templateStyle: string;
 		templateScript: string;
 		customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: Object) => HtmlTags);
@@ -43,6 +48,7 @@ export = class ChunksWebpackPlugin {
 	};
 	manifest: Manifest;
 	compilation: any;
+	isWebpack4: Boolean;
 	entryNames!: Array<string>;
 	publicPath!: string;
 	outputPath!: null | string;
@@ -54,8 +60,7 @@ export = class ChunksWebpackPlugin {
 		// Merge default options with user options
 		this.options = Object.assign(
 			{
-				outputPath: null,
-				fileExtension: '.html',
+				filename: '[name]-[type].html',
 				templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
 				templateScript: '<script src="{{chunk}}"></script>',
 				customFormatTags: false,
@@ -66,6 +71,8 @@ export = class ChunksWebpackPlugin {
 		);
 
 		this.manifest = {};
+		this.isWebpack4 = false;
+		this.addAssets = this.addAssets.bind(this);
 	}
 
 	/**
@@ -74,7 +81,9 @@ export = class ChunksWebpackPlugin {
 	 * @param {Object} compiler The Webpack compiler variable
 	 */
 	apply(compiler: Compiler): void {
-		compiler.hooks.emit.tap('ChunksWebpackPlugin', this.hookCallback.bind(this));
+		this.isWebpack4 = webpack.version.startsWith('4.');
+		const compilerHook = this.isWebpack4 ? 'emit' : 'thisCompilation';
+		compiler.hooks[compilerHook].tap('ChunksWebpackPlugin', this.hookCallback.bind(this));
 	}
 
 	/**
@@ -84,6 +93,26 @@ export = class ChunksWebpackPlugin {
 	 */
 	hookCallback(compilation: object): void {
 		this.compilation = compilation;
+
+		if (this.isWebpack4) {
+			this.addAssets();
+		} else {
+			// PROCESS_ASSETS_STAGE_ADDITIONAL: Add additional assets to the compilation
+			this.compilation.hooks.processAssets.tap(
+				{
+					name: 'ChunksWebpackPlugin',
+					stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
+				},
+				this.addAssets
+			);
+		}
+	}
+
+	/**
+	 * Add assets
+	 * The hook is triggered by webpack
+	 */
+	addAssets(): void {
 		this.publicPath = this.getPublicPath();
 		this.outputPath = this.getOutputPath();
 		this.entryNames = this.getEntryNames();
@@ -127,7 +156,10 @@ export = class ChunksWebpackPlugin {
 	 * @return {String} The public path
 	 */
 	getPublicPath(): string {
-		const publicPath = this.compilation.options.output.publicPath || '';
+		let publicPath = this.compilation.options.output.publicPath || '';
+		if (typeof publicPath === 'function') {
+			publicPath = publicPath();
+		}
 		return `${publicPath}${this.isPublicPathNeedsEndingSlash(publicPath) ? '/' : ''}`;
 	}
 
@@ -138,11 +170,7 @@ export = class ChunksWebpackPlugin {
 	 * @return {String} The output path
 	 */
 	getOutputPath(): string | null {
-		if (this.isValidOutputPath()) {
-			return this.options.outputPath;
-		} else {
-			return this.compilation.options.output.path || '';
-		}
+		return this.compilation.options.output.path || '';
 	}
 
 	/**
@@ -188,7 +216,7 @@ export = class ChunksWebpackPlugin {
 			if (this.isValidCustomFormatTagsDatas(htmlTags)) {
 				return htmlTags;
 			} else {
-				utils.setError('ChunksWebpackPlugin::customFormatTags return invalid object');
+				this.setError('ChunksWebpackPlugin::customFormatTags return invalid object');
 			}
 		} else {
 			// Default behavior, generate HTML tags with templateStyle and templateScript options
@@ -206,11 +234,11 @@ export = class ChunksWebpackPlugin {
 	sortsChunksByType(files: Array<string>): Chunks {
 		return {
 			styles: files
-				.filter(file => this.isValidExtensionByType(file, 'css'))
-				.map(file => `${this.publicPath}${file}`),
+				.filter((file) => this.isValidExtensionByType(file, 'css'))
+				.map((file) => `${this.publicPath}${file}`),
 			scripts: files
-				.filter(file => this.isValidExtensionByType(file, 'js'))
-				.map(file => `${this.publicPath}${file}`)
+				.filter((file) => this.isValidExtensionByType(file, 'js'))
+				.map((file) => `${this.publicPath}${file}`)
 		};
 	}
 
@@ -246,15 +274,6 @@ export = class ChunksWebpackPlugin {
 	}
 
 	/**
-	 * Check if the outputPath is valid, a string and absolute
-	 *
-	 * @returns {Boolean} outputPath is valid
-	 */
-	isValidOutputPath(): boolean {
-		return !!(this.options.outputPath && utils.isAbsolutePath(this.options.outputPath));
-	}
-
-	/**
 	 * Check if file extension correspond to the type parameter
 	 *
 	 * @param {String} file File path
@@ -263,7 +282,7 @@ export = class ChunksWebpackPlugin {
 	 * @returns {Boolean} File extension is valid
 	 */
 	isValidExtensionByType(file: string, type: string): boolean {
-		return utils.getFileExtension(file) === type;
+		return path.extname(file).substr(1) === type;
 	}
 
 	/**
@@ -303,10 +322,7 @@ export = class ChunksWebpackPlugin {
 
 		// Expose the manifest file into the assets compilation
 		// The file is automatically created by the compiler
-		this.compilation.assets['chunks-manifest.json'] = {
-			source: () => output,
-			size: () => output.length
-		};
+		this.compilation.emitAsset('chunks-manifest.json', new RawSource(output, false));
 	}
 
 	/**
@@ -323,16 +339,25 @@ export = class ChunksWebpackPlugin {
 		htmlTags: HtmlTags;
 	}): void {
 		if (htmlTags.scripts.length) {
-			utils.writeFile({
-				outputPath: `${this.outputPath}/${entryName}-scripts${this.options.fileExtension}`,
-				output: htmlTags.scripts
-			});
+			this.compilation.emitAsset(
+				this.options.filename.replace('[name]', entryName).replace('[type]', 'scripts'),
+				new RawSource(htmlTags.scripts, false)
+			);
 		}
 		if (htmlTags.styles.length) {
-			utils.writeFile({
-				outputPath: `${this.outputPath}/${entryName}-styles${this.options.fileExtension}`,
-				output: htmlTags.styles
-			});
+			this.compilation.emitAsset(
+				this.options.filename.replace('[name]', entryName).replace('[type]', 'styles'),
+				new RawSource(htmlTags.styles, false)
+			);
 		}
+	}
+
+	/**
+	 * Throw an error
+	 *
+	 * @param {String} message Text to display in the error
+	 */
+	setError(message: string) {
+		throw new Error(message);
 	}
 };

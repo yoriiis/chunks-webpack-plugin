@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## 7.0.0
+
+### New features
+
+- Add the `filename` parameter.
+
+### Updates
+
+- Add the webpack `v5` compatibility and the backward compatibility for the `v4`.
+- Use the `processAssets` compilation hook to create templates and the `chunks-manifest.json` file.
+- The plugin requires at least Node.js `10.13.0` (LTS). The `engines.node` is updated in the `package.json`.
+- Update the nodeJS version in the Github Action
+
+### Removes
+
+- Remove the `outputPath` parameter. Templates are generated in the the webpack output path. Use the `filename` to customize the output directory.
+- Remove the `fileExtension` parameter.
+- Remove the `fs-extra` package in favor of the file system exposed by the webpack compiler. It use the `graceful-fs` package.
+- Remove the utils and move useful functions into the main file
+
 ## 6.1.0
 
 ### Fixes
