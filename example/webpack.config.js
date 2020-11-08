@@ -16,7 +16,7 @@ module.exports = (env, argv) => {
 		watchOptions: {
 			ignored: /node_modules/
 		},
-		devtool: !isProduction ? 'nosources-source-map' : false,
+		devtool: isProduction ? false : 'nosources-source-map',
 		output: {
 			path: path.resolve(__dirname, './dist'),
 			publicPath: '/dist/',
