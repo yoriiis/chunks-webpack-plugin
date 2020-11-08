@@ -9,6 +9,12 @@
  **/
 
 import { Compiler } from 'webpack';
+const webpack = require('webpack');
+
+// webpack v4/v5 compatibility:
+// https://github.com/webpack/webpack/issues/11425#issuecomment-686607633
+const { RawSource } = webpack.sources || require('webpack-sources');
+
 import path = require('path');
 
 // Describe the shape of the Chunks object
@@ -42,7 +48,7 @@ export = class ChunksWebpackPlugin {
 	};
 	manifest: Manifest;
 	compilation: any;
-	webpack: any;
+	isWebpack4: Boolean;
 	entryNames!: Array<string>;
 	publicPath!: string;
 	outputPath!: null | string;
@@ -65,7 +71,8 @@ export = class ChunksWebpackPlugin {
 		);
 
 		this.manifest = {};
-		this.processAssets = this.processAssets.bind(this);
+		this.isWebpack4 = false;
+		this.addAssets = this.addAssets.bind(this);
 	}
 
 	/**
@@ -74,7 +81,9 @@ export = class ChunksWebpackPlugin {
 	 * @param {Object} compiler The Webpack compiler variable
 	 */
 	apply(compiler: Compiler): void {
-		compiler.hooks.thisCompilation.tap('ChunksWebpackPlugin', this.hookCallback.bind(this));
+		this.isWebpack4 = webpack.version.startsWith('4.');
+		const compilerHook = this.isWebpack4 ? 'emit' : 'thisCompilation';
+		compiler.hooks[compilerHook].tap('ChunksWebpackPlugin', this.hookCallback.bind(this));
 	}
 
 	/**
@@ -84,22 +93,26 @@ export = class ChunksWebpackPlugin {
 	 */
 	hookCallback(compilation: object): void {
 		this.compilation = compilation;
-		this.webpack = this.compilation.compiler.webpack;
 
-		this.compilation.hooks.processAssets.tap(
-			{
-				name: 'ChunksWebpackPlugin',
-				stage: this.compilation.compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
-			},
-			this.processAssets
-		);
+		if (this.isWebpack4) {
+			this.addAssets();
+		} else {
+			// PROCESS_ASSETS_STAGE_ADDITIONAL: Add additional assets to the compilation
+			this.compilation.hooks.processAssets.tap(
+				{
+					name: 'ChunksWebpackPlugin',
+					stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
+				},
+				this.addAssets
+			);
+		}
 	}
 
 	/**
-	 * Process assets
+	 * Add assets
 	 * The hook is triggered by webpack
 	 */
-	processAssets(): void {
+	addAssets(): void {
 		this.publicPath = this.getPublicPath();
 		this.outputPath = this.getOutputPath();
 		this.entryNames = this.getEntryNames();
@@ -309,10 +322,7 @@ export = class ChunksWebpackPlugin {
 
 		// Expose the manifest file into the assets compilation
 		// The file is automatically created by the compiler
-		this.compilation.emitAsset(
-			'chunks-manifest.json',
-			new this.webpack.sources.RawSource(output, false)
-		);
+		this.compilation.emitAsset('chunks-manifest.json', new RawSource(output, false));
 	}
 
 	/**
@@ -331,13 +341,13 @@ export = class ChunksWebpackPlugin {
 		if (htmlTags.scripts.length) {
 			this.compilation.emitAsset(
 				this.options.filename.replace('[name]', entryName).replace('[type]', 'scripts'),
-				new this.webpack.sources.RawSource(htmlTags.scripts, false)
+				new RawSource(htmlTags.scripts, false)
 			);
 		}
 		if (htmlTags.styles.length) {
 			this.compilation.emitAsset(
 				this.options.filename.replace('[name]', entryName).replace('[type]', 'styles'),
-				new this.webpack.sources.RawSource(htmlTags.styles, false)
+				new RawSource(htmlTags.styles, false)
 			);
 		}
 	}

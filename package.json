@@ -11,11 +11,8 @@
 	],
 	"files": [
 		"src/index.ts",
-		"src/utils.ts",
 		"lib/index.d.ts",
-		"lib/utils.d.ts",
-		"lib/index.js",
-		"lib/utils.js"
+		"lib/index.js"
 	],
 	"homepage": "https://github.com/yoriiis/chunks-webpack-plugin",
 	"bugs": "https://github.com/yoriiis/chunks-webpack-plugin/issues",
@@ -177,12 +174,12 @@
 		"ts-jest": "^26.4.3",
 		"typescript": "^4.0.5",
 		"vlitejs": "^3.0.4",
-		"webpack": "^5.3.2",
+		"webpack": "^5.4.0",
 		"webpack-bundle-analyzer": "^3.9.0",
 		"webpack-cli": "^4.1.0"
 	},
 	"peerDependencies": {
-		"webpack": "^5.3.2"
+		"webpack": "^4.0.0"
 	},
 	"engines": {
 		"node": ">=10.13.0"

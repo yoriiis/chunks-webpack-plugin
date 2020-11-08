@@ -34,7 +34,7 @@ declare const _default: {
         };
         manifest: Manifest;
         compilation: any;
-        webpack: any;
+        isWebpack4: Boolean;
         entryNames: Array<string>;
         publicPath: string;
         outputPath: null | string;
@@ -51,10 +51,10 @@ declare const _default: {
          */
         hookCallback(compilation: object): void;
         /**
-         * Process assets
+         * Add assets
          * The hook is triggered by webpack
          */
-        processAssets(): void;
+        addAssets(): void;
         /**
          * Process for each entry
     
