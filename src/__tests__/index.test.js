@@ -1,3 +1,5 @@
+'use strict';
+
 import ChunksWebpackPlugin from '../index';
 import {
 	mockGetEntryNames,
@@ -9,8 +11,6 @@ import {
 	mockIsValidCustomFormatTagsDatas
 } from '../__mocks__/mocks';
 import path from 'path';
-
-('use strict');
 
 const webpack = require('webpack');
 
