@@ -157,9 +157,18 @@ export = class ChunksWebpackPlugin {
 	 */
 	getPublicPath(): string {
 		let publicPath = this.compilation.options.output.publicPath || '';
-		if (typeof publicPath === 'function') {
+
+		// Default value for the publicPath is "auto"
+		// The value must be generated automatically from the webpack compilation data
+		if (publicPath === 'auto') {
+			publicPath = `/${path.relative(
+				this.compilation.options.context,
+				this.compilation.options.output.path
+			)}`;
+		} else if (typeof publicPath === 'function') {
 			publicPath = publicPath();
 		}
+
 		return `${publicPath}${this.isPublicPathNeedsEndingSlash(publicPath) ? '/' : ''}`;
 	}
 

@@ -8,6 +8,7 @@ module.exports = (env, argv) => {
 	const isProduction = argv.mode === 'production';
 
 	return {
+		context: __dirname, // Context is mandatory because webpack use the flag "--config"
 		entry: {
 			'app-a': `${path.resolve(__dirname, './src/js/app-a.js')}`,
 			'app-b': `${path.resolve(__dirname, './src/js/app-b.js')}`,

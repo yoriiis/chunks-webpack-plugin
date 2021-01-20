@@ -118,8 +118,9 @@ beforeEach(() => {
 		assets: {},
 		entrypoints: entrypointsMap,
 		options: {
+			context: '/chunks-webpack-plugin/example',
 			output: {
-				path: '/dist/',
+				path: '/chunks-webpack-plugin/example/dist/',
 				publicPath: '/dist/'
 			}
 		},
@@ -324,6 +325,16 @@ describe('ChunksWebpackPlugin getPublicPath', () => {
 		);
 	});
 
+	it('Should call the getPublicPath function with the default value "auto"', () => {
+		chunksWebpackPlugin.isPublicPathNeedsEndingSlash = jest.fn().mockReturnValue(true);
+
+		compilationWebpack.options.output.publicPath = 'auto';
+		chunksWebpackPlugin.compilation = compilationWebpack;
+
+		expect(chunksWebpackPlugin.getPublicPath()).toBe('/dist/');
+		expect(chunksWebpackPlugin.isPublicPathNeedsEndingSlash).toHaveBeenCalledWith('/dist');
+	});
+
 	it('Should call the getPublicPath function and add the leading slash', () => {
 		chunksWebpackPlugin.isPublicPathNeedsEndingSlash = jest.fn().mockReturnValue(true);
 
@@ -360,7 +371,7 @@ describe('ChunksWebpackPlugin getOutputPath', () => {
 		chunksWebpackPlugin.compilation = compilationWebpack;
 		const result = chunksWebpackPlugin.getOutputPath();
 
-		expect(result).toBe('/dist/');
+		expect(result).toBe('/chunks-webpack-plugin/example/dist/');
 	});
 
 	it('Should call the getOutputPath function with an undefined value', () => {
