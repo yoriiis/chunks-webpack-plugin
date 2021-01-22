@@ -22,6 +22,10 @@ interface Manifest {
         scripts: Array<string>;
     };
 }
+interface Fs {
+    mkdir: Function;
+    writeFile: Function;
+}
 declare const _default: {
     new (options?: {}): {
         options: {
@@ -35,7 +39,7 @@ declare const _default: {
             generateChunksFiles: boolean;
         };
         manifest: Manifest;
-        fs: any;
+        fs: Fs;
         compilation: any;
         isWebpack4: Boolean;
         entryNames: Array<string>;
