@@ -39,6 +39,8 @@ interface Manifest {
 
 export = class ChunksWebpackPlugin {
 	options: {
+		outputPath: null | string;
+		emitAssetsWithCompilation: boolean;
 		filename: string;
 		templateStyle: string;
 		templateScript: string;
@@ -47,11 +49,13 @@ export = class ChunksWebpackPlugin {
 		generateChunksFiles: boolean;
 	};
 	manifest: Manifest;
+	fs: any;
 	compilation: any;
 	isWebpack4: Boolean;
 	entryNames!: Array<string>;
 	publicPath!: string;
 	outputPath!: null | string;
+	outpathFromFilename!: string;
 	/**
 	 * Instanciate the constructor
 	 * @param {options}
@@ -63,9 +67,11 @@ export = class ChunksWebpackPlugin {
 				filename: '[name]-[type].html',
 				templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
 				templateScript: '<script src="{{chunk}}"></script>',
+				outputPath: null,
 				customFormatTags: false,
 				generateChunksManifest: false,
-				generateChunksFiles: true
+				generateChunksFiles: true,
+				emitAssetsWithCompilation: true
 			},
 			options
 		);
@@ -93,6 +99,7 @@ export = class ChunksWebpackPlugin {
 	 */
 	hookCallback(compilation: object): void {
 		this.compilation = compilation;
+		this.fs = this.compilation.compiler.outputFileSystem;
 
 		if (this.isWebpack4) {
 			this.addAssets();
@@ -115,6 +122,7 @@ export = class ChunksWebpackPlugin {
 	addAssets(): void {
 		this.publicPath = this.getPublicPath();
 		this.outputPath = this.getOutputPath();
+		this.outpathFromFilename = this.getOutputPathFromFilename();
 		this.entryNames = this.getEntryNames();
 
 		this.entryNames
@@ -179,7 +187,31 @@ export = class ChunksWebpackPlugin {
 	 * @return {String} The output path
 	 */
 	getOutputPath(): string | null {
-		return this.compilation.options.output.path || '';
+		if (this.isValidOutputPath()) {
+			return this.options.outputPath;
+		} else {
+			return this.compilation.options.output.path || '';
+		}
+	}
+
+	/**
+	 * Get the output path inside the filename if exist
+	 * Filename can contains directory (automatically created by the compilation
+	 *
+	 * @returns {String} The outpath path extract from the filename
+	 */
+	getOutputPathFromFilename(): string {
+		const pathFromFilename = /(^\/?)(.*\/)/.exec(this.options.filename);
+		return pathFromFilename && pathFromFilename[2] !== '/' ? pathFromFilename[2] : '';
+	}
+
+	/**
+	 * Check if the outputPath is valid, a string and absolute
+	 *
+	 * @returns {Boolean} outputPath is valid
+	 */
+	isValidOutputPath(): boolean {
+		return !!(this.options.outputPath && path.isAbsolute(this.options.outputPath));
 	}
 
 	/**
@@ -331,7 +363,10 @@ export = class ChunksWebpackPlugin {
 
 		// Expose the manifest file into the assets compilation
 		// The file is automatically created by the compiler
-		this.compilation.emitAsset('chunks-manifest.json', new RawSource(output, false));
+		this.createAsset({
+			filename: 'chunks-manifest.json',
+			output
+		});
 	}
 
 	/**
@@ -348,17 +383,55 @@ export = class ChunksWebpackPlugin {
 		htmlTags: HtmlTags;
 	}): void {
 		if (htmlTags.scripts.length) {
-			this.compilation.emitAsset(
-				this.options.filename.replace('[name]', entryName).replace('[type]', 'scripts'),
-				new RawSource(htmlTags.scripts, false)
-			);
+			this.createAsset({
+				filename: this.options.filename
+					.replace('[name]', entryName)
+					.replace('[type]', 'scripts'),
+				output: htmlTags.scripts
+			});
 		}
 		if (htmlTags.styles.length) {
-			this.compilation.emitAsset(
-				this.options.filename.replace('[name]', entryName).replace('[type]', 'styles'),
-				new RawSource(htmlTags.styles, false)
+			this.createAsset({
+				filename: this.options.filename
+					.replace('[name]', entryName)
+					.replace('[type]', 'styles'),
+				output: htmlTags.styles
+			});
+		}
+	}
+
+	/**
+	 * Create asset by the webpack compilation (default) or Node.js FS
+	 * @param {Object} options
+	 * @param {String} filename Filename
+	 * @param {String} output File content
+	 */
+	createAsset({ filename, output }: { filename: string; output: string }) {
+		if (this.options.emitAssetsWithCompilation) {
+			this.compilation.emitAsset(filename, new RawSource(output, false));
+		} else {
+			this.fs.mkdir(
+				`${this.options.outputPath}/${this.outpathFromFilename}`,
+				{ recursive: true },
+				(error: Error) => {
+					if (error) throw error;
+
+					const filePath = this.getOutputFilePath(filename);
+					this.fs.writeFile(filePath, output, (error: Error) => {
+						if (error) throw error;
+					});
+				}
 			);
 		}
+	}
+
+	/**
+	 * Get the output file path (outPath + filename)
+	 * @param {String} filename The filename
+	 * @returns {String} The output file path
+	 */
+	getOutputFilePath(filename: string): string {
+		return `${this.outputPath}${filename.substr(0, 1) === '/' ? '' : '/'}${filename}`;
 	}
 
 	/**

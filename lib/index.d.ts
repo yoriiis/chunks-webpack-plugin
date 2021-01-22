@@ -25,6 +25,8 @@ interface Manifest {
 declare const _default: {
     new (options?: {}): {
         options: {
+            outputPath: null | string;
+            emitAssetsWithCompilation: boolean;
             filename: string;
             templateStyle: string;
             templateScript: string;
@@ -33,11 +35,13 @@ declare const _default: {
             generateChunksFiles: boolean;
         };
         manifest: Manifest;
+        fs: any;
         compilation: any;
         isWebpack4: Boolean;
         entryNames: Array<string>;
         publicPath: string;
         outputPath: null | string;
+        outpathFromFilename: string;
         /**
          * Apply function is automatically called by the Webpack main compiler
          *
@@ -75,6 +79,19 @@ declare const _default: {
          * @return {String} The output path
          */
         getOutputPath(): string | null;
+        /**
+         * Get the output path inside the filename if exist
+         * Filename can contains directory (automatically created by the compilation
+         *
+         * @returns {String} The outpath path extract from the filename
+         */
+        getOutputPathFromFilename(): string;
+        /**
+         * Check if the outputPath is valid, a string and absolute
+         *
+         * @returns {Boolean} outputPath is valid
+         */
+        isValidOutputPath(): boolean;
         /**
          * Get entrypoint names from the compilation
          *
@@ -166,6 +183,22 @@ declare const _default: {
             entryName: string;
             htmlTags: HtmlTags;
         }): void;
+        /**
+         * Create asset by the webpack compilation (default) or Node.js FS
+         * @param {Object} options
+         * @param {String} filename Filename
+         * @param {String} output File content
+         */
+        createAsset({ filename, output }: {
+            filename: string;
+            output: string;
+        }): void;
+        /**
+         * Get the output file path (outPath + filename)
+         * @param {String} filename The filename
+         * @returns {String} The output file path
+         */
+        getOutputFilePath(filename: string): string;
         /**
          * Throw an error
          *

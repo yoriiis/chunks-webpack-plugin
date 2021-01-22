@@ -50,6 +50,7 @@ module.exports = (env, argv) => {
 			}),
 			new ChunksWebpackPlugin({
 				filename: 'templates/[name]-[type].html',
+				emitAssetsWithCompilation: true,
 				generateChunksManifest: true,
 				generateChunksFiles: true,
 				customFormatTags: (chunksSorted, Entrypoint) => {
