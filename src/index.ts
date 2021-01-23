@@ -5,7 +5,7 @@
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
- * @copyright 2020 Joris DANIEL
+ * @copyright 2021 Joris DANIEL
  **/
 
 import { Compiler } from 'webpack';
@@ -46,7 +46,6 @@ interface Fs {
 export = class ChunksWebpackPlugin {
 	options: {
 		outputPath: null | string;
-		emitAssetsWithCompilation: boolean;
 		filename: string;
 		templateStyle: string;
 		templateScript: string;
@@ -75,7 +74,6 @@ export = class ChunksWebpackPlugin {
 				templateScript: '<script src="{{chunk}}"></script>',
 				outputPath: null,
 				customFormatTags: false,
-				emitAssetsWithCompilation: true,
 				generateChunksManifest: false,
 				generateChunksFiles: true
 			},
@@ -388,17 +386,16 @@ export = class ChunksWebpackPlugin {
 	}
 
 	/**
-	 * Create asset by the webpack compilation (default) or the webpack built-in Node.js File System
+	 * Create asset by the webpack compilation or the webpack built-in Node.js File System
+	 * The outputPath parameter allows to override the default webpack output path
 	 * @param {Object} options
 	 * @param {String} options.filename Filename
 	 * @param {String} options.output File content
 	 */
 	createAsset({ filename, output }: { filename: string; output: string }): void {
-		if (this.options.emitAssetsWithCompilation) {
-			this.compilation.emitAsset(filename, new RawSource(output, false));
-		} else {
+		if (this.options.outputPath) {
 			this.fs.mkdir(
-				`${this.options.outputPath}/${this.outpathFromFilename}`,
+				`${this.outputPath}/${this.outpathFromFilename}`,
 				{ recursive: true },
 				(error: Error) => {
 					if (error) throw error;
@@ -409,6 +406,8 @@ export = class ChunksWebpackPlugin {
 					});
 				}
 			);
+		} else {
+			this.compilation.emitAsset(filename, new RawSource(output, false));
 		}
 	}
 

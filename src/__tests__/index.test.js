@@ -170,7 +170,6 @@ describe('ChunksWebpackPlugin constructor', () => {
 			templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
 			templateScript: '<script src="{{chunk}}"></script>',
 			outputPath: null,
-			emitAssetsWithCompilation: true,
 			generateChunksManifest: false,
 			generateChunksFiles: true,
 			customFormatTags: false
@@ -682,7 +681,6 @@ describe('ChunksWebpackPlugin createAsset', () => {
 		chunksWebpackPlugin.outpathFromFilename = 'templates/';
 		chunksWebpackPlugin.fs = compilationWebpack.compiler.outputFileSystem;
 		chunksWebpackPlugin.options.outputPath = '/chunks-webpack-plugin/example/dist/templates';
-		chunksWebpackPlugin.options.emitAssetsWithCompilation = false;
 		chunksWebpackPlugin.createAsset({
 			filename: 'templates/app-a-scripts.html',
 			output: htmlTags.scripts
@@ -690,7 +688,7 @@ describe('ChunksWebpackPlugin createAsset', () => {
 
 		expect(chunksWebpackPlugin.compilation.emitAsset).not.toHaveBeenCalled();
 		expect(chunksWebpackPlugin.fs.mkdir).toHaveBeenCalledWith(
-			'/chunks-webpack-plugin/example/dist/templates/templates/',
+			'/chunks-webpack-plugin/example/dist/templates/',
 			{
 				recursive: true
 			},
@@ -714,7 +712,6 @@ describe('ChunksWebpackPlugin createAsset', () => {
 		chunksWebpackPlugin.outpathFromFilename = 'templates/';
 		chunksWebpackPlugin.fs = generateMockFs({ mkdirError: true });
 		chunksWebpackPlugin.options.outputPath = '/chunks-webpack-plugin/example/dist/templates';
-		chunksWebpackPlugin.options.emitAssetsWithCompilation = false;
 
 		expect(() => {
 			chunksWebpackPlugin.createAsset({
