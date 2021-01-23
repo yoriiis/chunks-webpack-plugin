@@ -5,7 +5,7 @@
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
- * @copyright 2020 Joris DANIEL
+ * @copyright 2021 Joris DANIEL
  **/
 
 import { Compiler } from 'webpack';
@@ -37,8 +37,15 @@ interface Manifest {
 	};
 }
 
+// Describe the shape of the webpack built-in Node.js File System
+interface Fs {
+	mkdir: Function;
+	writeFile: Function;
+}
+
 export = class ChunksWebpackPlugin {
 	options: {
+		outputPath: null | string;
 		filename: string;
 		templateStyle: string;
 		templateScript: string;
@@ -47,11 +54,13 @@ export = class ChunksWebpackPlugin {
 		generateChunksFiles: boolean;
 	};
 	manifest: Manifest;
+	fs!: Fs;
 	compilation: any;
 	isWebpack4: Boolean;
 	entryNames!: Array<string>;
 	publicPath!: string;
 	outputPath!: null | string;
+	outpathFromFilename!: string;
 	/**
 	 * Instanciate the constructor
 	 * @param {options}
@@ -63,6 +72,7 @@ export = class ChunksWebpackPlugin {
 				filename: '[name]-[type].html',
 				templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
 				templateScript: '<script src="{{chunk}}"></script>',
+				outputPath: null,
 				customFormatTags: false,
 				generateChunksManifest: false,
 				generateChunksFiles: true
@@ -77,7 +87,6 @@ export = class ChunksWebpackPlugin {
 
 	/**
 	 * Apply function is automatically called by the Webpack main compiler
-	 *
 	 * @param {Object} compiler The Webpack compiler variable
 	 */
 	apply(compiler: Compiler): void {
@@ -88,11 +97,11 @@ export = class ChunksWebpackPlugin {
 
 	/**
 	 * Hook expose by the Webpack compiler
-	 *
 	 * @param {Object} compilation The Webpack compilation variable
 	 */
 	hookCallback(compilation: object): void {
 		this.compilation = compilation;
+		this.fs = this.compilation.compiler.outputFileSystem;
 
 		if (this.isWebpack4) {
 			this.addAssets();
@@ -115,6 +124,7 @@ export = class ChunksWebpackPlugin {
 	addAssets(): void {
 		this.publicPath = this.getPublicPath();
 		this.outputPath = this.getOutputPath();
+		this.outpathFromFilename = this.getOutputPathFromFilename();
 		this.entryNames = this.getEntryNames();
 
 		this.entryNames
@@ -129,7 +139,6 @@ export = class ChunksWebpackPlugin {
 
 	/**
 	 * Process for each entry
-
 	 * @param {String} entryName Entrypoint name
 	 */
 	processEntry(entryName: string): void {
@@ -152,7 +161,6 @@ export = class ChunksWebpackPlugin {
 	/**
 	 * Get the public path from Webpack configuation
 	 * and add slash at the end if necessary
-	 *
 	 * @return {String} The public path
 	 */
 	getPublicPath(): string {
@@ -175,16 +183,36 @@ export = class ChunksWebpackPlugin {
 	/**
 	 * Get the output path from Webpack configuation
 	 * or from constructor options
-	 *
 	 * @return {String} The output path
 	 */
 	getOutputPath(): string | null {
-		return this.compilation.options.output.path || '';
+		if (this.isValidOutputPath()) {
+			return this.options.outputPath;
+		} else {
+			return this.compilation.options.output.path || '';
+		}
+	}
+
+	/**
+	 * Get the output path inside the filename if it exists
+	 * Filename can contain a directory (created automatically by the compilation)
+	 * @returns {String} The outpath path extract from the filename
+	 */
+	getOutputPathFromFilename(): string {
+		const pathFromFilename = /(^\/?)(.*\/)/.exec(this.options.filename);
+		return pathFromFilename && pathFromFilename[2] !== '/' ? pathFromFilename[2] : '';
+	}
+
+	/**
+	 * Check if the outputPath is valid, a string and absolute
+	 * @returns {Boolean} outputPath is valid
+	 */
+	isValidOutputPath(): boolean {
+		return !!(this.options.outputPath && path.isAbsolute(this.options.outputPath));
 	}
 
 	/**
 	 * Get entrypoint names from the compilation
-	 *
 	 * @return {Array} List of entrypoint names
 	 */
 	getEntryNames(): Array<string> {
@@ -195,7 +223,6 @@ export = class ChunksWebpackPlugin {
 	 * Get files list by entrypoint name
 	 *
 	 * @param {String} entryName Entrypoint name
-	 *
 	 * @return {Array} List of entrypoint names
 	 */
 	getFiles(entryName: string): Array<string> {
@@ -204,10 +231,9 @@ export = class ChunksWebpackPlugin {
 
 	/**
 	 * Get HTML tags from chunks
-	 *
-	 * @param {Object} chunks Chunks sorted by type (style, script)
-	 * @param {Object} Entrypoint Entrypoint object part of a single ChunkGroup
-	 *
+	 * @param {Object} options
+	 * @param {Object} options.chunks Chunks sorted by type (style, script)
+	 * @param {Object} options.Entrypoint Entrypoint object part of a single ChunkGroup
 	 * @returns {String} HTML tags by entrypoints
 	 */
 	getHtmlTags({
@@ -235,9 +261,7 @@ export = class ChunksWebpackPlugin {
 
 	/**
 	 * Sorts all chunks by type (styles or scripts)
-	 *
 	 * @param {Array} files List of files by entrypoint name
-	 *
 	 * @returns {Object} All chunks sorted by extension type
 	 */
 	sortsChunksByType(files: Array<string>): Chunks {
@@ -253,9 +277,7 @@ export = class ChunksWebpackPlugin {
 
 	/**
 	 * Generate HTML styles and scripts tags for each entrypoints
-	 *
 	 * @param {Object} chunks The list of chunks of chunkGroups sorted by type
-	 *
 	 * @returns {Object} HTML tags with all assets for an entrypoint and sorted by type
 	 */
 	formatTags(chunks: Chunks): HtmlTags {
@@ -273,9 +295,7 @@ export = class ChunksWebpackPlugin {
 
 	/**
 	 * Check if the publicPath need an ending slash
-	 *
 	 * @param {String} publicPath Public path
-	 *
 	 * @returns {Boolean} The public path need an ending slash
 	 */
 	isPublicPathNeedsEndingSlash(publicPath: string): boolean {
@@ -284,10 +304,8 @@ export = class ChunksWebpackPlugin {
 
 	/**
 	 * Check if file extension correspond to the type parameter
-	 *
 	 * @param {String} file File path
 	 * @param {String} type File extension
-	 *
 	 * @returns {Boolean} File extension is valid
 	 */
 	isValidExtensionByType(file: string, type: string): boolean {
@@ -296,7 +314,6 @@ export = class ChunksWebpackPlugin {
 
 	/**
 	 * Check if datas from customFormatTags are valid
-	 *
 	 * @param {Object} htmlTags Formatted HTML tags by styles and scripts keys
 	 */
 	isValidCustomFormatTagsDatas(htmlTags: HtmlTags): boolean {
@@ -310,9 +327,9 @@ export = class ChunksWebpackPlugin {
 	/**
 	 * Update the class property manifest
 	 * which contains all chunks informations by entrypoint
-	 *
-	 * @param {String} entryName Entrypoint name
-	 * @param {Object} chunks List of styles and scripts chunks by entrypoint
+	 * @param {Object} options
+	 * @param {String} options.entryName Entrypoint name
+	 * @param {Object} options.chunks List of styles and scripts chunks by entrypoint
 	 */
 	updateManifest({ entryName, chunks }: { entryName: string; chunks: Chunks }): void {
 		this.manifest[entryName] = {
@@ -331,14 +348,17 @@ export = class ChunksWebpackPlugin {
 
 		// Expose the manifest file into the assets compilation
 		// The file is automatically created by the compiler
-		this.compilation.emitAsset('chunks-manifest.json', new RawSource(output, false));
+		this.createAsset({
+			filename: 'chunks-manifest.json',
+			output
+		});
 	}
 
 	/**
 	 * Create file with HTML tags for each entrypoints
-	 *
-	 * @param {String} entryName Entrypoint name
-	 * @param {Object} htmlTags Generated HTML of script and styles tags
+	 * @param {Object} options
+	 * @param {String} options.entryName Entrypoint name
+	 * @param {Object} options.htmlTags Generated HTML of script and styles tags
 	 */
 	createHtmlChunksFiles({
 		entryName,
@@ -348,22 +368,60 @@ export = class ChunksWebpackPlugin {
 		htmlTags: HtmlTags;
 	}): void {
 		if (htmlTags.scripts.length) {
-			this.compilation.emitAsset(
-				this.options.filename.replace('[name]', entryName).replace('[type]', 'scripts'),
-				new RawSource(htmlTags.scripts, false)
-			);
+			this.createAsset({
+				filename: this.options.filename
+					.replace('[name]', entryName)
+					.replace('[type]', 'scripts'),
+				output: htmlTags.scripts
+			});
 		}
 		if (htmlTags.styles.length) {
-			this.compilation.emitAsset(
-				this.options.filename.replace('[name]', entryName).replace('[type]', 'styles'),
-				new RawSource(htmlTags.styles, false)
-			);
+			this.createAsset({
+				filename: this.options.filename
+					.replace('[name]', entryName)
+					.replace('[type]', 'styles'),
+				output: htmlTags.styles
+			});
 		}
 	}
 
 	/**
+	 * Create asset by the webpack compilation or the webpack built-in Node.js File System
+	 * The outputPath parameter allows to override the default webpack output path
+	 * @param {Object} options
+	 * @param {String} options.filename Filename
+	 * @param {String} options.output File content
+	 */
+	createAsset({ filename, output }: { filename: string; output: string }): void {
+		if (this.options.outputPath) {
+			this.fs.mkdir(
+				`${this.outputPath}/${this.outpathFromFilename}`,
+				{ recursive: true },
+				(error: Error) => {
+					if (error) throw error;
+
+					const filePath = this.getOutputFilePath(filename);
+					this.fs.writeFile(filePath, output, (error: Error) => {
+						if (error) throw error;
+					});
+				}
+			);
+		} else {
+			this.compilation.emitAsset(filename, new RawSource(output, false));
+		}
+	}
+
+	/**
+	 * Get the output file path (outPath + filename)
+	 * @param {String} filename The filename
+	 * @returns {String} The output file path
+	 */
+	getOutputFilePath(filename: string): string {
+		return `${this.outputPath}${filename.substr(0, 1) === '/' ? '' : '/'}${filename}`;
+	}
+
+	/**
 	 * Throw an error
-	 *
 	 * @param {String} message Text to display in the error
 	 */
 	setError(message: string) {

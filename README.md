@@ -63,7 +63,7 @@ module.exports = {
 
 HTML files are built in the output path directory with the rest of the webpack output.
 
-Now you can include the outputted HTML files into your HTML page templates. You can do it with e.g. Twig.
+Now you can include the generated HTML files into your HTML page templates. You can do it with e.g. Twig.
 
 **main-styles.html**
 
@@ -87,15 +87,17 @@ You can pass a configuration object to `ChunksWebpackPlugin` to override the def
 
 `string = '[name]-[type].html'`
 
-Tells the plugin whether to personalize the filename of the generated files.
+Tells the plugin whether to personalize the filename of the generated files. Files are processed by the webpack compilation and generated in the output path directory.
+
+> 💡 `[name]` is automatically replaced by the entrypoint name and `[type]` by `styles|scripts`.
+>
+> The filename can contain directories, which will be created automatically.
 
 ```js
 new ChunksWebpackPlugin({
   filename: 'templates/[name]-[type].html'
 });
 ```
-
-> `[name]` is automatically replaced by the entrypoint name and `[type]` by `styles|scripts`.
 
 ### `templateStyle`
 
@@ -109,7 +111,7 @@ new ChunksWebpackPlugin({
 });
 ```
 
-> Keep the `{{chunk}}` placeholder, it is automatically replaced by the concatenation of the webpack public path and the chunk filename.
+> 💡 Keep the `{{chunk}}` placeholder, it is automatically replaced by the concatenation of the webpack public path and the chunk filename.
 
 ### `templateScript`
 
@@ -123,7 +125,21 @@ new ChunksWebpackPlugin({
 });
 ```
 
-> Keep the `{{chunk}}` placeholder, it is automatically replaced by the concatenation of the webpack public path and the chunk filename.
+> 💡 Keep the `{{chunk}}` placeholder, it is automatically replaced by the concatenation of the webpack public path and the chunk filename.
+
+### `outputPath`
+
+`string = null`
+
+Tells the plugin whether to personalize the output path of generated files (need absolute path). By default the plugin will use `options.output.path` from the [Webpack configuration](https://webpack.js.org/configuration/output/#outputpath).
+
+> 💡 Can be used to generate files outside the webpack output path directory. With this option, files are not processed by the webpack compilation.
+
+```javascript
+new ChunksWebpackPlugin({
+  outputPath: path.resolve(__dirname, `./templates`)
+});
+```
 
 ### `customFormatTags`
 
@@ -149,7 +165,7 @@ new ChunksWebpackPlugin({
 });
 ```
 
-> The arrow function syntax allow you to access the class properties.
+> 💡 The arrow function syntax allow you to access the class properties.
 >
 > The function provides more flexibility by replacing the default behavior. Follow the example above to make sure it works.
 
@@ -174,7 +190,7 @@ The list of the chunks sorted by type: `styles` and `scripts`.
 
 The object is included in every single ChunkGroup. The variable contains all information about the current entry point; log it on the console for more details.
 
-> Use this variable only for a full customization if the `chunksSorted` variable does not meet your needs.
+> 💡 Use this variable only for a full customization if the `chunksSorted` variable does not meet your needs.
 
 ### `generateChunksManifest`
 
@@ -215,7 +231,7 @@ new ChunksWebpackPlugin({
 });
 ```
 
-> When set to `false`, HTML files will not be generated. It can only be useful together with `generateChunksManifest` option set to `true` for custom generation of the HTML files.
+> 💡 When set to `false`, HTML files will not be generated. It can only be useful together with `generateChunksManifest` option set to `true` for custom generation of the HTML files.
 
 ### Caching
 
