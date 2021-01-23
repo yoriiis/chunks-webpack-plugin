@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 7.0.1
+
+### New features
+
+- Add the `outputPath` parameter to override the webpack output path directory
+
+### Fixes
+
+- Fix `outputPath` parameter ignored in `7.0.0` [#66](https://github.com/yoriiis/chunks-webpack-plugin/issues/66)
+- Fix `publicPath` parameter with default value "auto" [#67](https://github.com/yoriiis/chunks-webpack-plugin/issues/67)
+
 ## 7.0.0
 
 ### New features
