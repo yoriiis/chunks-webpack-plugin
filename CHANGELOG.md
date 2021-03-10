@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 7.0.2
+
+### Fixes
+
+- Add webpack `v5` as peer dependency [#74](https://github.com/yoriiis/chunks-webpack-plugin/pull/74)
+
 ## 7.0.1
 
 ### New features
