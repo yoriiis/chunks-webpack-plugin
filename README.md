@@ -165,9 +165,7 @@ new ChunksWebpackPlugin({
 });
 ```
 
-> 💡 The arrow function syntax allow you to access the class properties.
->
-> The function provides more flexibility by replacing the default behavior. Follow the example above to make sure it works.
+> 💡 The function provides more flexibility by replacing the default behavior. Follow the example above to make sure it works.
 
 The function must return an object with the following format:
 
