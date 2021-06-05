@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 7.0.3
+
+### Fixes
+
+- Add the compatibility with an entry name with slashes and the `outputPath` option [#81](https://github.com/yoriiis/chunks-webpack-plugin/pull/81)
+
 ## 7.0.2
 
 ### Fixes

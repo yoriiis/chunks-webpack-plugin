@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 7.0.2
+ * @version 7.0.3
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -60,7 +60,7 @@ export = class ChunksWebpackPlugin {
 	entryNames!: Array<string>;
 	publicPath!: string;
 	outputPath!: null | string;
-	outpathFromFilename!: string;
+	pathFromFilename!: string;
 	/**
 	 * Instanciate the constructor
 	 * @param {options}
@@ -124,7 +124,7 @@ export = class ChunksWebpackPlugin {
 	addAssets(): void {
 		this.publicPath = this.getPublicPath();
 		this.outputPath = this.getOutputPath();
-		this.outpathFromFilename = this.getOutputPathFromFilename();
+		this.pathFromFilename = this.getPathFromString(this.options.filename);
 		this.entryNames = this.getEntryNames();
 
 		this.entryNames
@@ -186,11 +186,9 @@ export = class ChunksWebpackPlugin {
 	 * @return {String} The output path
 	 */
 	getOutputPath(): string | null {
-		if (this.isValidOutputPath()) {
-			return this.options.outputPath;
-		} else {
-			return this.compilation.options.output.path || '';
-		}
+		return this.isValidOutputPath()
+			? this.options.outputPath
+			: this.compilation.options.output.path || '';
 	}
 
 	/**
@@ -198,9 +196,9 @@ export = class ChunksWebpackPlugin {
 	 * Filename can contain a directory (created automatically by the compilation)
 	 * @returns {String} The outpath path extract from the filename
 	 */
-	getOutputPathFromFilename(): string {
-		const pathFromFilename = /(^\/?)(.*\/)/.exec(this.options.filename);
-		return pathFromFilename && pathFromFilename[2] !== '/' ? pathFromFilename[2] : '';
+	getPathFromString(filename: string): string {
+		const path = /(^\/?)(.*\/)(.*)$/.exec(filename);
+		return path && path[2] !== '/' ? path[2] : '';
 	}
 
 	/**
@@ -369,6 +367,7 @@ export = class ChunksWebpackPlugin {
 	}): void {
 		if (htmlTags.scripts.length) {
 			this.createAsset({
+				entryName,
 				filename: this.options.filename
 					.replace('[name]', entryName)
 					.replace('[type]', 'scripts'),
@@ -377,6 +376,7 @@ export = class ChunksWebpackPlugin {
 		}
 		if (htmlTags.styles.length) {
 			this.createAsset({
+				entryName,
 				filename: this.options.filename
 					.replace('[name]', entryName)
 					.replace('[type]', 'styles'),
@@ -389,13 +389,23 @@ export = class ChunksWebpackPlugin {
 	 * Create asset by the webpack compilation or the webpack built-in Node.js File System
 	 * The outputPath parameter allows to override the default webpack output path
 	 * @param {Object} options
+	 * @param {String} options.entryName Entry name
 	 * @param {String} options.filename Filename
 	 * @param {String} options.output File content
 	 */
-	createAsset({ filename, output }: { filename: string; output: string }): void {
+	createAsset({
+		entryName = '',
+		filename,
+		output
+	}: {
+		entryName?: string;
+		filename: string;
+		output: string;
+	}): void {
 		if (this.options.outputPath) {
+			const pathFromEntryName = entryName ? this.getPathFromString(entryName) : '';
 			this.fs.mkdir(
-				`${this.outputPath}/${this.outpathFromFilename}`,
+				`${this.outputPath}/${this.pathFromFilename}${pathFromEntryName}`,
 				{ recursive: true },
 				(error: Error) => {
 					if (error) throw error;

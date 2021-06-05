@@ -248,7 +248,7 @@ describe('ChunksWebpackPlugin addAssets', () => {
 		chunksWebpackPlugin.getOutputPath = jest
 			.fn()
 			.mockReturnValue('/chunks-webpack-plugin/example/dist');
-		chunksWebpackPlugin.getOutputPathFromFilename = jest.fn().mockReturnValue('templates/');
+		chunksWebpackPlugin.getPathFromString = jest.fn().mockReturnValue('templates/');
 		mockGetEntryNames(chunksWebpackPlugin, entryNames);
 		mockGetFiles(chunksWebpackPlugin, files);
 		chunksWebpackPlugin.processEntry = jest.fn();
@@ -258,7 +258,7 @@ describe('ChunksWebpackPlugin addAssets', () => {
 
 		expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalled();
 		expect(chunksWebpackPlugin.getOutputPath).toHaveBeenCalled();
-		expect(chunksWebpackPlugin.getOutputPathFromFilename).toHaveBeenCalled();
+		expect(chunksWebpackPlugin.getPathFromString).toHaveBeenCalled();
 		expect(chunksWebpackPlugin.getEntryNames).toHaveBeenCalled();
 		expect(chunksWebpackPlugin.getFiles).toHaveBeenCalledTimes(3);
 		expect(chunksWebpackPlugin.getFiles).toHaveBeenCalledWith('app-a');
@@ -271,7 +271,7 @@ describe('ChunksWebpackPlugin addAssets', () => {
 		expect(chunksWebpackPlugin.createChunksManifestFile).toHaveBeenCalled();
 		expect(chunksWebpackPlugin.publicPath).toBe('/dist/');
 		expect(chunksWebpackPlugin.outputPath).toBe('/chunks-webpack-plugin/example/dist');
-		expect(chunksWebpackPlugin.outpathFromFilename).toBe('templates/');
+		expect(chunksWebpackPlugin.pathFromFilename).toBe('templates/');
 	});
 
 	it('Should call the addAssets function without generateChunksManifest', () => {
@@ -419,26 +419,26 @@ describe('ChunksWebpackPlugin getOutputPath', () => {
 	});
 });
 
-describe('ChunksWebpackPlugin getOutputPathFromFilename', () => {
-	it('Should call the getOutputPathFromFilename function with an outpath inside the filename', () => {
+describe('ChunksWebpackPlugin getPathFromString', () => {
+	it('Should call the getPathFromString function with an outpath inside the filename', () => {
 		chunksWebpackPlugin.compilation = compilationWebpack;
-		const result = chunksWebpackPlugin.getOutputPathFromFilename();
+		const result = chunksWebpackPlugin.getPathFromString(chunksWebpackPlugin.options.filename);
 
 		expect(result).toBe('templates/');
 	});
 
-	it('Should call the getOutputPathFromFilename function with a filename that starts with a slashe', () => {
+	it('Should call the getPathFromString function with a filename that starts with a slashe', () => {
 		chunksWebpackPlugin.compilation = compilationWebpack;
 		chunksWebpackPlugin.options.filename = '/[name]-[type].html';
-		const result = chunksWebpackPlugin.getOutputPathFromFilename();
+		const result = chunksWebpackPlugin.getPathFromString(chunksWebpackPlugin.options.filename);
 
 		expect(result).toBe('');
 	});
 
-	it('Should call the getOutputPathFromFilename function without an outpath inside the filename', () => {
+	it('Should call the getPathFromString function without an outpath inside the filename', () => {
 		chunksWebpackPlugin.compilation = compilationWebpack;
 		chunksWebpackPlugin.options.filename = '[name]-[type].html';
-		const result = chunksWebpackPlugin.getOutputPathFromFilename();
+		const result = chunksWebpackPlugin.getPathFromString();
 
 		expect(result).toBe('');
 	});
@@ -646,10 +646,12 @@ describe('ChunksWebpackPlugin createHtmlChunksFiles', () => {
 
 		expect(chunksWebpackPlugin.createAsset).toHaveBeenCalledTimes(2);
 		expect(chunksWebpackPlugin.createAsset).toHaveBeenNthCalledWith(1, {
+			entryName: 'app-a',
 			filename: 'templates/app-a-scripts.html',
 			output: htmlTags.scripts
 		});
 		expect(chunksWebpackPlugin.createAsset).toHaveBeenNthCalledWith(2, {
+			entryName: 'app-a',
 			filename: 'templates/app-a-styles.html',
 			output: htmlTags.styles
 		});
@@ -659,46 +661,53 @@ describe('ChunksWebpackPlugin createHtmlChunksFiles', () => {
 describe('ChunksWebpackPlugin createAsset', () => {
 	it('Should call the createAsset function with the emitAsset', () => {
 		chunksWebpackPlugin.compilation = compilationWebpack;
+		chunksWebpackPlugin.getPathFromString = jest.fn();
 
 		chunksWebpackPlugin.createAsset({
 			filename: 'templates/app-a-scripts.html',
 			output: htmlTags.scripts
 		});
 
+		expect(chunksWebpackPlugin.getPathFromString).not.toHaveBeenCalled();
 		expect(chunksWebpackPlugin.compilation.emitAsset).toHaveBeenCalledWith(
 			'templates/app-a-scripts.html',
 			new RawSource(htmlTags.scripts, false)
 		);
 	});
 
-	it('Should call the createAsset function with the Node.js FS', () => {
+	it('Should call the createAsset function with the Node.js FS and a custom entry name', () => {
 		chunksWebpackPlugin.getOutputFilePath = jest
 			.fn()
-			.mockReturnValue('/chunks-webpack-plugin/example/dist/templates/app-a-scripts.html');
+			.mockReturnValue(
+				'/chunks-webpack-plugin/example/dist/templates/shared/app-a-scripts.html'
+			);
+		chunksWebpackPlugin.getPathFromString = jest.fn().mockReturnValue('shared/');
 
 		chunksWebpackPlugin.compilation = compilationWebpack;
 		chunksWebpackPlugin.outputPath = compilationWebpack.options.output.path;
-		chunksWebpackPlugin.outpathFromFilename = 'templates/';
+		chunksWebpackPlugin.pathFromFilename = 'templates/';
 		chunksWebpackPlugin.fs = compilationWebpack.compiler.outputFileSystem;
 		chunksWebpackPlugin.options.outputPath = '/chunks-webpack-plugin/example/dist/templates';
 		chunksWebpackPlugin.createAsset({
-			filename: 'templates/app-a-scripts.html',
+			entryName: 'shared/app-a',
+			filename: 'templates/shared/app-a-scripts.html',
 			output: htmlTags.scripts
 		});
 
 		expect(chunksWebpackPlugin.compilation.emitAsset).not.toHaveBeenCalled();
+		expect(chunksWebpackPlugin.getPathFromString).toHaveBeenCalledWith('shared/app-a');
 		expect(chunksWebpackPlugin.fs.mkdir).toHaveBeenCalledWith(
-			'/chunks-webpack-plugin/example/dist/templates/',
+			'/chunks-webpack-plugin/example/dist/templates/shared/',
 			{
 				recursive: true
 			},
 			expect.any(Function)
 		);
 		expect(chunksWebpackPlugin.getOutputFilePath).toHaveBeenCalledWith(
-			'templates/app-a-scripts.html'
+			'templates/shared/app-a-scripts.html'
 		);
 		expect(chunksWebpackPlugin.fs.writeFile).toHaveBeenCalledWith(
-			'/chunks-webpack-plugin/example/dist/templates/app-a-scripts.html',
+			'/chunks-webpack-plugin/example/dist/templates/shared/app-a-scripts.html',
 			htmlTags.scripts,
 			expect.any(Function)
 		);
@@ -709,7 +718,7 @@ describe('ChunksWebpackPlugin createAsset', () => {
 
 		chunksWebpackPlugin.compilation = compilationWebpack;
 		chunksWebpackPlugin.outputPath = compilationWebpack.options.output.path;
-		chunksWebpackPlugin.outpathFromFilename = 'templates/';
+		chunksWebpackPlugin.pathFromFilename = 'templates/';
 		chunksWebpackPlugin.fs = generateMockFs({ mkdirError: true });
 		chunksWebpackPlugin.options.outputPath = '/chunks-webpack-plugin/example/dist/templates';
 
@@ -727,7 +736,7 @@ describe('ChunksWebpackPlugin createAsset', () => {
 
 		chunksWebpackPlugin.compilation = compilationWebpack;
 		chunksWebpackPlugin.outputPath = compilationWebpack.options.output.path;
-		chunksWebpackPlugin.outpathFromFilename = 'templates/';
+		chunksWebpackPlugin.pathFromFilename = 'templates/';
 		chunksWebpackPlugin.fs = generateMockFs({ writeFileError: true });
 		chunksWebpackPlugin.options.outputPath = '/chunks-webpack-plugin/example/dist/templates';
 		chunksWebpackPlugin.options.emitAssetsWithCompilation = false;
