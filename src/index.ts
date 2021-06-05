@@ -192,8 +192,8 @@ export = class ChunksWebpackPlugin {
 	}
 
 	/**
-	 * Get the output path inside the filename if it exists
-	 * Filename can contain a directory (created automatically by the compilation)
+	 * Get the path inside a string if it exists
+	 * Filename can contain a directory
 	 * @returns {String} The outpath path extract from the filename
 	 */
 	getPathFromString(filename: string): string {
@@ -388,6 +388,7 @@ export = class ChunksWebpackPlugin {
 	/**
 	 * Create asset by the webpack compilation or the webpack built-in Node.js File System
 	 * The outputPath parameter allows to override the default webpack output path
+	 * Directories are automatically created by FS or the compilation
 	 * @param {Object} options
 	 * @param {String} options.entryName Entry name
 	 * @param {String} options.filename Filename

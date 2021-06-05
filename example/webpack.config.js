@@ -49,7 +49,7 @@ module.exports = (env, argv) => {
 				filename: `css/[name]${isProduction ? '.[contenthash]' : ''}.css`
 			}),
 			new ChunksWebpackPlugin({
-				outputPath: path.resolve(__dirname, './dist'),
+				outputPath: path.resolve(__dirname, './dist'), // Optional field, used here to validate #81
 				filename: '/templates/[name]-[type].html',
 				generateChunksManifest: true,
 				generateChunksFiles: true,
