@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 7.0.2
+ * @version 7.0.3
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -44,7 +44,7 @@ declare const _default: {
         entryNames: Array<string>;
         publicPath: string;
         outputPath: null | string;
-        outpathFromFilename: string;
+        pathFromFilename: string;
         /**
          * Apply function is automatically called by the Webpack main compiler
          * @param {Object} compiler The Webpack compiler variable
@@ -78,11 +78,11 @@ declare const _default: {
          */
         getOutputPath(): string | null;
         /**
-         * Get the output path inside the filename if it exists
-         * Filename can contain a directory (created automatically by the compilation)
+         * Get the path inside a string if it exists
+         * Filename can contain a directory
          * @returns {String} The outpath path extract from the filename
          */
-        getOutputPathFromFilename(): string;
+        getPathFromString(filename: string): string;
         /**
          * Check if the outputPath is valid, a string and absolute
          * @returns {Boolean} outputPath is valid
@@ -170,11 +170,14 @@ declare const _default: {
         /**
          * Create asset by the webpack compilation or the webpack built-in Node.js File System
          * The outputPath parameter allows to override the default webpack output path
+         * Directories are automatically created by FS or the compilation
          * @param {Object} options
+         * @param {String} options.entryName Entry name
          * @param {String} options.filename Filename
          * @param {String} options.output File content
          */
-        createAsset({ filename, output }: {
+        createAsset({ entryName, filename, output }: {
+            entryName?: string | undefined;
             filename: string;
             output: string;
         }): void;

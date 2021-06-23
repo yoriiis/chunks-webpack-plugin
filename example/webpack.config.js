@@ -10,7 +10,7 @@ module.exports = (env, argv) => {
 	return {
 		context: __dirname, // Context is mandatory because webpack use the flag "--config"
 		entry: {
-			'app-a': `${path.resolve(__dirname, './src/js/app-a.js')}`,
+			'shared/app-a': `${path.resolve(__dirname, './src/js/app-a.js')}`,
 			'app-b': `${path.resolve(__dirname, './src/js/app-b.js')}`,
 			'app-c': `${path.resolve(__dirname, './src/js/app-c.js')}`
 		},
@@ -49,7 +49,8 @@ module.exports = (env, argv) => {
 				filename: `css/[name]${isProduction ? '.[contenthash]' : ''}.css`
 			}),
 			new ChunksWebpackPlugin({
-				filename: 'templates/[name]-[type].html',
+				outputPath: path.resolve(__dirname, './dist'), // Optional field, used here to validate #81
+				filename: '/templates/[name]-[type].html',
 				generateChunksManifest: true,
 				generateChunksFiles: true,
 				customFormatTags: (chunksSorted, Entrypoint) => {
