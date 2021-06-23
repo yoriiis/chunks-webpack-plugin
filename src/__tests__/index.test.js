@@ -240,6 +240,23 @@ describe('ChunksWebpackPlugin hookCallback', () => {
 			chunksWebpackPlugin.addAssets
 		);
 	});
+
+	it('Should call the hookCallback function with webpack v5 and outputPath', () => {
+		chunksWebpackPlugin.addAssets = jest.fn();
+
+		chunksWebpackPlugin.isWebpack4 = false;
+		chunksWebpackPlugin.options.outputPath = '/';
+		chunksWebpackPlugin.hookCallback(compilationWebpack);
+
+		expect(chunksWebpackPlugin.addAssets).not.toHaveBeenCalled();
+		expect(chunksWebpackPlugin.compilation.hooks.processAssets.tap).toHaveBeenCalledWith(
+			{
+				name: 'ChunksWebpackPlugin',
+				stage: Infinity
+			},
+			chunksWebpackPlugin.addAssets
+		);
+	});
 });
 
 describe('ChunksWebpackPlugin addAssets', () => {

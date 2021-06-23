@@ -106,11 +106,13 @@ export = class ChunksWebpackPlugin {
 		if (this.isWebpack4) {
 			this.addAssets();
 		} else {
-			// PROCESS_ASSETS_STAGE_ADDITIONAL: Add additional assets to the compilation
+			const stage = this.options.outputPath
+				? Infinity
+				: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL;
 			this.compilation.hooks.processAssets.tap(
 				{
 					name: 'ChunksWebpackPlugin',
-					stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
+					stage
 				},
 				this.addAssets
 			);

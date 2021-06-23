@@ -5,6 +5,7 @@
 ### Fixes
 
 - Fix incompatibility with `outputPath` and slashes on entry name #81 [#81](https://github.com/yoriiis/chunks-webpack-plugin/pull/81)
+- Fix `outputPath` caused `[contenthash`] differences in generated HTML (`realContentHash`)
 
 ## 7.0.2
 
