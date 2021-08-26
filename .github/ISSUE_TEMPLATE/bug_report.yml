@@ -1,0 +1,64 @@
+name: Bug report
+description: Create a report to help us improve ChunksWebpackPlugin
+labels: 'bug'
+body:
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Describe the bug
+      description: A clear description of what the bug is.
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Steps to reproduce
+      description: |
+        Steps to reproduce the problem.
+      placeholder: |
+        For example:
+        1. Enable plugin '...' and option '...'
+        2. Build in production mode
+        3. See error
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Expected behavior
+      description: A brief description of what should happen.
+  - type: textarea
+    attributes:
+      label: Screenshots and recordings
+      description: |
+        If applicable, add screenshots to help explain your problem
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: ChunksWebpackPlugin
+      description: What version of the library are you using?
+      placeholder: e.g. 7.0.3
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: webpack
+      description: What version of webpack are you using?
+      placeholder: e.g. webpack v5.4.0
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: Node.js & npm
+      description: What version of Node.js and npm are you using?
+      placeholder: e.g. Node.js v12.14.0 & npm v6.13.4
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: OS
+      placeholder: e.g. macOS 11.5.2
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here. This can be providers, plugins, custom settings...
