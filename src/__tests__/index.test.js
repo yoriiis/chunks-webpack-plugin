@@ -1,5 +1,3 @@
-'use strict';
-
 import ChunksWebpackPlugin from '../index';
 import {
 	mockGetEntryNames,
@@ -18,10 +16,13 @@ jest.mock('webpack', () => ({
 	version: '5.4.0',
 	Compilation: {
 		PROCESS_ASSETS_STAGE_ADDITIONAL: ''
+	},
+	sources: {
+		RawSource: jest.fn()
 	}
 }));
 
-const { RawSource } = webpack.sources || require('webpack-sources');
+const { RawSource } = webpack.sources;
 
 let chunksWebpackPlugin;
 let compilationWebpack;
@@ -179,22 +180,6 @@ describe('ChunksWebpackPlugin constructor', () => {
 });
 
 describe('ChunksWebpackPlugin apply', () => {
-	it('Should call the apply function with webpack v4', () => {
-		const compilerWebpack = {
-			hooks: {
-				emit: {
-					tap: () => {}
-				}
-			}
-		};
-		compilerWebpack.hooks.emit.tap = jest.fn();
-
-		webpack.version = '4.41.2';
-		chunksWebpackPlugin.apply(compilerWebpack);
-
-		expect(compilerWebpack.hooks.emit.tap).toHaveBeenCalled();
-	});
-
 	it('Should call the apply function with webpack v5', () => {
 		const compilerWebpack = {
 			hooks: {
@@ -213,22 +198,9 @@ describe('ChunksWebpackPlugin apply', () => {
 });
 
 describe('ChunksWebpackPlugin hookCallback', () => {
-	it('Should call the hookCallback function with webpack v4', () => {
-		chunksWebpackPlugin.addAssets = jest.fn();
-
-		chunksWebpackPlugin.isWebpack4 = true;
-		chunksWebpackPlugin.hookCallback(compilationWebpack);
-
-		expect(chunksWebpackPlugin.compilation).toBe(compilationWebpack);
-		expect(chunksWebpackPlugin.fs).toBe(mockFs);
-		expect(chunksWebpackPlugin.addAssets).toHaveBeenCalled();
-		expect(chunksWebpackPlugin.compilation.hooks.processAssets.tap).not.toHaveBeenCalledWith();
-	});
-
 	it('Should call the hookCallback function with webpack v5', () => {
 		chunksWebpackPlugin.addAssets = jest.fn();
 
-		chunksWebpackPlugin.isWebpack4 = false;
 		chunksWebpackPlugin.hookCallback(compilationWebpack);
 
 		expect(chunksWebpackPlugin.addAssets).not.toHaveBeenCalled();
@@ -244,7 +216,6 @@ describe('ChunksWebpackPlugin hookCallback', () => {
 	it('Should call the hookCallback function with webpack v5 and outputPath', () => {
 		chunksWebpackPlugin.addAssets = jest.fn();
 
-		chunksWebpackPlugin.isWebpack4 = false;
 		chunksWebpackPlugin.options.outputPath = '/';
 		chunksWebpackPlugin.hookCallback(compilationWebpack);
 

@@ -1,7 +1,7 @@
 /**
  * @license MIT
  * @name ChunksWebpackPlugin
- * @version 7.0.3
+ * @version 7.1.0
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
@@ -10,10 +10,7 @@
 
 import { Compiler } from 'webpack';
 const webpack = require('webpack');
-
-// webpack v4/v5 compatibility:
-// https://github.com/webpack/webpack/issues/11425#issuecomment-686607633
-const { RawSource } = webpack.sources || require('webpack-sources');
+const { RawSource } = webpack.sources;
 
 import path = require('path');
 
@@ -56,7 +53,6 @@ export = class ChunksWebpackPlugin {
 	manifest: Manifest;
 	fs!: Fs;
 	compilation: any;
-	isWebpack4: Boolean;
 	entryNames!: Array<string>;
 	publicPath!: string;
 	outputPath!: null | string;
@@ -81,7 +77,6 @@ export = class ChunksWebpackPlugin {
 		);
 
 		this.manifest = {};
-		this.isWebpack4 = false;
 		this.addAssets = this.addAssets.bind(this);
 	}
 
@@ -90,9 +85,7 @@ export = class ChunksWebpackPlugin {
 	 * @param {Object} compiler The Webpack compiler variable
 	 */
 	apply(compiler: Compiler): void {
-		this.isWebpack4 = webpack.version.startsWith('4.');
-		const compilerHook = this.isWebpack4 ? 'emit' : 'thisCompilation';
-		compiler.hooks[compilerHook].tap('ChunksWebpackPlugin', this.hookCallback.bind(this));
+		compiler.hooks.thisCompilation.tap('ChunksWebpackPlugin', this.hookCallback.bind(this));
 	}
 
 	/**
@@ -103,20 +96,16 @@ export = class ChunksWebpackPlugin {
 		this.compilation = compilation;
 		this.fs = this.compilation.compiler.outputFileSystem;
 
-		if (this.isWebpack4) {
-			this.addAssets();
-		} else {
-			const stage = this.options.outputPath
-				? Infinity
-				: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL;
-			this.compilation.hooks.processAssets.tap(
-				{
-					name: 'ChunksWebpackPlugin',
-					stage
-				},
-				this.addAssets
-			);
-		}
+		const stage = this.options.outputPath
+			? Infinity
+			: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL;
+		this.compilation.hooks.processAssets.tap(
+			{
+				name: 'ChunksWebpackPlugin',
+				stage
+			},
+			this.addAssets
+		);
 	}
 
 	/**
