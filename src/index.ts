@@ -36,8 +36,12 @@ interface Manifest {
 
 // Describe the shape of the webpack built-in Node.js File System
 interface Fs {
-	mkdir: () => void;
-	writeFile: () => void;
+	mkdir: (
+		filePath: string,
+		options: { recursive: boolean },
+		callback: (error: Error) => void
+	) => void;
+	writeFile: (filePath: string, output: string, callback: (error: Error) => void) => void;
 }
 
 export = class ChunksWebpackPlugin {
