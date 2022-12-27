@@ -9,10 +9,10 @@
  **/
 
 import { Compiler } from 'webpack';
-const webpack = require('webpack');
-const { RawSource } = webpack.sources;
 
 import path = require('path');
+const webpack = require('webpack');
+const { RawSource } = webpack.sources;
 
 // Describe the shape of the Chunks object
 interface Chunks {
@@ -36,8 +36,12 @@ interface Manifest {
 
 // Describe the shape of the webpack built-in Node.js File System
 interface Fs {
-	mkdir: Function;
-	writeFile: Function;
+	mkdir: (
+		filePath: string,
+		options: { recursive: boolean },
+		callback: (error: Error) => void
+	) => void;
+	writeFile: (filePath: string, output: string, callback: (error: Error) => void) => void;
 }
 
 export = class ChunksWebpackPlugin {
@@ -46,10 +50,11 @@ export = class ChunksWebpackPlugin {
 		filename: string;
 		templateStyle: string;
 		templateScript: string;
-		customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: Object) => HtmlTags);
+		customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: any) => HtmlTags);
 		generateChunksManifest: boolean;
 		generateChunksFiles: boolean;
 	};
+
 	manifest: Manifest;
 	fs!: Fs;
 	compilation: any;
@@ -225,13 +230,7 @@ export = class ChunksWebpackPlugin {
 	 * @param {Object} options.Entrypoint Entrypoint object part of a single ChunkGroup
 	 * @returns {String} HTML tags by entrypoints
 	 */
-	getHtmlTags({
-		chunks,
-		Entrypoint
-	}: {
-		chunks: Chunks;
-		Entrypoint: Object;
-	}): undefined | HtmlTags {
+	getHtmlTags({ chunks, Entrypoint }: { chunks: Chunks; Entrypoint: any }): undefined | HtmlTags {
 		// The user prefers to generate his own HTML tags, use his object
 		if (typeof this.options.customFormatTags === 'function') {
 			const htmlTags = this.options.customFormatTags(chunks, Entrypoint);
