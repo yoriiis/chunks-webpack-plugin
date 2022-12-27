@@ -1,32 +1,32 @@
 {
   "shared/app-a": {
     "styles": [
-      "/dist/css/936.7684229116fb2df0c1f6.css",
-      "/dist/css/shared/app-a.de61cc1a0db815aa2f84.css"
+      "/dist/css/209.107de727a6f3e908877d.css",
+      "/dist/css/shared/app-a.dc91e44ab6af1b380730.css"
     ],
     "scripts": [
-      "/dist/js/936.f8fcd7be40656ee9435a.js",
-      "/dist/js/shared/app-a.a0fa4881f97bcb4b1b31.js"
+      "/dist/js/209.58913b60c932669c85b2.js",
+      "/dist/js/shared/app-a.2b791f5eec0c34b0a882.js"
     ]
   },
   "app-b": {
     "styles": [
-      "/dist/css/936.7684229116fb2df0c1f6.css",
-      "/dist/css/app-b.df99780965ab1abf3f40.css"
+      "/dist/css/209.107de727a6f3e908877d.css",
+      "/dist/css/app-b.c8e16f748f904b1dcad5.css"
     ],
     "scripts": [
-      "/dist/js/936.f8fcd7be40656ee9435a.js",
-      "/dist/js/app-b.bc918d73846fbf628035.js"
+      "/dist/js/209.58913b60c932669c85b2.js",
+      "/dist/js/app-b.72908d9196f37b907c9d.js"
     ]
   },
   "app-c": {
     "styles": [
-      "/dist/css/936.7684229116fb2df0c1f6.css",
-      "/dist/css/app-c.3b4962393349d48672bc.css"
+      "/dist/css/209.107de727a6f3e908877d.css",
+      "/dist/css/app-c.ce2aa8d176f2373f916f.css"
     ],
     "scripts": [
-      "/dist/js/936.f8fcd7be40656ee9435a.js",
-      "/dist/js/app-c.af3ad2ffd2421875d58d.js"
+      "/dist/js/209.58913b60c932669c85b2.js",
+      "/dist/js/app-c.d0aa8211832d6b0cd551.js"
     ]
   }
 }

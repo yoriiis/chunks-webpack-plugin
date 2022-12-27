@@ -37,7 +37,7 @@ const options = {
 	filename: 'templates/[name]-[type].html',
 	generateChunksManifest: true,
 	generateChunksFiles: true,
-	customFormatTags: (chunksSorted, files) => {
+	customFormatTags: (chunksSorted) => {
 		// Generate all HTML style tags with CDN prefix
 		const styles = chunksSorted.styles
 			.map((chunkCss) => `<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`)
@@ -118,8 +118,7 @@ beforeEach(() => {
 		scripts: ['js/vendors~app-a~app-b~app-c.js', 'js/app-a.js']
 	};
 	htmlTags = {
-		styles:
-			'<link rel="stylesheet" href="https://cdn.domain.comcss/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="https://cdn.domain.comcss/app-a.css" />',
+		styles: '<link rel="stylesheet" href="https://cdn.domain.comcss/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="https://cdn.domain.comcss/app-a.css" />',
 		scripts:
 			'<script defer src="https://cdn.domain.comjs/vendors~app-a~app-b~app-c.js"></script><script defer src="https://cdn.domain.comjs/app-a.js"></script>'
 	};
@@ -184,7 +183,9 @@ describe('ChunksWebpackPlugin apply', () => {
 		const compilerWebpack = {
 			hooks: {
 				thisCompilation: {
-					tap: () => {}
+					tap: () => {
+						// Empty
+					}
 				}
 			}
 		};
@@ -300,7 +301,7 @@ describe('ChunksWebpackPlugin processEntry', () => {
 		});
 		expect(chunksWebpackPlugin.createHtmlChunksFiles).toHaveBeenCalledWith({
 			entryName: 'app-a',
-			htmlTags: htmlTags
+			htmlTags
 		});
 		expect(chunksWebpackPlugin.updateManifest).toHaveBeenCalledWith({
 			entryName: 'app-a',
@@ -510,8 +511,7 @@ describe('ChunksWebpackPlugin sortsChunksByType', () => {
 describe('ChunksWebpackPlugin formatTags', () => {
 	it('Should call the formatTags function', () => {
 		expect(chunksWebpackPlugin.formatTags(chunks)).toEqual({
-			styles:
-				'<link rel="stylesheet" href="css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="css/app-a.css" />',
+			styles: '<link rel="stylesheet" href="css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="css/app-a.css" />',
 			scripts:
 				'<script src="js/vendors~app-a~app-b~app-c.js"></script><script src="js/app-a.js"></script>'
 		});
@@ -524,8 +524,7 @@ describe('ChunksWebpackPlugin formatTags', () => {
 			'<script defer src="https://cdn.domain.com/{{chunk}}"></script>';
 
 		expect(chunksWebpackPlugin.formatTags(chunks)).toEqual({
-			styles:
-				'<link rel="stylesheet" href="https://cdn.domain.com/css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="https://cdn.domain.com/css/app-a.css" />',
+			styles: '<link rel="stylesheet" href="https://cdn.domain.com/css/vendors~app-a~app-b~app-c.css" /><link rel="stylesheet" href="https://cdn.domain.com/css/app-a.css" />',
 			scripts:
 				'<script defer src="https://cdn.domain.com/js/vendors~app-a~app-b~app-c.js"></script><script defer src="https://cdn.domain.com/js/app-a.js"></script>'
 		});
