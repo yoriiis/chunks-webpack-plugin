@@ -1,6 +1,6 @@
 # ChunksWebpackPlugin
 
-![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/yoriiis/chunks-webpack-plugin/build.yml?branch=master&style=for-the-badge) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master) [![Mutation testing badge](https://img.shields.io/endpoint?style=for-the-badge&url=https://badge-api.stryker-mutator.io/github.com/yoriiis/chunks-webpack-plugin/master)](https://dashboard.stryker-mutator.io/reports/github.com/yoriiis/chunks-webpack-plugin/master) ![Node.js](https://img.shields.io/node/v/chunks-webpack-plugin?style=for-the-badge) [![Bundlephobia](https://img.shields.io/bundlephobia/minzip/chunks-webpack-plugin?style=for-the-badge)](https://bundlephobia.com/result?p=fela@latest) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/yoriiis/chunks-webpack-plugin/build.yml?branch=master&style=for-the-badge) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master) [![Mutation testing badge](https://img.shields.io/endpoint?style=for-the-badge&url=https://badge-api.stryker-mutator.io/github.com/yoriiis/chunks-webpack-plugin/master)](https://dashboard.stryker-mutator.io/reports/github.com/yoriiis/chunks-webpack-plugin/master) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin)
 
 The `ChunksWebpackPlugin` creates HTML files with entry points and chunks relations to serve your webpack bundles. It is suitable with multi-page applications that contain multiple entry points.
 
@@ -294,7 +294,8 @@ The plugin will generate all files in the `./dist/` directory:
 **home-styles.html**
 
 ```html
-<link rel="stylesheet" href="vendors~home~news.css" /> <link rel="stylesheet" href="home.css" />
+<link rel="stylesheet" href="vendors~home~news.css" />
+<link rel="stylesheet" href="home.css" />
 ```
 
 **home-scripts.html**
@@ -307,7 +308,8 @@ The plugin will generate all files in the `./dist/` directory:
 **news-styles.html**
 
 ```html
-<link rel="stylesheet" href="vendors~home~news.css" /> <link rel="stylesheet" href="news.css" />
+<link rel="stylesheet" href="vendors~home~news.css" />
+<link rel="stylesheet" href="news.css" />
 ```
 
 **news-scripts.html**

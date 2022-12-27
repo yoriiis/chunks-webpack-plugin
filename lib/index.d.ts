@@ -5,7 +5,7 @@
  * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
  * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
  * {@link https://github.com/yoriiis/chunks-webpack-plugins}
- * @copyright 2021 Joris DANIEL
+ * @copyright 2023 Joris DANIEL
  **/
 import { Compiler } from 'webpack';
 interface Chunks {
@@ -23,8 +23,10 @@ interface Manifest {
     };
 }
 interface Fs {
-    mkdir: Function;
-    writeFile: Function;
+    mkdir: (filePath: string, options: {
+        recursive: boolean;
+    }, callback: (error: Error) => void) => void;
+    writeFile: (filePath: string, output: string, callback: (error: Error) => void) => void;
 }
 declare const _default: {
     new (options?: {}): {
@@ -33,7 +35,7 @@ declare const _default: {
             filename: string;
             templateStyle: string;
             templateScript: string;
-            customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: Object) => HtmlTags);
+            customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: any) => HtmlTags);
             generateChunksManifest: boolean;
             generateChunksFiles: boolean;
         };
@@ -108,7 +110,7 @@ declare const _default: {
          */
         getHtmlTags({ chunks, Entrypoint }: {
             chunks: Chunks;
-            Entrypoint: Object;
+            Entrypoint: any;
         }): undefined | HtmlTags;
         /**
          * Sorts all chunks by type (styles or scripts)
