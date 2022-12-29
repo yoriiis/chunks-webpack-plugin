@@ -1,0 +1,42 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"[javascript][typescript][postcss][html][markdown][json]": {
+			"editor.formatOnSave": true,
+			"editor.tabSize": 4,
+			"editor.rulers": [100]
+		},
+		"files.associations": {
+			"*.css": "postcss",
+			"*.html": "html",
+			"*.ts": "typescript",
+			"*.json": "json"
+		},
+		"files.trimTrailingWhitespace": true,
+		"search.exclude": {
+			"**/node_modules": true
+		},
+	},
+	"extensions": {
+		"recommendations": [
+			"davidanson.vscode-markdownlint",
+			"esbenp.prettier-vscode",
+			"dbaeumer.vscode-eslint"
+		]
+	},
+	"launch": {
+		"configurations": [
+			{
+				"type": "node",
+				"request": "attach",
+				"name": "Node: Nodemon",
+				"restart": true
+			}
+		]
+	}
+}
