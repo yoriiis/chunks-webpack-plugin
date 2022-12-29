@@ -30,9 +30,7 @@ yarn add chunks-webpack-plugin --dev
 
 ## Environment
 
-`ChunksWebpackPlugin` was built for Node.js `>=10.13.0` and webpack `^4 || ^5`.
-
-The plugin is compatible with the webpack `v4` and `v5`, more details in the [CHANGELOG](CHANGELOG.md).
+`ChunksWebpackPlugin` was built for Node.js LTS 14 and webpack 5.
 
 ## Example
 
@@ -294,8 +292,7 @@ The plugin will generate all files in the `./dist/` directory:
 **home-styles.html**
 
 ```html
-<link rel="stylesheet" href="vendors~home~news.css" />
-<link rel="stylesheet" href="home.css" />
+<link rel="stylesheet" href="vendors~home~news.css" /> <link rel="stylesheet" href="home.css" />
 ```
 
 **home-scripts.html**
@@ -308,8 +305,7 @@ The plugin will generate all files in the `./dist/` directory:
 **news-styles.html**
 
 ```html
-<link rel="stylesheet" href="vendors~home~news.css" />
-<link rel="stylesheet" href="news.css" />
+<link rel="stylesheet" href="vendors~home~news.css" /> <link rel="stylesheet" href="news.css" />
 ```
 
 **news-scripts.html**
