@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 7.1.0
+
+### Breaking changes
+
+- Drop webpack 4 support [#87](https://github.com/yoriiis/chunks-webpack-plugin/pull/87)
+- Drop Node.js 12 support [#88](https://github.com/yoriiis/chunks-webpack-plugin/pull/88)
+
 ## 7.0.3
 
 ### Fixes

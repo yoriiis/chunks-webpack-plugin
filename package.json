@@ -28,6 +28,7 @@
 		"coverage": "npm run test:coverage && cat ./coverage/lcov.info | coveralls",
 		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --config=./example/webpack.config.js --mode=development",
 		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development --watch",
+		"start:tsc": "tsc --watch",
 		"test": "jest --verbose --coverage",
 		"test:coverage": "jest --coverage",
 		"test:eslint": "eslint . --ignore-pattern coverage --ignore-pattern reports --ignore-pattern example/dist --ignore-pattern lib",
