@@ -9,52 +9,17 @@
  **/
 
 import { Compiler } from 'webpack';
-
 import path = require('path');
+import { validate } from 'schema-utils';
+import { Schema } from 'schema-utils/declarations/validate';
+import unTypedSchemaOptions from './schemas/plugin-options.json';
+import { Chunks, HtmlTags, Manifest, Fs, PluginOptions } from './interfaces';
 const webpack = require('webpack');
+const schemaOptions = unTypedSchemaOptions as Schema;
 const { RawSource } = webpack.sources;
 
-// Describe the shape of the Chunks object
-interface Chunks {
-	styles: Array<string>;
-	scripts: Array<string>;
-}
-
-// Describe the shape of the HtmlTags object
-interface HtmlTags {
-	styles: string;
-	scripts: string;
-}
-
-// Describe the shape of the Manifest object
-interface Manifest {
-	[key: string]: {
-		styles: Array<string>;
-		scripts: Array<string>;
-	};
-}
-
-// Describe the shape of the webpack built-in Node.js File System
-interface Fs {
-	mkdir: (
-		filePath: string,
-		options: { recursive: boolean },
-		callback: (error: Error) => void
-	) => void;
-	writeFile: (filePath: string, output: string, callback: (error: Error) => void) => void;
-}
-
 export = class ChunksWebpackPlugin {
-	options: {
-		outputPath: null | string;
-		filename: string;
-		templateStyle: string;
-		templateScript: string;
-		customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: any) => HtmlTags);
-		generateChunksManifest: boolean;
-		generateChunksFiles: boolean;
-	};
-
+	options: PluginOptions;
 	manifest: Manifest;
 	fs!: Fs;
 	compilation: any;
@@ -64,9 +29,9 @@ export = class ChunksWebpackPlugin {
 	pathFromFilename!: string;
 	/**
 	 * Instanciate the constructor
-	 * @param {options}
+	 * @param {object} options Plugin options
 	 */
-	constructor(options = {}) {
+	constructor(options: PluginOptions) {
 		// Merge default options with user options
 		this.options = Object.assign(
 			{
@@ -80,6 +45,11 @@ export = class ChunksWebpackPlugin {
 			},
 			options
 		);
+
+		validate(schemaOptions, this.options, {
+			name: 'ChunksWebpackPlugin',
+			baseDataPath: 'options'
+		});
 
 		this.manifest = {};
 		this.addAssets = this.addAssets.bind(this);

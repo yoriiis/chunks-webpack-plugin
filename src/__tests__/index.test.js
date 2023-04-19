@@ -9,9 +9,12 @@ import {
 	mockIsValidCustomFormatTagsDatas
 } from '../__mocks__/mocks';
 import path from 'path';
+import { validate } from 'schema-utils';
+import schemaOptions from '../schemas/plugin-options.json';
 
 const webpack = require('webpack');
 
+jest.mock('schema-utils');
 jest.mock('webpack', () => ({
 	version: '5.4.0',
 	Compilation: {
@@ -159,6 +162,10 @@ describe('ChunksWebpackPlugin constructor', () => {
 			generateChunksManifest: true,
 			generateChunksFiles: true,
 			customFormatTags: expect.any(Function)
+		});
+		expect(validate).toHaveBeenCalledWith(schemaOptions, chunksWebpackPlugin.options, {
+			name: 'ChunksWebpackPlugin',
+			baseDataPath: 'options'
 		});
 		expect(chunksWebpackPlugin.manifest).toEqual({});
 	});

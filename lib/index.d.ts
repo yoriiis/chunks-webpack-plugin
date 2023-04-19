@@ -8,37 +8,10 @@
  * @copyright 2023 Joris DANIEL
  **/
 import { Compiler } from 'webpack';
-interface Chunks {
-    styles: Array<string>;
-    scripts: Array<string>;
-}
-interface HtmlTags {
-    styles: string;
-    scripts: string;
-}
-interface Manifest {
-    [key: string]: {
-        styles: Array<string>;
-        scripts: Array<string>;
-    };
-}
-interface Fs {
-    mkdir: (filePath: string, options: {
-        recursive: boolean;
-    }, callback: (error: Error) => void) => void;
-    writeFile: (filePath: string, output: string, callback: (error: Error) => void) => void;
-}
+import { Chunks, HtmlTags, Manifest, Fs, PluginOptions } from './interfaces';
 declare const _default: {
-    new (options?: {}): {
-        options: {
-            outputPath: null | string;
-            filename: string;
-            templateStyle: string;
-            templateScript: string;
-            customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: any) => HtmlTags);
-            generateChunksManifest: boolean;
-            generateChunksFiles: boolean;
-        };
+    new (options: PluginOptions): {
+        options: PluginOptions;
         manifest: Manifest;
         fs: Fs;
         compilation: any;

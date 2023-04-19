@@ -1,0 +1,49 @@
+{
+    "type": "object",
+    "properties": {
+        "filename": {
+            "type": "string",
+            "description": "Personalize the default filename of the generated files",
+            "link": "https://github.com/yoriiis/chunks-webpack-plugin#filename"
+        },
+        "templateStyle": {
+            "type": "string",
+            "description": "Personalize the default template for the HTML <style> tags",
+            "link": "https://github.com/yoriiis/chunks-webpack-plugin#templatestyle"
+        },
+        "templateScript": {
+            "type": "string",
+            "description": "Personalize the default template for the HTML <script> tags",
+            "link": "https://github.com/yoriiis/chunks-webpack-plugin#templatescript"
+        },
+        "outputPath": {
+            "type": "string",
+            "nullable": true,
+            "description": "Personalize the default output path of generated files",
+            "link": "https://github.com/yoriiis/chunks-webpack-plugin#outputpath"
+        },
+        "customFormatTags": {
+            "description": "Personalize the default behavior for generating your own templates",
+            "link": "https://github.com/yoriiis/chunks-webpack-plugin#customformattags",
+            "oneOf": [
+                {
+                    "type": "boolean"
+                },
+                {
+                    "instanceof": "Function"
+                }
+            ]
+        },
+        "generateChunksManifest": {
+            "type": "boolean",
+            "description": "Generate the chunks manifest json file",
+            "link": "https://github.com/yoriiis/chunks-webpack-plugin#generatechunksmanifest"
+        },
+        "generateChunksFiles": {
+            "type": "boolean",
+            "description": "Generate the HTML files",
+            "link": "https://github.com/yoriiis/chunks-webpack-plugin#generatechunksfiles"
+        }
+    },
+    "additionalProperties": false
+}
