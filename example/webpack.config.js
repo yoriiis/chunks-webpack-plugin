@@ -5,7 +5,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ChunksWebpackPlugin = require('../lib/index.js');
 
 module.exports = (env, argv) => {
-	const isProduction = argv.mode === 'production';
+	// const isProduction = argv.mode === 'production';
 
 	return {
 		context: __dirname, // Context is mandatory because webpack use the flag "--config"
