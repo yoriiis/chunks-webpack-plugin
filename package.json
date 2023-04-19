@@ -23,18 +23,20 @@
 	],
 	"scripts": {
 		"analyze:bundle": "webpack --config=./example/webpack.config.js --mode=production --profile --json > webpack-stats.json && webpack-bundle-analyzer ./webpack-stats.json ./ -p 1664",
+		"build": "rm -rf ./types && tsc",
 		"build:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=production",
-		"build:tsc": "tsc",
-		"coverage": "npm run test:coverage && cat ./coverage/lcov.info | coveralls",
+		"coverage": "jest --config ./config/jest.config.js --coverage && cat ./coverage/lcov.info | coveralls",
+		"dev": "tsc --watch",
+		"dev:unit": "jest --config ./config/jest.config.js --watchAll --verbose --coverage",
 		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --config=./example/webpack.config.js --mode=development",
+		"pre:publish": "npm run build && npm run test",
 		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development --watch",
-		"start:tsc": "tsc --watch",
-		"test": "jest --config ./config/jest.config.js --verbose --coverage",
-		"test:coverage": "jest --config ./config/jest.config.js --coverage",
-		"test:eslint": "eslint . -c ./config/.eslintrc.js --ignore-pattern coverage --ignore-pattern reports --ignore-pattern example/dist --ignore-pattern lib",
+		"test": "npm run test:eslint && npm run test:types && npm run test:markdown && npm run test:unit && npm run test:mutation",
+		"test:eslint": "eslint . -c ./config/.eslintrc.js --ignore-pattern coverage --ignore-pattern reports --ignore-pattern example/dist --ignore-pattern lib --ignore-pattern types",
 		"test:markdown": "markdownlint '**/*.md' --ignore node_modules",
 		"test:mutation": "stryker run",
-		"test:watch": "jest --config ./config/jest.config.js --watchAll --coverage"
+		"test:types": "tsc --noEmit",
+		"test:unit": "jest --config ./config/jest.config.js --verbose --coverage"
 	},
 	"prettier": "./config/prettier.config.js",
 	"dependencies": {

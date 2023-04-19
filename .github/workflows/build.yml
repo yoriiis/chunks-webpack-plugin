@@ -42,7 +42,7 @@ jobs:
         run: npm run test:markdown
 
       - name: Test Jest
-        run: npm run test
+        run: npm run test:unit
 
       - name: Test Mutation
         run: npm run test:mutation
@@ -61,7 +61,7 @@ jobs:
 
       - name: Build
         run: |
-          npm run build:tsc
+          npm run build
           npm run build:example
 
   deploy-coverage:
