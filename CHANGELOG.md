@@ -92,7 +92,7 @@
 
 ### Breaking changes
 
-- Change default value of `outputPath` constructor option from `default` to `null`. If the parameter is omit or `null`, the plugin will use the `options.output.path` option from the [Webpack configuration](<(https://webpack.js.org/configuration/output/#outputpath)>).
+- Change default value of `outputPath` constructor option from `default` to `null`. If the parameter is omit or `null`, the plugin will use the `options.output.path` option from the [Webpack configuration](https://webpack.js.org/configuration/output/#outputpath).
 
 ## 4.0.3
 

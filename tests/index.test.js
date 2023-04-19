@@ -1,4 +1,4 @@
-import ChunksWebpackPlugin from '../index';
+import ChunksWebpackPlugin from '@src/index';
 import {
 	mockGetEntryNames,
 	mockGetFiles,
@@ -7,10 +7,10 @@ import {
 	mockSortsChunksByType,
 	mockCustomFormatTags,
 	mockIsValidCustomFormatTagsDatas
-} from '../__mocks__/mocks';
+} from './mocks';
 import path from 'path';
 import { validate } from 'schema-utils';
-import schemaOptions from '../schemas/plugin-options.json';
+import schemaOptions from '@src/schemas/plugin-options.json';
 
 const webpack = require('webpack');
 

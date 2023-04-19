@@ -3,17 +3,17 @@
 		"moduleResolution": "node",
 		"outDir": "./lib",
 		"allowJs": true,
-		"checkJs": true,
+		"checkJs": false,
 		"target": "es5",
 		"lib": ["es2017"],
 		"strict": true,
 		"esModuleInterop": true,
 		"declaration": true,
+		"declarationDir": "types",
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
 		"resolveJsonModule": true
 	},
 	"types": ["node"],
-	"include": ["./src/**/*"],
-	"exclude": ["./src/__tests__", "./src/__mocks__"]
+	"include": ["./src/**/*"]
 }

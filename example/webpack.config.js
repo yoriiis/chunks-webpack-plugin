@@ -5,7 +5,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ChunksWebpackPlugin = require('../lib/index.js');
 
 module.exports = (env, argv) => {
-	const isProduction = argv.mode === 'production';
+	// const isProduction = argv.mode === 'production';
 
 	return {
 		context: __dirname, // Context is mandatory because webpack use the flag "--config"
@@ -17,11 +17,11 @@ module.exports = (env, argv) => {
 		watchOptions: {
 			ignored: /node_modules/
 		},
-		devtool: isProduction ? false : 'nosources-source-map',
+		devtool: false,
 		output: {
 			path: path.resolve(__dirname, './dist'),
 			publicPath: '/dist/',
-			filename: `js/[name]${isProduction ? '.[contenthash]' : ''}.js`
+			filename: `js/[name].js`
 		},
 		module: {
 			rules: [
@@ -46,7 +46,7 @@ module.exports = (env, argv) => {
 		},
 		plugins: [
 			new MiniCssExtractPlugin({
-				filename: `css/[name]${isProduction ? '.[contenthash]' : ''}.css`
+				filename: `css/[name].css`
 			}),
 			new ChunksWebpackPlugin({
 				outputPath: path.resolve(__dirname, './dist'), // Optional field, used here to validate #81
