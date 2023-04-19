@@ -21,7 +21,7 @@ module.exports = (env, argv) => {
 		output: {
 			path: path.resolve(__dirname, './dist'),
 			publicPath: '/dist/',
-			filename: `js/[name]${isProduction ? '.[contenthash]' : ''}.js`
+			filename: `js/[name].js`
 		},
 		module: {
 			rules: [
@@ -46,7 +46,7 @@ module.exports = (env, argv) => {
 		},
 		plugins: [
 			new MiniCssExtractPlugin({
-				filename: `css/[name]${isProduction ? '.[contenthash]' : ''}.css`
+				filename: `css/[name].css`
 			}),
 			new ChunksWebpackPlugin({
 				outputPath: path.resolve(__dirname, './dist'), // Optional field, used here to validate #81

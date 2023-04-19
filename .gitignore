@@ -6,3 +6,6 @@ reports
 
 # stryker temp files
 .stryker-tmp
+
+lib/
+types/

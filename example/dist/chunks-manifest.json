@@ -1,32 +1,32 @@
 {
   "shared/app-a": {
     "styles": [
-      "/dist/css/209.107de727a6f3e908877d.css",
-      "/dist/css/shared/app-a.dc91e44ab6af1b380730.css"
+      "/dist/css/747.css",
+      "/dist/css/shared/app-a.css"
     ],
     "scripts": [
-      "/dist/js/209.58913b60c932669c85b2.js",
-      "/dist/js/shared/app-a.2b791f5eec0c34b0a882.js"
+      "/dist/js/747.js",
+      "/dist/js/shared/app-a.js"
     ]
   },
   "app-b": {
     "styles": [
-      "/dist/css/209.107de727a6f3e908877d.css",
-      "/dist/css/app-b.c8e16f748f904b1dcad5.css"
+      "/dist/css/747.css",
+      "/dist/css/app-b.css"
     ],
     "scripts": [
-      "/dist/js/209.58913b60c932669c85b2.js",
-      "/dist/js/app-b.72908d9196f37b907c9d.js"
+      "/dist/js/747.js",
+      "/dist/js/app-b.js"
     ]
   },
   "app-c": {
     "styles": [
-      "/dist/css/209.107de727a6f3e908877d.css",
-      "/dist/css/app-c.ce2aa8d176f2373f916f.css"
+      "/dist/css/747.css",
+      "/dist/css/app-c.css"
     ],
     "scripts": [
-      "/dist/js/209.58913b60c932669c85b2.js",
-      "/dist/js/app-c.d0aa8211832d6b0cd551.js"
+      "/dist/js/747.js",
+      "/dist/js/app-c.js"
     ]
   }
 }

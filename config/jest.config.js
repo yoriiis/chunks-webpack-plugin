@@ -7,5 +7,9 @@ module.exports = {
 	transform: {
 		'\\.(js|ts)$': ['ts-jest', { configFile: './config/babel.config.js' }]
 	},
+	moduleNameMapper: {
+		'^@src(.*)$': '<rootDir>/src$1'
+	},
+	testMatch: ['<rootDir>/tests/*.test.js'],
 	verbose: true
 };

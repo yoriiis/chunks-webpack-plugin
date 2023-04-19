@@ -1,17 +1,24 @@
 module.exports = (api) => {
-	api.cache(true);
-	return {
-		presets: [
-			[
-				'@babel/preset-env',
-				{
-					targets: {
-						node: '14.21.2'
-					}
+	const presets = [
+		[
+			'@babel/preset-env',
+			{
+				targets: {
+					node: '14.21.2'
 				}
-			],
-			['@babel/preset-typescript']
+			}
 		],
-		plugins: ['babel-plugin-dynamic-import-node']
+		['@babel/preset-typescript']
+	];
+
+	const plugins = [];
+	api.cache.using(() => process.env.NODE_ENV);
+
+	if (api.env('test')) {
+		plugins.push('babel-plugin-dynamic-import-node');
+	}
+	return {
+		presets,
+		plugins
 	};
 };
