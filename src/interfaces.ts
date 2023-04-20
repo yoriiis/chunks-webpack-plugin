@@ -1,18 +1,30 @@
-import { type Asset } from 'webpack';
+import { type Asset, type sources } from 'webpack';
 
-export interface Data {
-	filePath: Array<string>;
-	htmlTags: string;
-}
-
-export interface Chunks {
+export interface FilesDependencies {
 	css: Array<Asset>;
 	js: Array<Asset>;
 }
 
-export interface HtmlTags {
-	css: string;
-	js: string;
+export interface AllData {
+	entryName: string;
+	css?: {
+		source: sources.RawSource;
+	};
+	js?: {
+		source: sources.RawSource;
+	};
+}
+
+export interface AssetData {
+	filePath: Array<string>;
+	htmlTags: string;
+}
+
+export interface EntryCache {
+	source: sources.RawSource;
+	filePath: Array<string>;
+	htmlTags: string;
+	filename: string;
 }
 
 export interface Manifest {
@@ -22,20 +34,12 @@ export interface Manifest {
 	};
 }
 
-// Describe the shape of the webpack built-in Node.js File System
-export interface Fs {
-	mkdir: (
-		filePath: string,
-		options: { recursive: boolean },
-		callback: (error: Error) => void
-	) => void;
-	writeFile: (filePath: string, output: string, callback: (error: Error) => void) => void;
-}
+export type TemplateFunction = (name: string, entryName: string) => string;
 
 export interface PluginOptions {
 	filename: string;
-	templateStyle: (name: string, entryName: string) => string;
-	templateScript: (name: string, entryName: string) => string;
+	templateStyle: TemplateFunction;
+	templateScript: TemplateFunction;
 	generateChunksManifest: boolean;
 	generateChunksFiles: boolean;
 }

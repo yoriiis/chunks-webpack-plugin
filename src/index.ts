@@ -11,7 +11,15 @@ import path = require('path');
 import { validate } from 'schema-utils';
 import { Schema } from 'schema-utils/declarations/validate';
 import unTypedSchemaOptions from './schemas/plugin-options.json';
-import { Chunks, HtmlTags, Manifest, PluginOptions, Data } from './interfaces';
+import {
+	FilesDependencies,
+	Manifest,
+	PluginOptions,
+	AssetData,
+	TemplateFunction,
+	EntryCache,
+	AllData
+} from './interfaces';
 const webpack = require('webpack');
 const schemaOptions = unTypedSchemaOptions as Schema;
 const { RawSource } = webpack.sources;
@@ -59,7 +67,8 @@ class ChunksWebpackPlugin {
 
 	/**
 	 * Hook expose by the Webpack compiler
-	 * @param {Object} compilation The Webpack compilation variable
+	 * @async
+	 * @param {Compilation} compilation Webpack compilation
 	 */
 	async hookCallback(compilation: Compilation): Promise<void> {
 		compilation.hooks.processAssets.tapPromise(
@@ -74,143 +83,148 @@ class ChunksWebpackPlugin {
 	/**
 	 * Add assets
 	 * The hook is triggered by webpack
+	 * @async
+	 * @param {Compilation} compilation Webpack compilation
+	 * @returns {Promise<void>}
 	 */
 	async addAssets(compilation: Compilation): Promise<void> {
 		// For better compatibility with future webpack versions
 		const RawSource = compilation.compiler.webpack.sources.RawSource;
 
 		const cache = compilation.getCache('ChunksWebpackPlugin');
-		const publicPath = this.getPublicPath(compilation);
 		const entryNames = compilation.entrypoints.keys();
-		const customData: Array<any> = [];
+		const customData: Array<AllData> = [];
 		const manifest: Manifest = {};
+
+		let outputCss: EntryCache;
+		let outputJs: EntryCache;
 
 		await Promise.all(
 			Array.from(entryNames).map(async (entryName: string) => {
-				const chunks: any = this.getFilesDependenciesByEntrypoint({
+				const filesDependencies = this.getFilesDependenciesByEntrypoint({
 					compilation,
 					entryName
 				});
+				console.log({ entryName, filesDependencies });
 
-				// console.log({ entryName, chunks });
-				// debugger;
+				const publicPath = this.getPublicPath(compilation);
 
-				// For empty chunks
-				if (!chunks?.css.length && chunks?.js.length) {
-					return;
-				}
+				if (filesDependencies.css.length) {
+					const eTagCss = filesDependencies.css.map((item: any) =>
+						cache.getLazyHashedEtag(item.source as sources.Source)
+					);
+					const cacheItemCss = cache.getItemCache(entryName, eTagCss);
 
-				// CSS
-				const eTagCss = chunks.css.map((item: any) =>
-					cache.getLazyHashedEtag(item.source as sources.Source)
-				);
-				const cacheItemCss = cache.getItemCache(entryName, eTagCss);
+					outputCss = await cacheItemCss.getPromise();
+					if (!outputCss) {
+						const data = this.getAssetData({
+							templateFunction: this.options.templateStyle,
+							assets: filesDependencies.css,
+							entryName,
+							publicPath
+						});
+						console.log('data css', data);
 
-				let outputCss: any = await cacheItemCss.getPromise();
-				if (!outputCss) {
-					const data = this.getDataByType({
-						assets: chunks.css,
-						entryName,
-						publicPath
-					});
-					console.log(data);
+						outputCss = {
+							source: new RawSource(data.htmlTags, false),
+							filePath: data.filePath,
+							htmlTags: data.htmlTags,
+							filename: this.options.filename
+								.replace('[name]', entryName)
+								.replace('[type]', 'styles')
+						};
 
-					outputCss = {
-						source: new RawSource(data.htmlTags, false),
-						// chunks: chunks.css,
-						filePath: data.filePath,
-						htmlTags: data.htmlTags,
-						filename: this.options.filename
-							.replace('[name]', entryName)
-							.replace('[type]', 'styles')
-					};
-
-					await cacheItemCss.storePromise(outputCss);
-				}
-
-				compilation.emitAsset(outputCss.filename, outputCss.source);
-
-				// JS
-				const eTagJs = chunks.css.map((item: any) =>
-					cache.getLazyHashedEtag(item.source as sources.Source)
-				);
-				const cacheItemJs = cache.getItemCache(entryName, eTagJs);
-
-				let outputJs: any = await cacheItemJs.getPromise();
-				if (!outputJs) {
-					const data = this.getDataByType({
-						assets: chunks.js,
-						entryName,
-						publicPath
-					});
-					console.log(data);
-
-					outputJs = {
-						source: new RawSource(data.htmlTags, false),
-						// chunks: chunks.js,
-						filePath: data.filePath,
-						htmlTags: data.htmlTags,
-						filename: this.options.filename
-							.replace('[name]', entryName)
-							.replace('[type]', 'scripts')
-					};
-
-					await cacheItemJs.storePromise(outputJs);
-				}
-
-				compilation.emitAsset(outputJs.filename, outputJs.source);
-
-				customData.push({
-					entryName,
-					css: {
-						source: outputCss.source
-					},
-					js: {
-						source: outputJs.source
+						await cacheItemCss.storePromise(outputCss);
 					}
-				});
-				debugger;
-				manifest[entryName] = {
-					styles: outputCss.filePath,
-					scripts: outputJs.filePath
+
+					compilation.emitAsset(outputCss.filename, outputCss.source);
+				}
+
+				if (filesDependencies.js.length) {
+					const eTagJs = filesDependencies.css.map((item: any) =>
+						cache.getLazyHashedEtag(item.source as sources.Source)
+					);
+					const cacheItemJs = cache.getItemCache(entryName, eTagJs);
+
+					outputJs = await cacheItemJs.getPromise();
+					if (!outputJs) {
+						const data = this.getAssetData({
+							templateFunction: this.options.templateScript,
+							assets: filesDependencies.js,
+							entryName,
+							publicPath
+						});
+						console.log('data js', data);
+
+						outputJs = {
+							source: new RawSource(data.htmlTags, false),
+							filePath: data.filePath,
+							htmlTags: data.htmlTags,
+							filename: this.options.filename
+								.replace('[name]', entryName)
+								.replace('[type]', 'scripts')
+						};
+
+						await cacheItemJs.storePromise(outputJs);
+					}
+
+					compilation.emitAsset(outputJs.filename, outputJs.source);
+				}
+
+				const dataTest: AllData = {
+					entryName
 				};
+				manifest[entryName] = {
+					styles: [],
+					scripts: []
+				};
+
+				if (outputCss) {
+					dataTest.css = {
+						source: outputCss.source
+					};
+					manifest[entryName].styles = outputCss.filePath;
+				}
+				if (outputJs) {
+					dataTest.js = {
+						source: outputJs.source
+					};
+					manifest[entryName].scripts = outputJs.filePath;
+				}
+				customData.push(dataTest);
 			})
 		);
-		console.log({ manifest });
+
 		if (!customData.length) {
 			return;
 		}
 
 		// Need to sort (**always**), to have deterministic build
-		// const eTag = customData
-		// 	.sort((a, b) => a.entryName.localeCompare(b.entryName))
-		// 	.map((item) => {
-		// 		// const sources = [...item.styles.source, ...item.scripts.source];
-		// 		// return sources.map((source) => cache.getLazyHashedEtag(source));
-		// 		return cache.getLazyHashedEtag(item.styles.source);
-		// 	})
-		// 	.reduce((result, item) => cache.mergeEtags(result, item));
-
 		const entrySorted = customData.sort((a, b) => a.entryName.localeCompare(b.entryName));
-		const eTagCss = entrySorted.map((item) => {
-			return cache.getLazyHashedEtag(item.css.source);
-		});
-		const eTagJs = entrySorted.map((item) => {
-			return cache.getLazyHashedEtag(item.js.source);
-		});
+
+		const eTagCss =
+			entrySorted.map(
+				(item) => item.css && item.css.source && cache.getLazyHashedEtag(item.css.source)
+			) || [];
+
+		const eTagJs =
+			entrySorted.map(
+				(item) => item.js && item.js.source && cache.getLazyHashedEtag(item.js.source)
+			) || [];
 		const eTag = [...eTagCss, ...eTagJs].reduce((result, item) =>
 			cache.mergeEtags(result, item)
 		);
 
-		if (this.options.generateChunksManifest) {
-			await this.createChunksManifestFile({ compilation, cache, eTag, manifest });
-		}
+		// if (this.options.generateChunksManifest) {
+		// 	await this.createChunksManifestFile({ compilation, cache, eTag, manifest });
+		// }
 	}
 
 	/**
 	 * Get SVGs filtered by entrypoints
-	 * @param {Compilation} compilation Webpack compilation
-	 * @param {String} entryName Entrypoint name
+	 * @param {Object} options
+	 * @param {Compilation} options.compilation Webpack compilation
+	 * @param {String} options.entryName Entrypoint name
 	 * @returns {Array<NormalModule>} Svgs list
 	 */
 	getFilesDependenciesByEntrypoint({
@@ -219,8 +233,8 @@ class ChunksWebpackPlugin {
 	}: {
 		compilation: Compilation;
 		entryName: string;
-	}): Array<Chunks> {
-		const listDependencies: any = {
+	}): FilesDependencies {
+		const listDependencies: FilesDependencies = {
 			css: [],
 			js: []
 		};
@@ -228,18 +242,21 @@ class ChunksWebpackPlugin {
 		// When you use module federation you can don't have entries
 		const entries = compilation.entrypoints;
 		if (!entries || entries.size === 0) {
-			return [];
+			return listDependencies;
 		}
 
 		const entry = entries.get(entryName);
 		if (!entry) {
-			return [];
+			return listDependencies;
 		}
 
+		type FilesDependenciesKey = 'css' | 'js';
+
 		entry.getFiles().map((file) => {
-			const extension = path.extname(file).substr(1);
+			const extension = path.extname(file).slice(1) as FilesDependenciesKey;
 			if (['css', 'js'].includes(extension)) {
-				listDependencies[extension].push(compilation.getAsset(file));
+				const asset = compilation.getAsset(file);
+				asset && listDependencies[extension].push(asset);
 			}
 		});
 
@@ -249,6 +266,7 @@ class ChunksWebpackPlugin {
 	/**
 	 * Get the public path from Webpack configuation
 	 * and add slash at the end if necessary
+	 * @param {Compilation} compilation Webpack compilation
 	 * @return {String} The public path
 	 */
 	getPublicPath(compilation: Compilation): string {
@@ -262,29 +280,44 @@ class ChunksWebpackPlugin {
 				compilation.options.output.path || ''
 			)}`;
 		} else if (typeof publicPath === 'function') {
+			// @ts-ignore Missing pathData parameter
 			publicPath = publicPath();
 		}
 
-		// return '';
-		return `${publicPath}${this.isPublicPathNeedsEndingSlash(publicPath) ? '/' : ''}`;
+		return publicPath;
 	}
 
-	getDataByType({
+	/**
+	 * Get assets data
+	 * File path for the manifest
+	 * HTML tags for the generated files
+	 * @param {Object} options
+	 * @param {TemplateFunction} options.templateFunction Template function to generate HTML tags
+	 * @param {Asset} options.assets Asset module
+	 * @param {String} options.entryName Entry name
+	 * @param {String} options.publicPath Public path generated
+	 * @returns
+	 */
+	getAssetData({
+		templateFunction,
 		assets,
 		entryName,
 		publicPath
 	}: {
+		templateFunction: TemplateFunction;
 		assets: Array<Asset>;
 		entryName: string;
 		publicPath: string;
-	}): Data {
+	}): AssetData {
 		const filePath: Array<string> = [];
 		const htmlTags: Array<string> = [];
 
 		assets.forEach((asset: Asset) => {
 			const filename = `${publicPath}${asset.name}`;
+			const template = templateFunction(filename, entryName);
+
 			filePath.push(filename);
-			htmlTags.push(this.options.templateScript(filename, entryName));
+			htmlTags.push(template);
 		});
 
 		return {
@@ -294,14 +327,11 @@ class ChunksWebpackPlugin {
 	}
 
 	/**
-	 * Check if the publicPath need an ending slash
-	 * @param {String} publicPath Public path
-	 * @returns {Boolean} The public path need an ending slash
+	 * Create chunks manifest with Webpack compilation
+	 * Expose the manifest file into the assets compilation
+	 * The file is automatically created by the compiler
+	 * @async
 	 */
-	isPublicPathNeedsEndingSlash(publicPath: string): boolean {
-		return !!(publicPath && publicPath.substr(-1) !== '/');
-	}
-
 	async createChunksManifestFile({
 		compilation,
 		cache,
