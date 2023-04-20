@@ -1,14 +1,11 @@
-/**
- * @license MIT
- * @name ChunksWebpackPlugin
- * @version 7.1.0
- * @author: Yoriiis aka Joris DANIEL <joris.daniel@gmail.com>
- * @description: ChunksWebpackPlugin create HTML files to serve your webpack bundles. It is very convenient with multiple entrypoints and it works without configuration.
- * {@link https://github.com/yoriiis/chunks-webpack-plugins}
- * @copyright 2023 Joris DANIEL
- **/
-
-import { Compiler } from 'webpack';
+import {
+	type Compiler,
+	type Compilation,
+	type NormalModule,
+	type Chunk,
+	type Module,
+	type sources
+} from 'webpack';
 import path = require('path');
 import { validate } from 'schema-utils';
 import { Schema } from 'schema-utils/declarations/validate';
@@ -18,11 +15,8 @@ const webpack = require('webpack');
 const schemaOptions = unTypedSchemaOptions as Schema;
 const { RawSource } = webpack.sources;
 
-export = class ChunksWebpackPlugin {
+class ChunksWebpackPlugin {
 	options: PluginOptions;
-	manifest: Manifest;
-	fs!: Fs;
-	compilation: any;
 	entryNames!: Array<string>;
 	publicPath!: string;
 	outputPath!: null | string;
@@ -38,7 +32,6 @@ export = class ChunksWebpackPlugin {
 				filename: '[name]-[type].html',
 				templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
 				templateScript: '<script src="{{chunk}}"></script>',
-				outputPath: null,
 				customFormatTags: false,
 				generateChunksManifest: false,
 				generateChunksFiles: true
@@ -51,7 +44,6 @@ export = class ChunksWebpackPlugin {
 			baseDataPath: 'options'
 		});
 
-		this.manifest = {};
 		this.addAssets = this.addAssets.bind(this);
 	}
 
@@ -67,19 +59,13 @@ export = class ChunksWebpackPlugin {
 	 * Hook expose by the Webpack compiler
 	 * @param {Object} compilation The Webpack compilation variable
 	 */
-	hookCallback(compilation: object): void {
-		this.compilation = compilation;
-		this.fs = this.compilation.compiler.outputFileSystem;
-
-		const stage = this.options.outputPath
-			? Infinity
-			: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL;
-		this.compilation.hooks.processAssets.tap(
+	async hookCallback(compilation: Compilation): Promise<void> {
+		compilation.hooks.processAssets.tapPromise(
 			{
 				name: 'ChunksWebpackPlugin',
-				stage
+				stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
 			},
-			this.addAssets
+			this.addAssets.bind(this, compilation)
 		);
 	}
 
@@ -87,41 +73,141 @@ export = class ChunksWebpackPlugin {
 	 * Add assets
 	 * The hook is triggered by webpack
 	 */
-	addAssets(): void {
-		this.publicPath = this.getPublicPath();
-		this.outputPath = this.getOutputPath();
-		this.pathFromFilename = this.getPathFromString(this.options.filename);
-		this.entryNames = this.getEntryNames();
+	async addAssets(compilation: Compilation): Promise<void> {
+		// For better compatibility with future webpack versions
+		const RawSource = compilation.compiler.webpack.sources.RawSource;
 
-		this.entryNames
-			.filter((entryName: string) => this.getFiles(entryName).length)
-			.map((entryName: string) => this.processEntry(entryName));
+		const cache = compilation.getCache('ChunksWebpackPlugin');
+		const publicPath = this.getPublicPath(compilation);
+		const entryNames = compilation.entrypoints.keys();
+		const customData: Array<any> = [];
+		const manifest: Manifest = {};
 
-		// Check if manifest option is enabled
+		await Promise.all(
+			Array.from(entryNames).map(async (entryName: string) => {
+				const files = this.getFilesDependenciesByEntrypoint({
+					compilation,
+					entryName
+				});
+
+				// console.log({ entryName, files });
+				// debugger;
+
+				// For empty chunks
+				if (!files.length) {
+					return;
+				}
+
+				const eTag = files.map((item: any) =>
+					cache.getLazyHashedEtag(item.source as sources.Source)
+				);
+				const cacheItem = cache.getItemCache(entryName, eTag);
+
+				let output: any = await cacheItem.getPromise();
+				if (!output) {
+					const chunks = this.sortsChunksByType({ publicPath, files });
+					console.log({ chunks });
+					const htmlTags = this.getHtmlTags({
+						chunks,
+						Entrypoint: compilation.entrypoints.get(entryName)
+					});
+					// const source = new RawSource(JSON.stringify(htmlTags), false);
+					console.log(entryName, htmlTags.styles);
+					output = {
+						styles: {
+							source: new RawSource(htmlTags.styles, false),
+							chunks: chunks.styles,
+							htmlTags: htmlTags.styles,
+							filename: this.options.filename
+								.replace('[name]', entryName)
+								.replace('[type]', 'styles')
+						},
+						scripts: {
+							source: new RawSource(htmlTags.scripts, false),
+							chunks: chunks.scripts,
+							htmlTags: htmlTags.scripts,
+							filename: this.options.filename
+								.replace('[name]', entryName)
+								.replace('[type]', 'scripts')
+						}
+						// chunks,
+						// htmlTags,
+						// filename: {
+						// 	style: this.options.filename
+						// 		.replace('[name]', entryName)
+						// 		.replace('[type]', 'styles'),
+						// 	scripts: this.options.filename
+						// 		.replace('[name]', entryName)
+						// 		.replace('[type]', 'scripts')
+						// }
+					};
+
+					await cacheItem.storePromise(output);
+				}
+
+				if (output.styles.htmlTags) {
+					compilation.emitAsset(output.styles.filename, output.styles.source);
+				}
+
+				if (output.scripts.htmlTags) {
+					compilation.emitAsset(output.scripts.filename, output.scripts.source);
+				}
+
+				customData.push({
+					entryName,
+					styles: output.styles,
+					scripts: output.scripts
+					// htmlTags: output.htmlTags
+				});
+				manifest[entryName] = {
+					styles: output.styles.chunks,
+					scripts: output.scripts.chunks
+				};
+			})
+		);
+
+		if (!customData.length) {
+			return;
+		}
+
+		// Need to sort (**always**), to have deterministic build
+		const eTag = customData
+			.sort((a, b) => a.entryName.localeCompare(b.entryName))
+			.map((item) => cache.getLazyHashedEtag(item.source))
+			.reduce((result, item) => cache.mergeEtags(result, item));
+
 		if (this.options.generateChunksManifest) {
-			this.createChunksManifestFile();
+			await this.createChunksManifestFile({ compilation, cache, eTag, manifest });
 		}
 	}
 
 	/**
-	 * Process for each entry
+	 * Get SVGs filtered by entrypoints
+	 * @param {Compilation} compilation Webpack compilation
 	 * @param {String} entryName Entrypoint name
+	 * @returns {Array<NormalModule>} Svgs list
 	 */
-	processEntry(entryName: string): void {
-		const files = this.getFiles(entryName);
-		const chunks = this.sortsChunksByType(files);
-		const Entrypoint = this.compilation.entrypoints.get(entryName);
-		const htmlTags = this.getHtmlTags({ chunks, Entrypoint });
-
-		// Check if HTML chunk files option is enabled and htmlTags valid
-		if (this.options.generateChunksFiles && htmlTags) {
-			this.createHtmlChunksFiles({ entryName, htmlTags });
+	getFilesDependenciesByEntrypoint({
+		compilation,
+		entryName
+	}: {
+		compilation: Compilation;
+		entryName: string;
+	}): Array<any> {
+		// When you use module federation you can don't have entries
+		const entries = compilation.entrypoints;
+		if (!entries || entries.size === 0) {
+			return [];
 		}
 
-		// Check if manifest option is enabled
-		if (this.options.generateChunksManifest) {
-			this.updateManifest({ entryName, chunks });
+		const entry = entries.get(entryName);
+		if (!entry) {
+			return [];
 		}
+
+		return entry.getFiles().map((file) => {
+			return compilation.getAsset(file);
+		});
 	}
 
 	/**
@@ -129,32 +215,22 @@ export = class ChunksWebpackPlugin {
 	 * and add slash at the end if necessary
 	 * @return {String} The public path
 	 */
-	getPublicPath(): string {
-		let publicPath = this.compilation.options.output.publicPath || '';
+	getPublicPath(compilation: Compilation): string {
+		let publicPath = compilation.options.output.publicPath || '';
 
 		// Default value for the publicPath is "auto"
 		// The value must be generated automatically from the webpack compilation data
-		if (publicPath === 'auto') {
-			publicPath = `/${path.relative(
-				this.compilation.options.context,
-				this.compilation.options.output.path
-			)}`;
-		} else if (typeof publicPath === 'function') {
-			publicPath = publicPath();
-		}
+		// if (publicPath === 'auto') {
+		// 	publicPath = `/${path.relative(
+		// 		compilation.options.context || '',
+		// 		compilation.options.output.path
+		// 	)}`;
+		// } else if (typeof publicPath === 'function') {
+		// 	publicPath = publicPath();
+		// }
 
-		return `${publicPath}${this.isPublicPathNeedsEndingSlash(publicPath) ? '/' : ''}`;
-	}
-
-	/**
-	 * Get the output path from Webpack configuation
-	 * or from constructor options
-	 * @return {String} The output path
-	 */
-	getOutputPath(): string | null {
-		return this.isValidOutputPath()
-			? this.options.outputPath
-			: this.compilation.options.output.path || '';
+		return '';
+		// return `${publicPath}${this.isPublicPathNeedsEndingSlash(publicPath) ? '/' : ''}`;
 	}
 
 	/**
@@ -168,53 +244,27 @@ export = class ChunksWebpackPlugin {
 	}
 
 	/**
-	 * Check if the outputPath is valid, a string and absolute
-	 * @returns {Boolean} outputPath is valid
-	 */
-	isValidOutputPath(): boolean {
-		return !!(this.options.outputPath && path.isAbsolute(this.options.outputPath));
-	}
-
-	/**
-	 * Get entrypoint names from the compilation
-	 * @return {Array} List of entrypoint names
-	 */
-	getEntryNames(): Array<string> {
-		return Array.from(this.compilation.entrypoints.keys());
-	}
-
-	/**
-	 * Get files list by entrypoint name
-	 *
-	 * @param {String} entryName Entrypoint name
-	 * @return {Array} List of entrypoint names
-	 */
-	getFiles(entryName: string): Array<string> {
-		return this.compilation.entrypoints.get(entryName).getFiles();
-	}
-
-	/**
 	 * Get HTML tags from chunks
 	 * @param {Object} options
 	 * @param {Object} options.chunks Chunks sorted by type (style, script)
 	 * @param {Object} options.Entrypoint Entrypoint object part of a single ChunkGroup
 	 * @returns {String} HTML tags by entrypoints
 	 */
-	getHtmlTags({ chunks, Entrypoint }: { chunks: Chunks; Entrypoint: any }): undefined | HtmlTags {
+	getHtmlTags({ chunks, Entrypoint }: { chunks: Chunks; Entrypoint: any }): HtmlTags {
 		// The user prefers to generate his own HTML tags, use his object
-		if (typeof this.options.customFormatTags === 'function') {
-			const htmlTags = this.options.customFormatTags(chunks, Entrypoint);
+		// if (typeof this.options.customFormatTags === 'function') {
+		// 	const htmlTags = this.options.customFormatTags(chunks, Entrypoint);
 
-			// Check if datas are correctly formatted
-			if (this.isValidCustomFormatTagsDatas(htmlTags)) {
-				return htmlTags;
-			} else {
-				this.setError('ChunksWebpackPlugin::customFormatTags return invalid object');
-			}
-		} else {
-			// Default behavior, generate HTML tags with templateStyle and templateScript options
-			return this.formatTags(chunks);
-		}
+		// 	// Check if datas are correctly formatted
+		// 	if (this.isValidCustomFormatTagsDatas(htmlTags)) {
+		// 		return htmlTags;
+		// 	} else {
+		// 		// this.setError('ChunksWebpackPlugin::customFormatTags return invalid object');
+		// 	}
+		// } else {
+		// Default behavior, generate HTML tags with templateStyle and templateScript options
+		return this.formatTags(chunks);
+		// }
 	}
 
 	/**
@@ -222,14 +272,18 @@ export = class ChunksWebpackPlugin {
 	 * @param {Array} files List of files by entrypoint name
 	 * @returns {Object} All chunks sorted by extension type
 	 */
-	sortsChunksByType(files: Array<string>): Chunks {
+	sortsChunksByType({ publicPath, files }: { publicPath: string; files: Array<any> }): Chunks {
+		// let filename = compilation.getPath(this.options.filename, {
+		// 	filename: entryName
+		// });
+
 		return {
 			styles: files
-				.filter((file) => this.isValidExtensionByType(file, 'css'))
-				.map((file) => `${this.publicPath}${file}`),
+				.filter(({ name }) => path.extname(name).substr(1) === 'css')
+				.map(({ name }) => `${publicPath}${name}`),
 			scripts: files
-				.filter((file) => this.isValidExtensionByType(file, 'js'))
-				.map((file) => `${this.publicPath}${file}`)
+				.filter(({ name }) => path.extname(name).substr(1) === 'js')
+				.map(({ name }) => `${publicPath}${name}`)
 		};
 	}
 
@@ -266,9 +320,9 @@ export = class ChunksWebpackPlugin {
 	 * @param {String} type File extension
 	 * @returns {Boolean} File extension is valid
 	 */
-	isValidExtensionByType(file: string, type: string): boolean {
-		return path.extname(file).substr(1) === type;
-	}
+	// isValidExtensionByType(file: string, type: string): boolean {
+	// 	return path.extname(file).substr(1) === type;
+	// }
 
 	/**
 	 * Check if datas from customFormatTags are valid
@@ -282,120 +336,29 @@ export = class ChunksWebpackPlugin {
 		);
 	}
 
-	/**
-	 * Update the class property manifest
-	 * which contains all chunks informations by entrypoint
-	 * @param {Object} options
-	 * @param {String} options.entryName Entrypoint name
-	 * @param {Object} options.chunks List of styles and scripts chunks by entrypoint
-	 */
-	updateManifest({ entryName, chunks }: { entryName: string; chunks: Chunks }): void {
-		this.manifest[entryName] = {
-			styles: chunks.styles,
-			scripts: chunks.scripts
-		};
-	}
-
-	/**
-	 * Create the chunks manifest file
-	 * Contains all scripts and styles chunks grouped by entrypoint
-	 */
-	createChunksManifestFile(): void {
-		// Stringify the content of the manifest
-		const output = JSON.stringify(this.manifest, null, 2);
-
-		// Expose the manifest file into the assets compilation
-		// The file is automatically created by the compiler
-		this.createAsset({
-			filename: 'chunks-manifest.json',
-			output
-		});
-	}
-
-	/**
-	 * Create file with HTML tags for each entrypoints
-	 * @param {Object} options
-	 * @param {String} options.entryName Entrypoint name
-	 * @param {Object} options.htmlTags Generated HTML of script and styles tags
-	 */
-	createHtmlChunksFiles({
-		entryName,
-		htmlTags
+	async createChunksManifestFile({
+		compilation,
+		cache,
+		eTag,
+		manifest
 	}: {
-		entryName: string;
-		htmlTags: HtmlTags;
-	}): void {
-		if (htmlTags.scripts.length) {
-			this.createAsset({
-				entryName,
-				filename: this.options.filename
-					.replace('[name]', entryName)
-					.replace('[type]', 'scripts'),
-				output: htmlTags.scripts
-			});
+		compilation: Compilation;
+		cache: any;
+		eTag: any;
+		manifest: Manifest;
+	}): Promise<void> {
+		const RawSource = compilation.compiler.webpack.sources.RawSource;
+
+		const cacheItem = cache.getItemCache('chunks-manifest.json', eTag);
+		let output: sources.RawSource = await cacheItem.getPromise();
+
+		if (!output) {
+			output = new RawSource(JSON.stringify(manifest, null, 2), false);
+			await cacheItem.storePromise(output);
 		}
-		if (htmlTags.styles.length) {
-			this.createAsset({
-				entryName,
-				filename: this.options.filename
-					.replace('[name]', entryName)
-					.replace('[type]', 'styles'),
-				output: htmlTags.styles
-			});
-		}
-	}
 
-	/**
-	 * Create asset by the webpack compilation or the webpack built-in Node.js File System
-	 * The outputPath parameter allows to override the default webpack output path
-	 * Directories are automatically created by FS or the compilation
-	 * @param {Object} options
-	 * @param {String} options.entryName Entry name
-	 * @param {String} options.filename Filename
-	 * @param {String} options.output File content
-	 */
-	createAsset({
-		entryName = '',
-		filename,
-		output
-	}: {
-		entryName?: string;
-		filename: string;
-		output: string;
-	}): void {
-		if (this.options.outputPath) {
-			const pathFromEntryName = entryName ? this.getPathFromString(entryName) : '';
-			this.fs.mkdir(
-				`${this.outputPath}/${this.pathFromFilename}${pathFromEntryName}`,
-				{ recursive: true },
-				(error: Error) => {
-					if (error) throw error;
-
-					const filePath = this.getOutputFilePath(filename);
-					this.fs.writeFile(filePath, output, (error: Error) => {
-						if (error) throw error;
-					});
-				}
-			);
-		} else {
-			this.compilation.emitAsset(filename, new RawSource(output, false));
-		}
+		compilation.emitAsset('chunks-manifest.json', output);
 	}
+}
 
-	/**
-	 * Get the output file path (outPath + filename)
-	 * @param {String} filename The filename
-	 * @returns {String} The output file path
-	 */
-	getOutputFilePath(filename: string): string {
-		return `${this.outputPath}${filename.substr(0, 1) === '/' ? '' : '/'}${filename}`;
-	}
-
-	/**
-	 * Throw an error
-	 * @param {String} message Text to display in the error
-	 */
-	setError(message: string) {
-		throw new Error(message);
-	}
-};
+export = ChunksWebpackPlugin;
