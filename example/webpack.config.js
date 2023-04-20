@@ -17,9 +17,9 @@ module.exports = (env, argv) => {
 		watchOptions: {
 			ignored: /node_modules/
 		},
-		// cache: {
-		// 	type: 'filesystem'
-		// },
+		cache: {
+			type: 'filesystem'
+		},
 		devtool: false,
 		output: {
 			path: path.resolve(__dirname, './dist'),
@@ -52,26 +52,13 @@ module.exports = (env, argv) => {
 				filename: `css/[name].css`
 			}),
 			new ChunksWebpackPlugin({
-				// filename: '/templates/[name]-[type].html',
+				filename: '/templates/[name]-[type].html',
+				templateStyle: (name) =>
+					`<link rel="stylesheet" href="https://cdn.domain.com${name}" />`,
+				templateScript: (name) =>
+					`<script defer src="https://cdn.domain.com${name}"></script>`,
 				generateChunksManifest: true,
 				generateChunksFiles: true
-				// customFormatTags: (chunksSorted) => {
-				// 	// Generate all HTML style tags with CDN prefix
-				// 	const styles = chunksSorted.styles
-				// 		.map(
-				// 			(chunkCss) =>
-				// 				`<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`
-				// 		)
-				// 		.join('');
-				// 	// Generate all HTML style tags with CDN prefix and defer attribute
-				// 	const scripts = chunksSorted.scripts
-				// 		.map(
-				// 			(chunkJs) =>
-				// 				`<script defer src="https://cdn.domain.com${chunkJs}"></script>`
-				// 		)
-				// 		.join('');
-				// 	return { styles, scripts };
-				// }
 			})
 		],
 		stats: {

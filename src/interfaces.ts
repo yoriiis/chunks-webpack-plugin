@@ -5,13 +5,23 @@ export interface FilesDependencies {
 	js: Array<Asset>;
 }
 
+export interface EntryCssData {
+	entryName: string;
+	source: sources.RawSource;
+}
+
+export interface EntryJsData {
+	entryName: string;
+	source: sources.RawSource;
+}
+
 export interface AllData {
 	entryName: string;
-	css?: {
-		source: sources.RawSource;
+	css: {
+		source: sources.RawSource | null;
 	};
-	js?: {
-		source: sources.RawSource;
+	js: {
+		source: sources.RawSource | null;
 	};
 }
 
