@@ -1,11 +1,18 @@
+import { type Asset } from 'webpack';
+
+export interface Data {
+	filePath: Array<string>;
+	htmlTags: string;
+}
+
 export interface Chunks {
-	styles: Array<string>;
-	scripts: Array<string>;
+	css: Array<Asset>;
+	js: Array<Asset>;
 }
 
 export interface HtmlTags {
-	styles: string;
-	scripts: string;
+	css: string;
+	js: string;
 }
 
 export interface Manifest {
@@ -27,10 +34,8 @@ export interface Fs {
 
 export interface PluginOptions {
 	filename: string;
-	templateStyle: string;
-	templateScript: string;
-	outputPath: null | string;
-	customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: any) => HtmlTags);
+	templateStyle: (name: string, entryName: string) => string;
+	templateScript: (name: string, entryName: string) => string;
 	generateChunksManifest: boolean;
 	generateChunksFiles: boolean;
 }

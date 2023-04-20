@@ -53,8 +53,8 @@ module.exports = (env, argv) => {
 			}),
 			new ChunksWebpackPlugin({
 				// filename: '/templates/[name]-[type].html',
-				// generateChunksManifest: true,
-				// generateChunksFiles: true
+				generateChunksManifest: true,
+				generateChunksFiles: true
 				// customFormatTags: (chunksSorted) => {
 				// 	// Generate all HTML style tags with CDN prefix
 				// 	const styles = chunksSorted.styles

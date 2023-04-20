@@ -4,13 +4,14 @@ import {
 	type NormalModule,
 	type Chunk,
 	type Module,
-	type sources
+	type Asset,
+	sources
 } from 'webpack';
 import path = require('path');
 import { validate } from 'schema-utils';
 import { Schema } from 'schema-utils/declarations/validate';
 import unTypedSchemaOptions from './schemas/plugin-options.json';
-import { Chunks, HtmlTags, Manifest, Fs, PluginOptions } from './interfaces';
+import { Chunks, HtmlTags, Manifest, PluginOptions, Data } from './interfaces';
 const webpack = require('webpack');
 const schemaOptions = unTypedSchemaOptions as Schema;
 const { RawSource } = webpack.sources;
@@ -30,9 +31,10 @@ class ChunksWebpackPlugin {
 		this.options = Object.assign(
 			{
 				filename: '[name]-[type].html',
-				templateStyle: '<link rel="stylesheet" href="{{chunk}}" />',
-				templateScript: '<script src="{{chunk}}"></script>',
-				customFormatTags: false,
+				templateStyle: (name: string, entryName: string) =>
+					`<link rel="stylesheet" href="${name}" />`,
+				templateScript: (name: string, entryName: string) =>
+					`<script defer src="${name}"></script>`,
 				generateChunksManifest: false,
 				generateChunksFiles: true
 			},
@@ -85,96 +87,120 @@ class ChunksWebpackPlugin {
 
 		await Promise.all(
 			Array.from(entryNames).map(async (entryName: string) => {
-				const files = this.getFilesDependenciesByEntrypoint({
+				const chunks: any = this.getFilesDependenciesByEntrypoint({
 					compilation,
 					entryName
 				});
 
-				// console.log({ entryName, files });
+				// console.log({ entryName, chunks });
 				// debugger;
 
 				// For empty chunks
-				if (!files.length) {
+				if (!chunks?.css.length && chunks?.js.length) {
 					return;
 				}
 
-				const eTag = files.map((item: any) =>
+				// CSS
+				const eTagCss = chunks.css.map((item: any) =>
 					cache.getLazyHashedEtag(item.source as sources.Source)
 				);
-				const cacheItem = cache.getItemCache(entryName, eTag);
+				const cacheItemCss = cache.getItemCache(entryName, eTagCss);
 
-				let output: any = await cacheItem.getPromise();
-				if (!output) {
-					const chunks = this.sortsChunksByType({ publicPath, files });
-					console.log({ chunks });
-					const htmlTags = this.getHtmlTags({
-						chunks,
-						Entrypoint: compilation.entrypoints.get(entryName)
+				let outputCss: any = await cacheItemCss.getPromise();
+				if (!outputCss) {
+					const data = this.getDataByType({
+						assets: chunks.css,
+						entryName,
+						publicPath
 					});
-					// const source = new RawSource(JSON.stringify(htmlTags), false);
-					console.log(entryName, htmlTags.styles);
-					output = {
-						styles: {
-							source: new RawSource(htmlTags.styles, false),
-							chunks: chunks.styles,
-							htmlTags: htmlTags.styles,
-							filename: this.options.filename
-								.replace('[name]', entryName)
-								.replace('[type]', 'styles')
-						},
-						scripts: {
-							source: new RawSource(htmlTags.scripts, false),
-							chunks: chunks.scripts,
-							htmlTags: htmlTags.scripts,
-							filename: this.options.filename
-								.replace('[name]', entryName)
-								.replace('[type]', 'scripts')
-						}
-						// chunks,
-						// htmlTags,
-						// filename: {
-						// 	style: this.options.filename
-						// 		.replace('[name]', entryName)
-						// 		.replace('[type]', 'styles'),
-						// 	scripts: this.options.filename
-						// 		.replace('[name]', entryName)
-						// 		.replace('[type]', 'scripts')
-						// }
+					console.log(data);
+
+					outputCss = {
+						source: new RawSource(data.htmlTags, false),
+						// chunks: chunks.css,
+						filePath: data.filePath,
+						htmlTags: data.htmlTags,
+						filename: this.options.filename
+							.replace('[name]', entryName)
+							.replace('[type]', 'styles')
 					};
 
-					await cacheItem.storePromise(output);
+					await cacheItemCss.storePromise(outputCss);
 				}
 
-				if (output.styles.htmlTags) {
-					compilation.emitAsset(output.styles.filename, output.styles.source);
+				compilation.emitAsset(outputCss.filename, outputCss.source);
+
+				// JS
+				const eTagJs = chunks.css.map((item: any) =>
+					cache.getLazyHashedEtag(item.source as sources.Source)
+				);
+				const cacheItemJs = cache.getItemCache(entryName, eTagJs);
+
+				let outputJs: any = await cacheItemJs.getPromise();
+				if (!outputJs) {
+					const data = this.getDataByType({
+						assets: chunks.js,
+						entryName,
+						publicPath
+					});
+					console.log(data);
+
+					outputJs = {
+						source: new RawSource(data.htmlTags, false),
+						// chunks: chunks.js,
+						filePath: data.filePath,
+						htmlTags: data.htmlTags,
+						filename: this.options.filename
+							.replace('[name]', entryName)
+							.replace('[type]', 'scripts')
+					};
+
+					await cacheItemJs.storePromise(outputJs);
 				}
 
-				if (output.scripts.htmlTags) {
-					compilation.emitAsset(output.scripts.filename, output.scripts.source);
-				}
+				compilation.emitAsset(outputJs.filename, outputJs.source);
 
 				customData.push({
 					entryName,
-					styles: output.styles,
-					scripts: output.scripts
-					// htmlTags: output.htmlTags
+					css: {
+						source: outputCss.source
+					},
+					js: {
+						source: outputJs.source
+					}
 				});
+				debugger;
 				manifest[entryName] = {
-					styles: output.styles.chunks,
-					scripts: output.scripts.chunks
+					styles: outputCss.filePath,
+					scripts: outputJs.filePath
 				};
 			})
 		);
-
+		console.log({ manifest });
 		if (!customData.length) {
 			return;
 		}
 
 		// Need to sort (**always**), to have deterministic build
-		const eTag = customData
-			.sort((a, b) => a.entryName.localeCompare(b.entryName))
-			.map((item) => cache.getLazyHashedEtag(item.source))
-			.reduce((result, item) => cache.mergeEtags(result, item));
+		// const eTag = customData
+		// 	.sort((a, b) => a.entryName.localeCompare(b.entryName))
+		// 	.map((item) => {
+		// 		// const sources = [...item.styles.source, ...item.scripts.source];
+		// 		// return sources.map((source) => cache.getLazyHashedEtag(source));
+		// 		return cache.getLazyHashedEtag(item.styles.source);
+		// 	})
+		// 	.reduce((result, item) => cache.mergeEtags(result, item));
+
+		const entrySorted = customData.sort((a, b) => a.entryName.localeCompare(b.entryName));
+		const eTagCss = entrySorted.map((item) => {
+			return cache.getLazyHashedEtag(item.css.source);
+		});
+		const eTagJs = entrySorted.map((item) => {
+			return cache.getLazyHashedEtag(item.js.source);
+		});
+		const eTag = [...eTagCss, ...eTagJs].reduce((result, item) =>
+			cache.mergeEtags(result, item)
+		);
 
 		if (this.options.generateChunksManifest) {
 			await this.createChunksManifestFile({ compilation, cache, eTag, manifest });
@@ -193,7 +219,12 @@ class ChunksWebpackPlugin {
 	}: {
 		compilation: Compilation;
 		entryName: string;
-	}): Array<any> {
+	}): Array<Chunks> {
+		const listDependencies: any = {
+			css: [],
+			js: []
+		};
+
 		// When you use module federation you can don't have entries
 		const entries = compilation.entrypoints;
 		if (!entries || entries.size === 0) {
@@ -205,9 +236,14 @@ class ChunksWebpackPlugin {
 			return [];
 		}
 
-		return entry.getFiles().map((file) => {
-			return compilation.getAsset(file);
+		entry.getFiles().map((file) => {
+			const extension = path.extname(file).substr(1);
+			if (['css', 'js'].includes(extension)) {
+				listDependencies[extension].push(compilation.getAsset(file));
+			}
 		});
+
+		return listDependencies;
 	}
 
 	/**
@@ -220,88 +256,40 @@ class ChunksWebpackPlugin {
 
 		// Default value for the publicPath is "auto"
 		// The value must be generated automatically from the webpack compilation data
-		// if (publicPath === 'auto') {
-		// 	publicPath = `/${path.relative(
-		// 		compilation.options.context || '',
-		// 		compilation.options.output.path
-		// 	)}`;
-		// } else if (typeof publicPath === 'function') {
-		// 	publicPath = publicPath();
-		// }
+		if (publicPath === 'auto') {
+			publicPath = `/${path.relative(
+				compilation.options.context || '',
+				compilation.options.output.path || ''
+			)}`;
+		} else if (typeof publicPath === 'function') {
+			publicPath = publicPath();
+		}
 
-		return '';
-		// return `${publicPath}${this.isPublicPathNeedsEndingSlash(publicPath) ? '/' : ''}`;
+		// return '';
+		return `${publicPath}${this.isPublicPathNeedsEndingSlash(publicPath) ? '/' : ''}`;
 	}
 
-	/**
-	 * Get the path inside a string if it exists
-	 * Filename can contain a directory
-	 * @returns {String} The outpath path extract from the filename
-	 */
-	getPathFromString(filename: string): string {
-		const path = /(^\/?)(.*\/)(.*)$/.exec(filename);
-		return path && path[2] !== '/' ? path[2] : '';
-	}
+	getDataByType({
+		assets,
+		entryName,
+		publicPath
+	}: {
+		assets: Array<Asset>;
+		entryName: string;
+		publicPath: string;
+	}): Data {
+		const filePath: Array<string> = [];
+		const htmlTags: Array<string> = [];
 
-	/**
-	 * Get HTML tags from chunks
-	 * @param {Object} options
-	 * @param {Object} options.chunks Chunks sorted by type (style, script)
-	 * @param {Object} options.Entrypoint Entrypoint object part of a single ChunkGroup
-	 * @returns {String} HTML tags by entrypoints
-	 */
-	getHtmlTags({ chunks, Entrypoint }: { chunks: Chunks; Entrypoint: any }): HtmlTags {
-		// The user prefers to generate his own HTML tags, use his object
-		// if (typeof this.options.customFormatTags === 'function') {
-		// 	const htmlTags = this.options.customFormatTags(chunks, Entrypoint);
-
-		// 	// Check if datas are correctly formatted
-		// 	if (this.isValidCustomFormatTagsDatas(htmlTags)) {
-		// 		return htmlTags;
-		// 	} else {
-		// 		// this.setError('ChunksWebpackPlugin::customFormatTags return invalid object');
-		// 	}
-		// } else {
-		// Default behavior, generate HTML tags with templateStyle and templateScript options
-		return this.formatTags(chunks);
-		// }
-	}
-
-	/**
-	 * Sorts all chunks by type (styles or scripts)
-	 * @param {Array} files List of files by entrypoint name
-	 * @returns {Object} All chunks sorted by extension type
-	 */
-	sortsChunksByType({ publicPath, files }: { publicPath: string; files: Array<any> }): Chunks {
-		// let filename = compilation.getPath(this.options.filename, {
-		// 	filename: entryName
-		// });
+		assets.forEach((asset: Asset) => {
+			const filename = `${publicPath}${asset.name}`;
+			filePath.push(filename);
+			htmlTags.push(this.options.templateScript(filename, entryName));
+		});
 
 		return {
-			styles: files
-				.filter(({ name }) => path.extname(name).substr(1) === 'css')
-				.map(({ name }) => `${publicPath}${name}`),
-			scripts: files
-				.filter(({ name }) => path.extname(name).substr(1) === 'js')
-				.map(({ name }) => `${publicPath}${name}`)
-		};
-	}
-
-	/**
-	 * Generate HTML styles and scripts tags for each entrypoints
-	 * @param {Object} chunks The list of chunks of chunkGroups sorted by type
-	 * @returns {Object} HTML tags with all assets for an entrypoint and sorted by type
-	 */
-	formatTags(chunks: Chunks): HtmlTags {
-		return {
-			styles: chunks.styles
-				.map((chunkCSS: string) =>
-					this.options.templateStyle.replace('{{chunk}}', chunkCSS)
-				)
-				.join(''),
-			scripts: chunks.scripts
-				.map((chunkJS: string) => this.options.templateScript.replace('{{chunk}}', chunkJS))
-				.join('')
+			filePath,
+			htmlTags: htmlTags.join('')
 		};
 	}
 
@@ -312,28 +300,6 @@ class ChunksWebpackPlugin {
 	 */
 	isPublicPathNeedsEndingSlash(publicPath: string): boolean {
 		return !!(publicPath && publicPath.substr(-1) !== '/');
-	}
-
-	/**
-	 * Check if file extension correspond to the type parameter
-	 * @param {String} file File path
-	 * @param {String} type File extension
-	 * @returns {Boolean} File extension is valid
-	 */
-	// isValidExtensionByType(file: string, type: string): boolean {
-	// 	return path.extname(file).substr(1) === type;
-	// }
-
-	/**
-	 * Check if datas from customFormatTags are valid
-	 * @param {Object} htmlTags Formatted HTML tags by styles and scripts keys
-	 */
-	isValidCustomFormatTagsDatas(htmlTags: HtmlTags): boolean {
-		return (
-			htmlTags !== null &&
-			typeof htmlTags.styles !== 'undefined' &&
-			typeof htmlTags.scripts !== 'undefined'
-		);
 	}
 
 	async createChunksManifestFile({
