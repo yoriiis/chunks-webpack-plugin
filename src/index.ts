@@ -28,10 +28,8 @@ class ChunksWebpackPlugin {
 		this.options = Object.assign(
 			{
 				filename: '[name]-[type].html',
-				templateStyle: (name: string, _entryName: string) =>
-					`<link rel="stylesheet" href="${name}" />`,
-				templateScript: (name: string, _entryName: string) =>
-					`<script defer src="${name}"></script>`,
+				templateStyle: (name: string) => `<link rel="stylesheet" href="${name}" />`,
+				templateScript: (name: string) => `<script defer src="${name}"></script>`,
 				generateChunksManifest: false,
 				generateChunksFiles: true
 			},
@@ -226,7 +224,7 @@ class ChunksWebpackPlugin {
 		}
 
 		type FilesDependenciesKey = 'css' | 'js';
-		entry.getFiles().map((file) => {
+		entry.getFiles().forEach((file: string) => {
 			const extension = path.extname(file).slice(1) as FilesDependenciesKey;
 			if (['css', 'js'].includes(extension)) {
 				const asset = compilation.getAsset(file);
