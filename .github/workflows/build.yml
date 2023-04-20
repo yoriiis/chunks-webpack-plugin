@@ -73,10 +73,6 @@ jobs:
         with:
           name: coverage
 
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 18
-
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
