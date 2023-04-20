@@ -43,7 +43,7 @@ class ChunksWebpackPlugin {
 			baseDataPath: 'options'
 		});
 
-		this.addAssets = this.addAssets.bind(this);
+		this.hookCallback = this.hookCallback.bind(this);
 	}
 
 	/**
@@ -51,7 +51,7 @@ class ChunksWebpackPlugin {
 	 * @param {Object} compiler The Webpack compiler variable
 	 */
 	apply(compiler: Compiler): void {
-		compiler.hooks.thisCompilation.tap('ChunksWebpackPlugin', this.hookCallback.bind(this));
+		compiler.hooks.thisCompilation.tap('ChunksWebpackPlugin', this.hookCallback);
 	}
 
 	/**
@@ -100,14 +100,14 @@ class ChunksWebpackPlugin {
 				const publicPath = this.getPublicPath(compilation);
 
 				if (filesDependencies.css.length) {
-					const eTagCss = filesDependencies.css.map((item: any) =>
+					const eTagCss = filesDependencies.css.map((item: Asset) =>
 						cache.getLazyHashedEtag(item.source as sources.Source)
 					);
 					const cacheItemCss = cache.getItemCache(entryName, eTagCss);
 
 					let outputCss: EntryCache = await cacheItemCss.getPromise();
 					if (!outputCss) {
-						const data = this.getAssetData({
+						const { htmlTags, filePath } = this.getAssetData({
 							templateFunction: this.options.templateStyle,
 							assets: filesDependencies.css,
 							entryName,
@@ -115,9 +115,9 @@ class ChunksWebpackPlugin {
 						});
 
 						outputCss = {
-							source: new RawSource(data.htmlTags, false),
-							filePath: data.filePath,
-							htmlTags: data.htmlTags,
+							source: new RawSource(htmlTags, false),
+							filePath,
+							htmlTags,
 							filename: this.options.filename
 								.replace('[name]', entryName)
 								.replace('[type]', 'styles')
@@ -126,24 +126,24 @@ class ChunksWebpackPlugin {
 						await cacheItemCss.storePromise(outputCss);
 					}
 
+					compilation.emitAsset(outputCss.filename, outputCss.source);
+
 					entryCssData.push({
 						entryName,
 						source: outputCss.source
 					});
 					manifest[entryName].styles = outputCss.filePath;
-
-					compilation.emitAsset(outputCss.filename, outputCss.source);
 				}
 
 				if (filesDependencies.js.length) {
-					const eTagJs = filesDependencies.css.map((item: any) =>
+					const eTagJs = filesDependencies.js.map((item: Asset) =>
 						cache.getLazyHashedEtag(item.source as sources.Source)
 					);
-					const cacheItemJs = cache.getItemCache(entryName, eTagJs);
+					const cacheItemJs = cache.getItemCache(`${entryName}-js`, eTagJs);
 
 					let outputJs: EntryCache = await cacheItemJs.getPromise();
 					if (!outputJs) {
-						const data = this.getAssetData({
+						const { htmlTags, filePath } = this.getAssetData({
 							templateFunction: this.options.templateScript,
 							assets: filesDependencies.js,
 							entryName,
@@ -151,9 +151,9 @@ class ChunksWebpackPlugin {
 						});
 
 						outputJs = {
-							source: new RawSource(data.htmlTags, false),
-							filePath: data.filePath,
-							htmlTags: data.htmlTags,
+							source: new RawSource(htmlTags, false),
+							filePath,
+							htmlTags,
 							filename: this.options.filename
 								.replace('[name]', entryName)
 								.replace('[type]', 'scripts')
@@ -162,13 +162,13 @@ class ChunksWebpackPlugin {
 						await cacheItemJs.storePromise(outputJs);
 					}
 
+					compilation.emitAsset(outputJs.filename, outputJs.source);
+
 					entryJsData.push({
 						entryName,
 						source: outputJs.source
 					});
 					manifest[entryName].scripts = outputJs.filePath;
-
-					compilation.emitAsset(outputJs.filename, outputJs.source);
 				}
 			})
 		);
@@ -226,7 +226,6 @@ class ChunksWebpackPlugin {
 		}
 
 		type FilesDependenciesKey = 'css' | 'js';
-
 		entry.getFiles().map((file) => {
 			const extension = path.extname(file).slice(1) as FilesDependenciesKey;
 			if (['css', 'js'].includes(extension)) {

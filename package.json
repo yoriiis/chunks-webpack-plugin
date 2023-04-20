@@ -30,7 +30,7 @@
 		"dev:unit": "jest --config ./config/jest.config.js --watchAll --verbose --coverage",
 		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --config=./example/webpack.config.js --mode=development",
 		"pre:publish": "npm run build && npm run test",
-		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development --watch",
+		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development",
 		"test": "npm run test:eslint && npm run test:types && npm run test:markdown && npm run test:unit && npm run test:mutation",
 		"test:eslint": "eslint . -c ./config/.eslintrc.js --ignore-pattern coverage --ignore-pattern reports --ignore-pattern example/dist --ignore-pattern lib --ignore-pattern types",
 		"test:markdown": "markdownlint '**/*.md' --ignore node_modules",

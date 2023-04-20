@@ -5,10 +5,11 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ChunksWebpackPlugin = require('../lib/index.js');
 
 module.exports = (env, argv) => {
-	// const isProduction = argv.mode === 'production';
+	const isProduction = argv.mode === 'production';
 
 	return {
 		context: __dirname, // Context is mandatory because webpack use the flag "--config"
+		watch: !isProduction,
 		entry: {
 			'shared/app-a': `${path.resolve(__dirname, './src/js/app-a.js')}`,
 			'app-b': `${path.resolve(__dirname, './src/js/app-b.js')}`,
@@ -49,7 +50,7 @@ module.exports = (env, argv) => {
 		},
 		plugins: [
 			new MiniCssExtractPlugin({
-				filename: `css/[name].css`
+				filename: 'css/[name].css'
 			}),
 			new ChunksWebpackPlugin({
 				filename: '/templates/[name]-[type].html',
