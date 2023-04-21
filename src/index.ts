@@ -101,7 +101,7 @@ class ChunksWebpackPlugin {
 					const eTagCss = filesDependencies.css.map((item: Asset) =>
 						cache.getLazyHashedEtag(item.source as sources.Source)
 					);
-					const cacheItemCss = cache.getItemCache(entryName, eTagCss);
+					const cacheItemCss = cache.getItemCache(`CSS|${entryName}`, eTagCss);
 
 					let outputCss: EntryCache = await cacheItemCss.getPromise();
 					if (!outputCss) {
@@ -122,7 +122,7 @@ class ChunksWebpackPlugin {
 						};
 
 						await cacheItemCss.storePromise(outputCss);
-					}
+					} else console.log('from cache');
 
 					compilation.emitAsset(outputCss.filename, outputCss.source);
 
@@ -137,7 +137,7 @@ class ChunksWebpackPlugin {
 					const eTagJs = filesDependencies.js.map((item: Asset) =>
 						cache.getLazyHashedEtag(item.source as sources.Source)
 					);
-					const cacheItemJs = cache.getItemCache(`${entryName}-js`, eTagJs);
+					const cacheItemJs = cache.getItemCache(`js|${entryName}`, eTagJs);
 
 					let outputJs: EntryCache = await cacheItemJs.getPromise();
 					if (!outputJs) {
@@ -158,7 +158,7 @@ class ChunksWebpackPlugin {
 						};
 
 						await cacheItemJs.storePromise(outputJs);
-					}
+					} else console.log('from cache');
 
 					compilation.emitAsset(outputJs.filename, outputJs.source);
 
