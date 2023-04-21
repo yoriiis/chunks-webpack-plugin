@@ -98,16 +98,16 @@ class ChunksWebpackPlugin {
 				const publicPath = this.getPublicPath(compilation);
 
 				if (filesDependencies.css.length) {
-					const eTagCss = filesDependencies.css
+					const eTag = filesDependencies.css
 						.map((item: Asset) =>
 							cache.getLazyHashedEtag(item.source as sources.Source)
 						)
 						.reduce((result, item) => cache.mergeEtags(result, item));
 
-					const cacheItemCss = cache.getItemCache(`CSS|${entryName}`, eTagCss);
+					const cacheItem = cache.getItemCache(`CSS|${entryName}`, eTag);
 
-					let outputCss: EntryCache = await cacheItemCss.getPromise();
-					if (!outputCss) {
+					let output: EntryCache = await cacheItem.getPromise();
+					if (!output) {
 						const { htmlTags, filePath } = this.getAssetData({
 							templateFunction: this.options.templateStyle,
 							assets: filesDependencies.css,
@@ -115,7 +115,7 @@ class ChunksWebpackPlugin {
 							publicPath
 						});
 
-						outputCss = {
+						output = {
 							source: new RawSource(htmlTags, false),
 							filePath,
 							htmlTags,
@@ -124,29 +124,29 @@ class ChunksWebpackPlugin {
 								.replace('[type]', 'styles')
 						};
 
-						await cacheItemCss.storePromise(outputCss);
-					} else console.log('from cache');
+						await cacheItem.storePromise(output);
+					}
 
-					compilation.emitAsset(outputCss.filename, outputCss.source);
+					compilation.emitAsset(output.filename, output.source);
 
 					entryCssData.push({
 						entryName,
-						source: outputCss.source
+						source: output.source
 					});
-					manifest[entryName].styles = outputCss.filePath;
+					manifest[entryName].styles = output.filePath;
 				}
 
 				if (filesDependencies.js.length) {
-					const eTagJs = filesDependencies.js
+					const eTag = filesDependencies.js
 						.map((item: Asset) =>
 							cache.getLazyHashedEtag(item.source as sources.Source)
 						)
 						.reduce((result, item) => cache.mergeEtags(result, item));
 
-					const cacheItemJs = cache.getItemCache(`js|${entryName}`, eTagJs);
+					const cacheItem = cache.getItemCache(`js|${entryName}`, eTag);
 
-					let outputJs: EntryCache = await cacheItemJs.getPromise();
-					if (!outputJs) {
+					let output: EntryCache = await cacheItem.getPromise();
+					if (!output) {
 						const { htmlTags, filePath } = this.getAssetData({
 							templateFunction: this.options.templateScript,
 							assets: filesDependencies.js,
@@ -154,7 +154,7 @@ class ChunksWebpackPlugin {
 							publicPath
 						});
 
-						outputJs = {
+						output = {
 							source: new RawSource(htmlTags, false),
 							filePath,
 							htmlTags,
@@ -163,19 +163,23 @@ class ChunksWebpackPlugin {
 								.replace('[type]', 'scripts')
 						};
 
-						await cacheItemJs.storePromise(outputJs);
-					} else console.log('from cache');
+						await cacheItem.storePromise(output);
+					}
 
-					compilation.emitAsset(outputJs.filename, outputJs.source);
+					compilation.emitAsset(output.filename, output.source);
 
 					entryJsData.push({
 						entryName,
-						source: outputJs.source
+						source: output.source
 					});
-					manifest[entryName].scripts = outputJs.filePath;
+					manifest[entryName].scripts = output.filePath;
 				}
 			})
 		);
+
+		if (!this.options.generateChunksManifest || (!entryCssData.length && !entryJsData.length)) {
+			return;
+		}
 
 		// Need to sort (**always**), to have deterministic build
 		const eTagCss = entryCssData
@@ -193,9 +197,7 @@ class ChunksWebpackPlugin {
 		if (eTagCssJs.length) {
 			const eTag = eTagCssJs.reduce((result, item) => cache.mergeEtags(result, item));
 
-			if (this.options.generateChunksManifest) {
-				await this.createChunksManifestFile({ compilation, cache, eTag, manifest });
-			}
+			await this.createChunksManifestFile({ compilation, cache, eTag, manifest });
 		}
 	}
 
