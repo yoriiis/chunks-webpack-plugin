@@ -98,9 +98,12 @@ class ChunksWebpackPlugin {
 				const publicPath = this.getPublicPath(compilation);
 
 				if (filesDependencies.css.length) {
-					const eTagCss = filesDependencies.css.map((item: Asset) =>
-						cache.getLazyHashedEtag(item.source as sources.Source)
-					);
+					const eTagCss = filesDependencies.css
+						.map((item: Asset) =>
+							cache.getLazyHashedEtag(item.source as sources.Source)
+						)
+						.reduce((result, item) => cache.mergeEtags(result, item));
+
 					const cacheItemCss = cache.getItemCache(`CSS|${entryName}`, eTagCss);
 
 					let outputCss: EntryCache = await cacheItemCss.getPromise();
@@ -134,9 +137,12 @@ class ChunksWebpackPlugin {
 				}
 
 				if (filesDependencies.js.length) {
-					const eTagJs = filesDependencies.js.map((item: Asset) =>
-						cache.getLazyHashedEtag(item.source as sources.Source)
-					);
+					const eTagJs = filesDependencies.js
+						.map((item: Asset) =>
+							cache.getLazyHashedEtag(item.source as sources.Source)
+						)
+						.reduce((result, item) => cache.mergeEtags(result, item));
+
 					const cacheItemJs = cache.getItemCache(`js|${entryName}`, eTagJs);
 
 					let outputJs: EntryCache = await cacheItemJs.getPromise();
