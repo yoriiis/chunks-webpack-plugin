@@ -46,7 +46,7 @@ class ChunksWebpackPlugin {
 
 	/**
 	 * Apply function is automatically called by the Webpack main compiler
-	 * @param {Object} compiler The Webpack compiler variable
+	 * @param {Compiler} compiler The Webpack compiler variable
 	 */
 	apply(compiler: Compiler): void {
 		compiler.hooks.thisCompilation.tap('ChunksWebpackPlugin', this.hookCallback);
@@ -104,7 +104,7 @@ class ChunksWebpackPlugin {
 						)
 						.reduce((result, item) => cache.mergeEtags(result, item));
 
-					const cacheItem = cache.getItemCache(`CSS|${entryName}`, eTag);
+					const cacheItem = cache.getItemCache(`css|${entryName}`, eTag);
 
 					let output: EntryCache = await cacheItem.getPromise();
 					if (!output) {
