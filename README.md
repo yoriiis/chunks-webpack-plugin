@@ -87,7 +87,7 @@ type filename = string;
 
 Default: `'[name]-[type].html'`
 
-Tells the plugin whether to personalize the filename of the generated files. Files are processed by the webpack compilation and generated in the output path directory. The placeholder `[name]` is automatically replaced by entry points names.
+Tells the plugin whether to personalize the filename of the generated files. Files are processed by the webpack compilation and generated in the output path directory. The placeholder `[name]` is automatically replaced by entry points names and `[type]` by `styles|scripts`.
 
 ```js
 new ChunksWebpackPlugin({
@@ -108,7 +108,7 @@ type templateStyle = (name: string, entryName: string) => string;
 Default:
 
 ```js
-(name: string) => `<link rel="stylesheet" href="${name}" />`;
+(name) => `<link rel="stylesheet" href="${name}" />`;
 ```
 
 Tells the plugin whether to personalize the default template for the HTML `<style>` tags. For example, add additional attributes or a CDN prefix.
@@ -134,7 +134,7 @@ type templateScript = (name: string, entryName: string) => string;
 Default:
 
 ```js
-(name: string) => `<script defer src="${name}"></script>`;
+(name) => `<script defer src="${name}"></script>`;
 ```
 
 Tells the plugin whether to personalize the default template for the HTML `<script>` tags. For example, add additional attributes or a CDN prefix.
@@ -159,7 +159,7 @@ type generateChunksManifest = boolean;
 
 Default: `false`
 
-Tells the plugin whether to generate the `chunks-manifest.json`. The file contains the list of all chunks grouped by entry points.
+Tells the plugin whether to generate the `chunks-manifest.json`. The file contains the list of all chunks grouped by entry points. See the [chunks-manifest.json example](example/dist/chunks-manifest.json).
 
 ```js
 module.exports = {
@@ -170,25 +170,6 @@ module.exports = {
   ]
 };
 ```
-
-<details>
-
-<summary>See the chunks-manifest.json</summary>
-
-```json
-{
-  "app-a": {
-    "styles": ["/dist/css/vendors~app-a~app-b.css", "/dist/css/app-a.css"],
-    "scripts": ["/dist/js/vendors~app-a~app-b.js", "/dist/js/app-a.js"]
-  },
-  "app-b": {
-    "styles": ["/dist/css/vendors~app-a~app-b.css", "/dist/css/app-b.css"],
-    "scripts": ["/dist/js/vendors~app-a~app-b.js", "/dist/js/app-b.js"]
-  }
-}
-```
-
-</details>
 
 ### `generateChunksFiles`
 
@@ -214,9 +195,13 @@ module.exports = {
 
 > **Warning** When set to `false`, HTML files will not be generated. It can **only** be useful together with `generateChunksManifest` option set to `true` for custom generation of the HTML files.
 
+---
+
 <details>
 
 <summary>Multiple entrypoints example</summary>
+
+## Multiple entrypoints example
 
 Example of the webpack configuration with multiple entry points which share common code with the `splitChunks` option.
 
@@ -246,28 +231,32 @@ The plugin will generate all files in the output path directory:
 
 **home-styles.html**
 
+<!-- prettier-ignore -->
 ```html
-<link rel="stylesheet" href="vendors~home~news.css" /> <link rel="stylesheet" href="home.css" />
+<link rel="stylesheet" href="vendors~home~news.css" />
+<link rel="stylesheet" href="home.css" />
 ```
 
 **home-scripts.html**
 
 ```html
-<script src="vendors~home~news.js"></script>
-<script src="home.js"></script>
+<script defer src="vendors~home~news.js"></script>
+<script defer src="home.js"></script>
 ```
 
 **news-styles.html**
 
+<!-- prettier-ignore -->
 ```html
-<link rel="stylesheet" href="vendors~home~news.css" /> <link rel="stylesheet" href="news.css" />
+<link rel="stylesheet" href="vendors~home~news.css" />
+<link rel="stylesheet" href="news.css" />
 ```
 
 **news-scripts.html**
 
 ```html
-<script src="vendors~home~news.js"></script>
-<script src="news.js"></script>
+<script defer src="vendors~home~news.js"></script>
+<script defer src="news.js"></script>
 ```
 
 </details>
