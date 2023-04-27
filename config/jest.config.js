@@ -11,5 +11,7 @@ module.exports = {
 		'^@src(.*)$': '<rootDir>/src$1'
 	},
 	testMatch: ['<rootDir>/tests/*.test.js'],
-	verbose: true
+	verbose: true,
+	resetMocks: true,
+	clearMocks: true
 };
