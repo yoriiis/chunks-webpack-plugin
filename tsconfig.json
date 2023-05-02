@@ -4,7 +4,7 @@
 		"outDir": "./lib",
 		"allowJs": true,
 		"checkJs": false,
-		"target": "es5",
+		"target": "es2017",
 		"lib": ["es2017"],
 		"strict": true,
 		"esModuleInterop": true,
@@ -12,6 +12,7 @@
 		"declarationDir": "types",
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
+		"module": "commonjs",
 		"resolveJsonModule": true
 	},
 	"types": ["node"],

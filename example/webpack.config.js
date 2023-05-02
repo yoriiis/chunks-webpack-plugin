@@ -5,10 +5,11 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ChunksWebpackPlugin = require('../lib/index.js');
 
 module.exports = (env, argv) => {
-	// const isProduction = argv.mode === 'production';
+	const isProduction = argv.mode === 'production';
 
 	return {
 		context: __dirname, // Context is mandatory because webpack use the flag "--config"
+		watch: !isProduction,
 		entry: {
 			'shared/app-a': `${path.resolve(__dirname, './src/js/app-a.js')}`,
 			'app-b': `${path.resolve(__dirname, './src/js/app-b.js')}`,
@@ -16,6 +17,9 @@ module.exports = (env, argv) => {
 		},
 		watchOptions: {
 			ignored: /node_modules/
+		},
+		cache: {
+			type: 'filesystem'
 		},
 		devtool: false,
 		output: {
@@ -46,32 +50,16 @@ module.exports = (env, argv) => {
 		},
 		plugins: [
 			new MiniCssExtractPlugin({
-				filename: `css/[name].css`
+				filename: 'css/[name].css'
 			}),
 			new ChunksWebpackPlugin({
-				outputPath: path.resolve(__dirname, './dist'), // Optional field, used here to validate #81
 				filename: '/templates/[name]-[type].html',
+				templateStyle: (name) =>
+					`<link rel="stylesheet" href="https://cdn.domain.com${name}" />`,
+				templateScript: (name) =>
+					`<script defer src="https://cdn.domain.com${name}"></script>`,
 				generateChunksManifest: true,
-				generateChunksFiles: true,
-				customFormatTags: (chunksSorted) => {
-					// Generate all HTML style tags with CDN prefix
-					const styles = chunksSorted.styles
-						.map(
-							(chunkCss) =>
-								`<link rel="stylesheet" href="https://cdn.domain.com${chunkCss}" />`
-						)
-						.join('');
-
-					// Generate all HTML style tags with CDN prefix and defer attribute
-					const scripts = chunksSorted.scripts
-						.map(
-							(chunkJs) =>
-								`<script defer src="https://cdn.domain.com${chunkJs}"></script>`
-						)
-						.join('');
-
-					return { styles, scripts };
-				}
+				generateChunksFiles: true
 			})
 		],
 		stats: {

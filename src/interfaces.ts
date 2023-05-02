@@ -1,11 +1,40 @@
-export interface Chunks {
-	styles: Array<string>;
-	scripts: Array<string>;
+import { type Asset, type sources } from 'webpack';
+
+export interface FilesDependencies {
+	css: Array<Asset>;
+	js: Array<Asset>;
 }
 
-export interface HtmlTags {
-	styles: string;
-	scripts: string;
+export interface EntryCssData {
+	entryName: string;
+	source: sources.RawSource;
+}
+
+export interface EntryJsData {
+	entryName: string;
+	source: sources.RawSource;
+}
+
+export interface AllData {
+	entryName: string;
+	css: {
+		source: sources.RawSource | null;
+	};
+	js: {
+		source: sources.RawSource | null;
+	};
+}
+
+export interface AssetData {
+	filePath: Array<string>;
+	htmlTags: string;
+}
+
+export interface EntryCache {
+	source: sources.RawSource;
+	filePath: Array<string>;
+	htmlTags: string;
+	filename: string;
 }
 
 export interface Manifest {
@@ -15,22 +44,12 @@ export interface Manifest {
 	};
 }
 
-// Describe the shape of the webpack built-in Node.js File System
-export interface Fs {
-	mkdir: (
-		filePath: string,
-		options: { recursive: boolean },
-		callback: (error: Error) => void
-	) => void;
-	writeFile: (filePath: string, output: string, callback: (error: Error) => void) => void;
-}
+export type TemplateFunction = (name: string, entryName: string) => string;
 
 export interface PluginOptions {
 	filename: string;
-	templateStyle: string;
-	templateScript: string;
-	outputPath: null | string;
-	customFormatTags: boolean | ((chunksSorted: Chunks, Entrypoint: any) => HtmlTags);
+	templateStyle: TemplateFunction;
+	templateScript: TemplateFunction;
 	generateChunksManifest: boolean;
 	generateChunksFiles: boolean;
 }
