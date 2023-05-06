@@ -1,6 +1,6 @@
 # ChunksWebpackPlugin
 
-![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/yoriiis/chunks-webpack-plugin/build.yml?branch=master&style=for-the-badge) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=master) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/yoriiis/chunks-webpack-plugin/build.yml?branch=main&style=for-the-badge) [![Coverage Status](https://img.shields.io/coveralls/github/yoriiis/chunks-webpack-plugin?style=for-the-badge)](https://coveralls.io/github/yoriiis/chunks-webpack-plugin?branch=main) [![Npm downloads](https://img.shields.io/npm/dm/chunks-webpack-plugin?color=fb3e44&label=npm%20downloads&style=for-the-badge)](https://npmjs.com/package/chunks-webpack-plugin)
 
 The `chunks-webpack-plugin` creates HTML files with entry points and chunks relations to serve your webpack bundles. It is suitable with multi-page applications that contain multiple entry points.
 
