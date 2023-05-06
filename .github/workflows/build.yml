@@ -39,7 +39,7 @@ jobs:
 
       - name: Test Mutation
         run: npm run test:mutation
-        if: matrix.node == '18'
+        if: matrix.node == '16'
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
@@ -47,7 +47,8 @@ jobs:
         uses: actions/upload-artifact@v1
         if: github.ref == 'refs/heads/master' &&
             github.repository == 'yoriiis/chunks-webpack-plugin' &&
-            github.event_name != 'pull_request'
+            github.event_name != 'pull_request' &&
+            matrix.node == '16'
         with:
           name: coverage
           path: coverage
