@@ -39,7 +39,7 @@ jobs:
 
       - name: Test Mutation
         run: npm run test:mutation
-        if: matrix.node == '16'
+        if: matrix.node == '16' && matrix.os == 'ubuntu-latest'
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
