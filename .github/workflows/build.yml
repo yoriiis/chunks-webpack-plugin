@@ -48,7 +48,8 @@ jobs:
         if: github.ref == 'refs/heads/main' &&
             github.repository == 'yoriiis/chunks-webpack-plugin' &&
             github.event_name != 'pull_request' &&
-            matrix.node == '16'
+            matrix.node == '16' &&
+            matrix.os == 'ubuntu-latest'
         with:
           name: coverage
           path: coverage
