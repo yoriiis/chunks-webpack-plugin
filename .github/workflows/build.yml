@@ -45,7 +45,7 @@ jobs:
 
       - name: Upload coverage artifacts
         uses: actions/upload-artifact@v1
-        if: github.ref == 'refs/heads/master' &&
+        if: github.ref == 'refs/heads/main' &&
             github.repository == 'yoriiis/chunks-webpack-plugin' &&
             github.event_name != 'pull_request' &&
             matrix.node == '16'
@@ -63,7 +63,7 @@ jobs:
     timeout-minutes: 10
     needs: build
     if: success() &&
-        github.ref == 'refs/heads/master' &&
+        github.ref == 'refs/heads/main' &&
         github.repository == 'yoriiis/chunks-webpack-plugin' &&
         github.event_name != 'pull_request'
     steps:
