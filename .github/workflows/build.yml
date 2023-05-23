@@ -7,6 +7,8 @@ on:
   pull_request:
     branches:
       - main
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -54,6 +56,24 @@ jobs:
           name: coverage
           path: coverage
 
+      - name: Upload package lib artifacts
+        uses: actions/upload-artifact@v3
+        if: github.event_name == 'release' &&
+          matrix.node == '16' &&
+          matrix.os == 'ubuntu-latest'
+        with:
+          name: package-lib
+          path: lib
+
+      - name: Upload package types artifacts
+        uses: actions/upload-artifact@v3
+        if: github.event_name == 'release' &&
+          matrix.node == '16' &&
+          matrix.os == 'ubuntu-latest'
+        with:
+          name: package-types
+          path: types
+
       - name: Build
         run: |
           npm run build
@@ -79,3 +99,36 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-npm:
+    runs-on: ubuntu-latest
+    if: success() &&
+      github.event_name == 'release' &&
+      github.event.release.target_commitish == 'main'
+    environment: npm
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download package lib artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: package-lib
+          path: lib
+
+      - name: Download package types artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: package-types
+          path: types
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
+          cache-dependency-path: ./package-lock.json
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

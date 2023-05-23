@@ -21,7 +21,6 @@
 	"main": "./lib/index.js",
 	"types": "./types/index.d.ts",
 	"files": [
-		"src",
 		"lib",
 		"types"
 	],
