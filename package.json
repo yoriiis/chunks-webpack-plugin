@@ -1,6 +1,6 @@
 {
 	"name": "chunks-webpack-plugin",
-	"version": "8.0.0",
+	"version": "8.0.1",
 	"description": "Create HTML files with entrypoints and chunks relations to serve your bundles",
 	"keywords": [
 		"chunks",
