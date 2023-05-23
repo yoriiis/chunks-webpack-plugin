@@ -33,6 +33,9 @@ jobs:
       - name: Test ESLint
         run: npm run test:eslint
 
+      - name: Test Typescript
+        run: npm run test:types
+
       - name: Test Markdown
         run: npm run test:markdown
 
@@ -56,6 +59,11 @@ jobs:
           name: coverage
           path: coverage
 
+      - name: Build
+        run: |
+          npm run build
+          npm run build:example
+
       - name: Upload package lib artifacts
         uses: actions/upload-artifact@v3
         if: github.event_name == 'release' &&
@@ -73,11 +81,6 @@ jobs:
         with:
           name: package-types
           path: types
-
-      - name: Build
-        run: |
-          npm run build
-          npm run build:example
 
   deploy-coverage:
     runs-on: ubuntu-latest
