@@ -12,6 +12,10 @@
 	"homepage": "https://github.com/yoriiis/chunks-webpack-plugin",
 	"bugs": "https://github.com/yoriiis/chunks-webpack-plugin/issues",
 	"repository": "https://github.com/yoriiis/chunks-webpack-plugin.git",
+	"funding": {
+		"type": "individual",
+		"url": "https://github.com/sponsors/yoriiis"
+	},
 	"license": "MIT",
 	"author": "Joris DANIEL",
 	"main": "./lib/index.js",
