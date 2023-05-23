@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 8.0.1
+
+### Updates
+
+- Add funding key in `package.json` ([dd7b91c](https://github.com/yoriiis/chunks-webpack-plugin/commit/dd7b91cc619c3e53614112bb9cfde2a7fd94b67e))
+
 ## 8.0.0
 
 ### ⚠️ Breaking changes
