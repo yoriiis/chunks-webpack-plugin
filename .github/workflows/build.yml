@@ -48,17 +48,6 @@ jobs:
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
-      - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v3
-        if: github.ref == 'refs/heads/main' &&
-            github.repository == 'yoriiis/chunks-webpack-plugin' &&
-            github.event_name != 'pull_request' &&
-            matrix.node == '16' &&
-            matrix.os == 'ubuntu-latest'
-        with:
-          name: coverage
-          path: coverage
-
       - name: Build
         run: |
           npm run build
@@ -81,28 +70,6 @@ jobs:
         with:
           name: package-types
           path: types
-
-  deploy-coverage:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: build
-    if: success() &&
-        github.ref == 'refs/heads/main' &&
-        github.repository == 'yoriiis/chunks-webpack-plugin' &&
-        github.event_name != 'pull_request'
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Download coverage artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: coverage
-          path: coverage
-
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   publish-npm:
     runs-on: ubuntu-latest
