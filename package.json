@@ -36,7 +36,7 @@
 		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development",
 		"test": "npm run test:eslint && npm run test:types && npm run test:markdown && npm run test:unit && npm run test:mutation",
 		"test:eslint": "eslint . -c ./config/.eslintrc.js --ignore-pattern coverage --ignore-pattern reports --ignore-pattern example/dist --ignore-pattern lib --ignore-pattern types",
-		"test:markdown": "markdownlint '**/*.md' --ignore node_modules",
+		"test:markdown": "markdownlint \"**/*.md\" --ignore node_modules",
 		"test:mutation": "stryker run",
 		"test:types": "tsc --noEmit",
 		"test:unit": "jest --config ./config/jest.config.js --verbose --coverage"
