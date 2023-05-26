@@ -21,6 +21,7 @@
 		"search.exclude": {
 			"**/node_modules": true
 		},
+        "files.eol": "\n"
 	},
 	"extensions": {
 		"recommendations": [
