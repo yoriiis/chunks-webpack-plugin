@@ -11,7 +11,8 @@ import {
 	TemplateFunction,
 	EntryCache,
 	EntryCssData,
-	EntryJsData
+	EntryJsData,
+	PublicPath
 } from './interfaces';
 const webpack = require('webpack');
 const schemaOptions = unTypedSchemaOptions as Schema;
@@ -95,7 +96,7 @@ class ChunksWebpackPlugin {
 					styles: [],
 					scripts: []
 				};
-				const publicPath = this.getPublicPath(compilation);
+				const publicPath = this.getPublicPath(compilation, entryName);
 
 				if (filesDependencies.css.length) {
 					const eTag = filesDependencies.css
@@ -249,22 +250,35 @@ class ChunksWebpackPlugin {
 	 * @param {Compilation} compilation Webpack compilation
 	 * @return {String} The public path
 	 */
-	getPublicPath(compilation: Compilation): string {
-		let publicPath = compilation.options.output.publicPath || '';
+	getPublicPath(compilation: Compilation, entryName: string): PublicPath {
+		const webpackPublicPath = compilation.getAssetPath(
+			compilation.outputOptions.publicPath || '',
+			{}
+		);
 
-		// Default value for the publicPath is "auto"
-		// The value must be generated automatically from the webpack compilation data
-		if (publicPath === 'auto') {
-			publicPath = `/${path.relative(
-				compilation.options.context || '',
-				compilation.options.output.path || ''
-			)}`;
-		} else if (typeof publicPath === 'function') {
-			// @ts-ignore Missing pathData parameter
-			publicPath = publicPath();
+		if (webpackPublicPath === 'auto') {
+			const outputPath = compilation.options.output.path || '';
+			const filenameDirname = path.dirname(this.options.filename);
+			const entryDirname = path.dirname(entryName);
+			let pathHtml = path.relative(
+				`${outputPath}/${filenameDirname}/${entryDirname}`,
+				`${outputPath}`
+			);
+
+			if (pathHtml && !pathHtml.endsWith('/')) {
+				pathHtml += '/';
+			}
+
+			return {
+				html: pathHtml,
+				manifest: ''
+			};
 		}
 
-		return publicPath;
+		return {
+			html: webpackPublicPath,
+			manifest: webpackPublicPath
+		};
 	}
 
 	/**
@@ -287,17 +301,14 @@ class ChunksWebpackPlugin {
 		templateFunction: TemplateFunction;
 		assets: Array<Asset>;
 		entryName: string;
-		publicPath: string;
+		publicPath: PublicPath;
 	}): AssetData {
 		const filePath: Array<string> = [];
 		const htmlTags: Array<string> = [];
 
 		assets.forEach((asset: Asset) => {
-			const filename = `${publicPath}${asset.name}`;
-			const template = templateFunction(filename, entryName);
-
-			filePath.push(filename);
-			htmlTags.push(template);
+			filePath.push(`${publicPath.manifest}${asset.name}`);
+			htmlTags.push(templateFunction(`${publicPath.html}${asset.name}`, entryName));
 		});
 
 		return {

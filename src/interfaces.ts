@@ -53,3 +53,8 @@ export interface PluginOptions {
 	generateChunksManifest: boolean;
 	generateChunksFiles: boolean;
 }
+
+export interface PublicPath {
+	html: string;
+	manifest: string;
+}
