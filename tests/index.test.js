@@ -48,6 +48,7 @@ beforeEach(() => {
 		},
 		getCache: jest.fn(),
 		getAsset: jest.fn(),
+		getAssetPath: jest.fn(),
 		emitAsset: jest.fn(),
 		hooks: {
 			processAssets: {
@@ -162,7 +163,10 @@ describe('ChunksWebpackPlugin', () => {
 				compilation: compilationWebpack,
 				entryName: 'home'
 			});
-			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(compilationWebpack);
+			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(
+				compilationWebpack,
+				'home'
+			);
 			expect(compilationWebpack.getCache().getLazyHashedEtag).not.toHaveBeenCalled();
 			expect(compilationWebpack.getCache().mergeEtags).not.toHaveBeenCalled();
 			expect(compilationWebpack.getCache().getItemCache).not.toHaveBeenCalled();
@@ -233,7 +237,10 @@ describe('ChunksWebpackPlugin', () => {
 				compilation: compilationWebpack,
 				entryName: 'home'
 			});
-			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(compilationWebpack);
+			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(
+				compilationWebpack,
+				'home'
+			);
 
 			// CSS
 			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(
@@ -414,7 +421,10 @@ describe('ChunksWebpackPlugin', () => {
 				compilation: compilationWebpack,
 				entryName: 'home'
 			});
-			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(compilationWebpack);
+			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(
+				compilationWebpack,
+				'home'
+			);
 
 			// CSS
 			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(
@@ -547,48 +557,105 @@ describe('ChunksWebpackPlugin', () => {
 	});
 
 	describe('ChunksWebpackPlugin getPublicPath', () => {
-		it('Should call the getPublicPath function with a string', () => {
-			expect(chunksWebpackPlugin.getPublicPath(compilationWebpack)).toBe('/dist/');
+		describe('ChunksWebpackPlugin getPublicPath auto', () => {
+			it('Should call the getPublicPath function with default filename', () => {
+				compilationWebpack.outputOptions = {
+					publicPath: 'auto'
+				};
+				compilationWebpack.getAssetPath.mockReturnValue('auto');
+				jest.spyOn(path, 'relative');
+
+				chunksWebpackPlugin.options.filename = '[name]-[type].html';
+				const result = chunksWebpackPlugin.getPublicPath(compilationWebpack, 'home');
+
+				expect(compilationWebpack.getAssetPath).toHaveBeenCalledWith('auto', {});
+				expect(path.relative).toHaveBeenCalledWith(
+					'/chunks-webpack-plugin/example/dist/./.',
+					'/chunks-webpack-plugin/example/dist'
+				);
+				expect(result).toStrictEqual({ html: '', manifest: '' });
+			});
+
+			it('Should call the getPublicPath function with filename with a directory in the name', () => {
+				compilationWebpack.outputOptions = {
+					publicPath: 'auto'
+				};
+				compilationWebpack.getAssetPath.mockReturnValue('auto');
+				jest.spyOn(path, 'relative');
+
+				chunksWebpackPlugin.options.filename = 'templates/[name]-[type].html';
+				const result = chunksWebpackPlugin.getPublicPath(compilationWebpack, 'home');
+
+				expect(compilationWebpack.getAssetPath).toHaveBeenCalledWith('auto', {});
+				expect(path.relative).toHaveBeenCalledWith(
+					'/chunks-webpack-plugin/example/dist/templates/.',
+					'/chunks-webpack-plugin/example/dist'
+				);
+				expect(result).toStrictEqual({ html: '../', manifest: '' });
+			});
+
+			it('Should call the getPublicPath function with entry point with a directory in the name', () => {
+				compilationWebpack.outputOptions = {
+					publicPath: 'auto'
+				};
+				compilationWebpack.getAssetPath.mockReturnValue('auto');
+				jest.spyOn(path, 'relative');
+
+				chunksWebpackPlugin.options.filename = 'templates/[name]-[type].html';
+				const result = chunksWebpackPlugin.getPublicPath(compilationWebpack, 'shared/home');
+
+				expect(compilationWebpack.getAssetPath).toHaveBeenCalledWith('auto', {});
+				expect(path.relative).toHaveBeenCalledWith(
+					'/chunks-webpack-plugin/example/dist/templates/shared',
+					'/chunks-webpack-plugin/example/dist'
+				);
+				expect(result).toStrictEqual({ html: '../../', manifest: '' });
+			});
+
+			it('Should call the getPublicPath function with output.path empty', () => {
+				compilationWebpack.outputOptions = {
+					publicPath: 'auto'
+				};
+				compilationWebpack.options.output.path = undefined;
+				compilationWebpack.getAssetPath.mockReturnValue('auto');
+				jest.spyOn(path, 'relative');
+
+				chunksWebpackPlugin.options.filename = 'templates/[name]-[type].html';
+				const result = chunksWebpackPlugin.getPublicPath(compilationWebpack, 'home');
+
+				expect(compilationWebpack.getAssetPath).toHaveBeenCalledWith('auto', {});
+				expect(path.relative).toHaveBeenCalledWith('/templates/.', '');
+				expect(result.manifest).toStrictEqual('');
+
+				// Only test the start because path.relative add absolute path according to the system
+				expect(result.html.startsWith('../')).toBe(true);
+			});
 		});
 
-		it('Should call the getPublicPath function with the default value "auto"', () => {
-			compilationWebpack.options.output.publicPath = 'auto';
+		describe('ChunksWebpackPlugin getPublicPath custom', () => {
+			it('Should call the getPublicPath function', () => {
+				compilationWebpack.outputOptions = {
+					publicPath: '/dist/'
+				};
+				compilationWebpack.getAssetPath.mockReturnValue('/dist/');
 
-			expect(chunksWebpackPlugin.getPublicPath(compilationWebpack)).toBe('/dist');
-		});
+				const result = chunksWebpackPlugin.getPublicPath(compilationWebpack, 'home');
 
-		it('Should call the getPublicPath function with context empty', () => {
-			jest.spyOn(path, 'relative').mockImplementation((_from, to) =>
-				to.replace('/chunks-webpack-plugin/example/', '')
-			);
+				expect(compilationWebpack.getAssetPath).toHaveBeenCalledWith('/dist/', {});
+				expect(result).toStrictEqual({ html: '/dist/', manifest: '/dist/' });
+			});
 
-			compilationWebpack.options.output.publicPath = 'auto';
-			compilationWebpack.options.context = undefined;
+			it('Should call the getPublicPath function with public path ""', () => {
+				compilationWebpack.outputOptions = {
+					publicPath: ''
+				};
+				compilationWebpack.getAssetPath.mockReturnValue('');
 
-			expect(chunksWebpackPlugin.getPublicPath(compilationWebpack)).toBe('/dist');
-		});
+				const result = chunksWebpackPlugin.getPublicPath(compilationWebpack, 'home');
 
-		it('Should call the getPublicPath function with output.path empty', () => {
-			jest.spyOn(path, 'relative').mockImplementation((_from, to) =>
-				to.replace('/chunks-webpack-plugin/example/', '')
-			);
-
-			compilationWebpack.options.output.publicPath = 'auto';
-			compilationWebpack.options.output.path = undefined;
-
-			expect(chunksWebpackPlugin.getPublicPath(compilationWebpack)).toBe('/');
-		});
-
-		it('Should call the getPublicPath function with an undefined value', () => {
-			compilationWebpack.options.output.publicPath = undefined;
-
-			expect(chunksWebpackPlugin.getPublicPath(compilationWebpack)).toBe('');
-		});
-
-		it('Should call the getPublicPath function with a function', () => {
-			compilationWebpack.options.output.publicPath = () => '/dist/';
-
-			expect(chunksWebpackPlugin.getPublicPath(compilationWebpack)).toBe('/dist/');
+				expect(compilationWebpack.getAssetPath).toHaveBeenCalledWith('', {});
+				expect(result).toStrictEqual({ html: '', manifest: '' });
+			});
 		});
 	});
 
@@ -605,13 +672,47 @@ describe('ChunksWebpackPlugin', () => {
 					}
 				],
 				entryName: 'app-a',
-				publicPath: 'dist/'
+				publicPath: {
+					html: 'dist/',
+					manifest: 'dist/'
+				}
 			});
 
 			expect(response).toStrictEqual({
 				filePath: ['dist/abc', 'dist/def'],
 				htmlTags:
 					'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def" />'
+			});
+		});
+
+		it('Should call the getAssetData function with default template function and filename with directory', () => {
+			chunksWebpackPlugin.options.filename = 'templates/[name]-[type].html';
+			chunksWebpackPlugin.options.templateStyle = (name) =>
+				`<link rel="stylesheet" href="${name}" />`;
+			chunksWebpackPlugin.options.templateScript = (name) =>
+				`<script defer src="${name}"></script>`;
+
+			const response = chunksWebpackPlugin.getAssetData({
+				templateFunction: chunksWebpackPlugin.options.templateStyle,
+				assets: [
+					{
+						name: 'abc'
+					},
+					{
+						name: 'def'
+					}
+				],
+				entryName: 'app-a',
+				publicPath: {
+					html: '../',
+					manifest: ''
+				}
+			});
+
+			expect(response).toStrictEqual({
+				filePath: ['abc', 'def'],
+				htmlTags:
+					'<link rel="stylesheet" href="../abc" /><link rel="stylesheet" href="../def" />'
 			});
 		});
 	});
