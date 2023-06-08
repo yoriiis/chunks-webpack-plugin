@@ -17,7 +17,7 @@ import {
 } from './types';
 const schemaOptions = unTypedSchemaOptions as Schema;
 
-class ChunksWebpackPlugin {
+export default class ChunksWebpackPlugin {
 	options: PluginOptions;
 
 	/**
@@ -37,10 +37,10 @@ class ChunksWebpackPlugin {
 			options
 		);
 
-		validate(schemaOptions, this.options, {
-			name: 'ChunksWebpackPlugin',
-			baseDataPath: 'options'
-		});
+		// validate(schemaOptions, this.options, {
+		// 	name: 'ChunksWebpackPlugin',
+		// 	baseDataPath: 'options'
+		// });
 
 		this.hookCallback = this.hookCallback.bind(this);
 	}
@@ -353,5 +353,3 @@ class ChunksWebpackPlugin {
 		compilation.emitAsset('chunks-manifest.json', output);
 	}
 }
-
-export = ChunksWebpackPlugin;
