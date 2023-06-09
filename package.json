@@ -25,7 +25,6 @@
 		"types"
 	],
 	"scripts": {
-		"analyze:bundle": "webpack --config=./example/webpack.config.js --mode=production --profile --json > webpack-stats.json && webpack-bundle-analyzer ./webpack-stats.json ./ -p 1664",
 		"build": "rm -rf ./types ./lib && tsc",
 		"build:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=production",
 		"coverage": "jest --config ./config/jest.config.js --coverage && cat ./coverage/lcov.info | coveralls",
@@ -46,17 +45,13 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.21.4",
-		"@babel/preset-env": "^7.21.4",
-		"@babel/preset-typescript": "^7.21.4",
 		"@types/fs-extra": "^11.0.1",
 		"@types/jest": "^29.5.1",
-		"@types/node": "^18.15.11",
 		"@types/tapable": "^2.2.3",
 		"@types/webpack": "^5.28.1",
 		"@typescript-eslint/eslint-plugin": "^5.59.0",
 		"@typescript-eslint/parser": "^5.59.0",
 		"babel-loader": "^9.1.2",
-		"babel-plugin-dynamic-import-node": "^2.3.3",
 		"coveralls": "^3.1.1",
 		"css-loader": "^6.7.3",
 		"css-minimizer-webpack-plugin": "^5.0.0",
@@ -77,7 +72,6 @@
 		"typescript": "^5.0.4",
 		"vlitejs": "^4.2.0",
 		"webpack": "^5.80.0",
-		"webpack-bundle-analyzer": "^4.8.0",
 		"webpack-cli": "^5.0.1"
 	},
 	"peerDependencies": {

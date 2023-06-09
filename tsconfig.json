@@ -1,20 +1,20 @@
 {
 	"compilerOptions": {
-		"moduleResolution": "node",
-		"outDir": "./lib",
-		"allowJs": true,
-		"checkJs": false,
-		"target": "es2017",
-		"lib": ["es2017"],
 		"strict": true,
-		"esModuleInterop": true,
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"target": "esnext",
+		"lib": ["ESNext"],
+		"outDir": "./lib",
 		"declaration": true,
 		"declarationDir": "types",
+		"allowJs": true,
+		"checkJs": false,
+		"esModuleInterop": true,
 		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
 		"allowSyntheticDefaultImports": true,
-		"module": "commonjs",
 		"resolveJsonModule": true
 	},
-	"types": ["node"],
 	"include": ["./src/**/*"]
 }

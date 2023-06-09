@@ -1,21 +1,21 @@
-import { type Asset, type sources } from 'webpack';
+import type { Asset, sources } from 'webpack';
 
-export interface FilesDependencies {
-	css: Array<Asset>;
-	js: Array<Asset>;
-}
+export type FilesDependencies = {
+	css: Asset[];
+	js: Asset[];
+};
 
-export interface EntryCssData {
+export type EntryCssData = {
 	entryName: string;
 	source: sources.RawSource;
-}
+};
 
-export interface EntryJsData {
+export type EntryJsData = {
 	entryName: string;
 	source: sources.RawSource;
-}
+};
 
-export interface AllData {
+export type AllData = {
 	entryName: string;
 	css: {
 		source: sources.RawSource | null;
@@ -23,38 +23,37 @@ export interface AllData {
 	js: {
 		source: sources.RawSource | null;
 	};
-}
+};
 
-export interface AssetData {
-	filePath: Array<string>;
+export type AssetData = {
+	filePath: string[];
 	htmlTags: string;
-}
+};
 
-export interface EntryCache {
+export type EntryCache = {
 	source: sources.RawSource;
-	filePath: Array<string>;
+	filePath: string[];
 	htmlTags: string;
 	filename: string;
-}
+};
 
-export interface Manifest {
-	[key: string]: {
-		styles: Array<string>;
-		scripts: Array<string>;
-	};
-}
+type ManifestItem = {
+	styles: string[];
+	scripts: string[];
+};
 
+export type Manifest = Record<string, ManifestItem>;
 export type TemplateFunction = (name: string, entryName: string) => string;
 
-export interface PluginOptions {
+export type PluginOptions = {
 	filename: string;
 	templateStyle: TemplateFunction;
 	templateScript: TemplateFunction;
 	generateChunksManifest: boolean;
 	generateChunksFiles: boolean;
-}
+};
 
-export interface PublicPath {
+export type PublicPath = {
 	html: string;
 	manifest: string;
-}
+};
