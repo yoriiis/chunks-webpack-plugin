@@ -1,8 +1,9 @@
-import { type Compiler, type Compilation, type Asset, sources } from 'webpack';
-import path = require('path');
+import webpack, { sources } from 'webpack';
+import path from 'path';
 import { validate } from 'schema-utils';
-import { Schema } from 'schema-utils/declarations/validate';
 import unTypedSchemaOptions from './schemas/plugin-options.json';
+import type { Compiler, Compilation, Asset } from 'webpack';
+import { Schema } from 'schema-utils/declarations/validate';
 import {
 	FilesDependencies,
 	Manifest,
@@ -13,8 +14,7 @@ import {
 	EntryCssData,
 	EntryJsData,
 	PublicPath
-} from './interfaces';
-const webpack = require('webpack');
+} from './types';
 const schemaOptions = unTypedSchemaOptions as Schema;
 
 class ChunksWebpackPlugin {
@@ -81,8 +81,8 @@ class ChunksWebpackPlugin {
 
 		const cache = compilation.getCache('ChunksWebpackPlugin');
 		const entryNames = compilation.entrypoints.keys();
-		const entryCssData: Array<EntryCssData> = [];
-		const entryJsData: Array<EntryJsData> = [];
+		const entryCssData: EntryCssData[] = [];
+		const entryJsData: EntryJsData[] = [];
 		const manifest: Manifest = {};
 
 		await Promise.all(
@@ -206,8 +206,8 @@ class ChunksWebpackPlugin {
 	 * Get SVGs filtered by entrypoints
 	 * @param {Object} options
 	 * @param {Compilation} options.compilation Webpack compilation
-	 * @param {String} options.entryName Entrypoint name
-	 * @returns {Array<NormalModule>} Svgs list
+	 * @param {string} options.entryName Entrypoint name
+	 * @returns {NormalModule[]} Svgs list
 	 */
 	getFilesDependenciesByEntrypoint({
 		compilation,
@@ -248,7 +248,7 @@ class ChunksWebpackPlugin {
 	 * Get the public path from Webpack configuation
 	 * and add slash at the end if necessary
 	 * @param {Compilation} compilation Webpack compilation
-	 * @return {String} The public path
+	 * @return {string} The public path
 	 */
 	getPublicPath(compilation: Compilation, entryName: string): PublicPath {
 		const webpackPublicPath = compilation.getAssetPath(
@@ -288,8 +288,8 @@ class ChunksWebpackPlugin {
 	 * @param {Object} options
 	 * @param {TemplateFunction} options.templateFunction Template function to generate HTML tags
 	 * @param {Asset} options.assets Asset module
-	 * @param {String} options.entryName Entry name
-	 * @param {String} options.publicPath Public path generated
+	 * @param {string} options.entryName Entry name
+	 * @param {string} options.publicPath Public path generated
 	 * @returns
 	 */
 	getAssetData({
@@ -299,12 +299,12 @@ class ChunksWebpackPlugin {
 		publicPath
 	}: {
 		templateFunction: TemplateFunction;
-		assets: Array<Asset>;
+		assets: Asset[];
 		entryName: string;
 		publicPath: PublicPath;
 	}): AssetData {
-		const filePath: Array<string> = [];
-		const htmlTags: Array<string> = [];
+		const filePath: string[] = [];
+		const htmlTags: string[] = [];
 
 		assets.forEach((asset: Asset) => {
 			filePath.push(`${publicPath.manifest}${asset.name}`);
@@ -322,6 +322,12 @@ class ChunksWebpackPlugin {
 	 * Expose the manifest file into the assets compilation
 	 * The file is automatically created by the compiler
 	 * @async
+	 * @param {Object} options
+	 * @param {Compilation} options.compilation Webpack compilation
+	 * @param {any} options.cache Webpack cache
+	 * @param {unknown} options.eTag Webpack eTag
+	 * @param {Manifest} options.manifest Manifest
+	 * @returns {String} Sprite filename
 	 */
 	async createChunksManifestFile({
 		compilation,
