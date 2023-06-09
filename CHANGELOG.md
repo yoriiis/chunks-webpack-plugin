@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 9.0.0
+
+### ⚠️ Breaking changes
+
+- Fix automatic public path generation [#93](https://github.com/yoriiis/chunks-webpack-plugin/pull/93)
+
+### Updates
+
+- Optimize TypeScript ([#94](https://github.com/yoriiis/chunks-webpack-plugin/pull/94))
+
 ## 8.0.1
 
 ### Updates
