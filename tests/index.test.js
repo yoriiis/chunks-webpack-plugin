@@ -1,4 +1,4 @@
-import ChunksWebpackPlugin from '../src/index';
+import ChunksWebpackPlugin from '@src/index';
 import path from 'path';
 import { validate } from 'schema-utils';
 import schemaOptions from '@src/schemas/plugin-options.json';
@@ -130,13 +130,13 @@ describe('ChunksWebpackPlugin', () => {
 
 			chunksWebpackPlugin.hookCallback(compilationWebpack);
 
-			// expect(compilationWebpack.hooks.processAssets.tapPromise).toHaveBeenCalledWith(
-			// 	{
-			// 		name: 'ChunksWebpackPlugin',
-			// 		stage: ''
-			// 	},
-			// 	chunksWebpackPlugin.addAssets.bind(chunksWebpackPlugin, compilationWebpack)
-			// );
+			expect(compilationWebpack.hooks.processAssets.tapPromise).toHaveBeenCalledWith(
+				{
+					name: 'ChunksWebpackPlugin',
+					stage: ''
+				},
+				chunksWebpackPlugin.addAssets.bind(chunksWebpackPlugin, compilationWebpack)
+			);
 		});
 	});
 

@@ -1,8 +1,8 @@
-import type { Compiler, Compilation, Asset } from 'webpack';
 import webpack, { sources } from 'webpack';
 import path from 'path';
 import { validate } from 'schema-utils';
 import unTypedSchemaOptions from './schemas/plugin-options.json' assert { type: 'json' };
+import type { Compiler, Compilation, Asset } from 'webpack';
 import { Schema } from 'schema-utils/declarations/validate.js';
 
 import {
