@@ -19,7 +19,13 @@
 	},
 	"license": "MIT",
 	"author": "Joris DANIEL",
-	"exports": "./lib/index.js",
+	"exports": {
+		".": {
+			"types": "./types/index.d.ts",
+			"import": "./lib/index.js"
+		}
+	},
+	"main": "./lib/index.js",
 	"types": "./types/index.d.ts",
 	"files": [
 		"lib",
@@ -29,7 +35,7 @@
 		"build": "rm -rf ./types ./lib && tsc",
 		"build:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=production",
 		"dev": "tsc --watch",
-		"dev:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --no-cache --verbose --coverage --config ./config/jest.config.cjs --watchAll",
+		"dev:unit": "jest --config ./config/jest.config.js --watchAll --verbose --coverage",
 		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --config=./example/webpack.config.js --mode=development",
 		"pre:publish": "npm run build && npm run build:example && npm run test",
 		"start:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=development",
@@ -37,7 +43,7 @@
 		"test:eslint": "eslint . -c ./config/.eslintrc.cjs --ignore-pattern coverage --ignore-pattern reports --ignore-pattern example/dist --ignore-pattern lib --ignore-pattern types",
 		"test:markdown": "markdownlint \"**/*.md\" --ignore node_modules",
 		"test:types": "tsc --noEmit",
-		"test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js ./config/jest.config.js --verbose --coverage"
+		"test:unit": "jest --config ./config/jest.config.js --verbose --coverage"
 	},
 	"prettier": "./config/prettier.config.cjs",
 	"dependencies": {
@@ -65,6 +71,7 @@
 		"eslint-plugin-promise": "^6.1.1",
 		"esmock": "^2.3.1",
 		"jest": "^29.5.0",
+		"jest-environment-jsdom": "^29.5.0",
 		"markdownlint-cli": "^0.33.0",
 		"mini-css-extract-plugin": "^2.7.5",
 		"prettier-eslint": "^15.0.1",

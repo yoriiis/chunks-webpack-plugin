@@ -1,25 +1,10 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { jest } from '@jest/globals';
-
-const ChunksWebpackPlugin = (await import('../src/index')).default;
+import ChunksWebpackPlugin from '../src/index';
 import path from 'path';
-// const { validate } = require('schema-utils');
+import { validate } from 'schema-utils';
+import schemaOptions from '@src/schemas/plugin-options.json';
 
-// import schemaOptions from '@src/schemas/plugin-options.json' assert { type: 'json' };
-// const schemaOptions = await import('../src/schemas/plugin-options.json', {
-// 	assert: { type: 'json' }
-// });
-// console.log(schemaOptions);
-// jest.mock('path');
-// jest.mock('schema-utils');
-// const { validate } = (await import('schema-utils')).default;
-// jest.unstable_mockModule('schema-utils', () => ({
-// 	validate: jest.fn()
-// }));
-// console.log(validate);
-// import { validate } from 'schema-utils';
-// jest.unstable_mockModule('schema-utils/declarations/validate.js', () => {});
-jest.unstable_mockModule('webpack', () => ({
+jest.mock('schema-utils');
+jest.mock('webpack', () => ({
 	Compilation: {
 		PROCESS_ASSETS_STAGE_ADDITIONAL: ''
 	},
@@ -89,10 +74,10 @@ describe('ChunksWebpackPlugin', () => {
 				generateChunksManifest: true,
 				generateChunksFiles: true
 			});
-			// expect(validate).toHaveBeenCalledWith({}, chunksWebpackPlugin.options, {
-			// 	name: 'ChunksWebpackPlugin',
-			// 	baseDataPath: 'options'
-			// });
+			expect(validate).toHaveBeenCalledWith(schemaOptions, chunksWebpackPlugin.options, {
+				name: 'ChunksWebpackPlugin',
+				baseDataPath: 'options'
+			});
 			expect(chunksWebpackPlugin.options.templateStyle('app.css')).toStrictEqual(
 				'<link rel="stylesheet" href="https://cdn.domain.com/app.css" />'
 			);

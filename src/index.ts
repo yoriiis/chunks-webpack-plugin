@@ -1,9 +1,10 @@
+import type { Compiler, Compilation, Asset } from 'webpack';
 import webpack, { sources } from 'webpack';
 import path from 'path';
 import { validate } from 'schema-utils';
-import unTypedSchemaOptions from './schemas/plugin-options.json';
-import type { Compiler, Compilation, Asset } from 'webpack';
-import { Schema } from 'schema-utils/declarations/validate';
+import unTypedSchemaOptions from './schemas/plugin-options.json' assert { type: 'json' };
+import { Schema } from 'schema-utils/declarations/validate.js';
+
 import {
 	FilesDependencies,
 	Manifest,
@@ -37,10 +38,10 @@ export default class ChunksWebpackPlugin {
 			options
 		);
 
-		// validate(schemaOptions, this.options, {
-		// 	name: 'ChunksWebpackPlugin',
-		// 	baseDataPath: 'options'
-		// });
+		validate(schemaOptions, this.options, {
+			name: 'ChunksWebpackPlugin',
+			baseDataPath: 'options'
+		});
 
 		this.hookCallback = this.hookCallback.bind(this);
 	}
