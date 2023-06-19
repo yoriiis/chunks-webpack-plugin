@@ -7,8 +7,10 @@ export default {
 		'\\.(js|ts)$': [
 			'ts-jest',
 			{
-				useESM: true,
-				isolatedModules: true
+				diagnostics: {
+					// Disable error reporting with import assertions
+					ignoreCodes: ['TS2821']
+				}
 			}
 		]
 	},

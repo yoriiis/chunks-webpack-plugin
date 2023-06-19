@@ -15,7 +15,7 @@ import {
 	EntryCssData,
 	EntryJsData,
 	PublicPath
-} from './types';
+} from './types.js';
 const schemaOptions = unTypedSchemaOptions as Schema;
 
 export default class ChunksWebpackPlugin {
