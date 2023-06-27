@@ -48,9 +48,9 @@ First, let's add the plugin to the webpack configuration.
 **webpack.config.js**
 
 ```js
-const ChunksWebpackPlugin = require('chunks-webpack-plugin');
+import ChunksWebpackPlugin from 'chunks-webpack-plugin';
 
-module.exports = {
+export default {
   plugins: [new ChunksWebpackPlugin()]
 };
 ```
@@ -114,7 +114,7 @@ Default:
 Tells the plugin whether to personalize the default template for the HTML `<style>` tags. For example, add additional attributes or a CDN prefix.
 
 ```js
-module.exports = {
+export default {
   plugins: [
     new ChunksWebpackPlugin({
       templateStyle: (name) => `<link rel="stylesheet" href="https://cdn.domain.com${name}" />`
@@ -140,7 +140,7 @@ Default:
 Tells the plugin whether to personalize the default template for the HTML `<script>` tags. For example, add additional attributes or a CDN prefix.
 
 ```js
-module.exports = {
+export default {
   plugins: [
     new ChunksWebpackPlugin({
       templateScript: (name) => `<script defer src="https://cdn.domain.com${name}"></script>`
@@ -162,7 +162,7 @@ Default: `false`
 Tells the plugin whether to generate the `chunks-manifest.json`. The file contains the list of all chunks grouped by entry points. See the [chunks-manifest.json example](example/dist/chunks-manifest.json).
 
 ```js
-module.exports = {
+export default {
   plugins: [
     new ChunksWebpackPlugin({
       generateChunksManifest: true
@@ -184,7 +184,7 @@ Default: `true`
 Tells the plugin whether to generate the HTML files.
 
 ```js
-module.exports = {
+export default {
   plugins: [
     new ChunksWebpackPlugin({
       generateChunksFiles: false
@@ -206,10 +206,13 @@ module.exports = {
 Example of the webpack configuration with multiple entry points which share common code with the `splitChunks` option.
 
 ```js
-const ChunksWebpackPlugin = require('chunks-webpack-plugin');
-const path = require('path');
+import ChunksWebpackPlugin from 'chunks-webpack-plugin';
+import path from 'path';
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
   entry: {
     home: 'home.js',
     news: 'news.js'
