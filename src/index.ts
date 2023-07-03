@@ -23,7 +23,7 @@ export default class ChunksWebpackPlugin {
 
 	/**
 	 * Instanciate the constructor
-	 * @param {object} options Plugin options
+	 * @param options Plugin options
 	 */
 	constructor(options: PluginOptions) {
 		// Merge default options with user options
@@ -48,7 +48,7 @@ export default class ChunksWebpackPlugin {
 
 	/**
 	 * Apply function is automatically called by the Webpack main compiler
-	 * @param {Compiler} compiler The Webpack compiler variable
+	 * @param compiler The Webpack compiler variable
 	 */
 	apply(compiler: Compiler): void {
 		compiler.hooks.thisCompilation.tap('ChunksWebpackPlugin', this.hookCallback);
@@ -57,7 +57,7 @@ export default class ChunksWebpackPlugin {
 	/**
 	 * Hook expose by the Webpack compiler
 	 * @async
-	 * @param {Compilation} compilation Webpack compilation
+	 * @param compilation Webpack compilation
 	 */
 	async hookCallback(compilation: Compilation): Promise<void> {
 		compilation.hooks.processAssets.tapPromise(
@@ -73,8 +73,8 @@ export default class ChunksWebpackPlugin {
 	 * Add assets
 	 * The hook is triggered by webpack
 	 * @async
-	 * @param {Compilation} compilation Webpack compilation
-	 * @returns {Promise<void>}
+	 * @param compilation Webpack compilation
+	 * @returns
 	 */
 	async addAssets(compilation: Compilation): Promise<void> {
 		// For better compatibility with future webpack versions
@@ -205,10 +205,10 @@ export default class ChunksWebpackPlugin {
 
 	/**
 	 * Get SVGs filtered by entrypoints
-	 * @param {Object} options
-	 * @param {Compilation} options.compilation Webpack compilation
-	 * @param {string} options.entryName Entrypoint name
-	 * @returns {NormalModule[]} Svgs list
+	 * @param options
+	 * @param options.compilation Webpack compilation
+	 * @param options.entryName Entrypoint name
+	 * @returns Svgs list
 	 */
 	getFilesDependenciesByEntrypoint({
 		compilation,
@@ -248,8 +248,8 @@ export default class ChunksWebpackPlugin {
 	/**
 	 * Get the public path from Webpack configuation
 	 * and add slash at the end if necessary
-	 * @param {Compilation} compilation Webpack compilation
-	 * @return {string} The public path
+	 * @param compilation Webpack compilation
+	 * @return The public path
 	 */
 	getPublicPath(compilation: Compilation, entryName: string): PublicPath {
 		const webpackPublicPath = compilation.getAssetPath(
@@ -286,11 +286,11 @@ export default class ChunksWebpackPlugin {
 	 * Get assets data
 	 * File path for the manifest
 	 * HTML tags for the generated files
-	 * @param {Object} options
-	 * @param {TemplateFunction} options.templateFunction Template function to generate HTML tags
-	 * @param {Asset} options.assets Asset module
-	 * @param {string} options.entryName Entry name
-	 * @param {string} options.publicPath Public path generated
+	 * @param options
+	 * @param options.templateFunction Template function to generate HTML tags
+	 * @param options.assets Asset module
+	 * @param options.entryName Entry name
+	 * @param options.publicPath Public path generated
 	 * @returns
 	 */
 	getAssetData({
@@ -323,12 +323,12 @@ export default class ChunksWebpackPlugin {
 	 * Expose the manifest file into the assets compilation
 	 * The file is automatically created by the compiler
 	 * @async
-	 * @param {Object} options
-	 * @param {Compilation} options.compilation Webpack compilation
-	 * @param {any} options.cache Webpack cache
-	 * @param {unknown} options.eTag Webpack eTag
-	 * @param {Manifest} options.manifest Manifest
-	 * @returns {String} Sprite filename
+	 * @param options
+	 * @param options.compilation Webpack compilation
+	 * @param options.cache Webpack cache
+	 * @param options.eTag Webpack eTag
+	 * @param options.manifest Manifest
+	 * @returns Sprite filename
 	 */
 	async createChunksManifestFile({
 		compilation,

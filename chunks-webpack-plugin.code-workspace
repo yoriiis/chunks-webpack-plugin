@@ -11,17 +11,25 @@
 			"editor.tabSize": 4,
 			"editor.rulers": [100]
 		},
+		"[yaml]": {
+			"editor.tabSize": 2,
+			"editor.detectIndentation": true,
+			"editor.insertSpaces": true,
+			"editor.autoIndent": "none"
+		},
 		"files.associations": {
 			"*.css": "postcss",
 			"*.html": "html",
 			"*.ts": "typescript",
-			"*.json": "json"
+			"*.json": "json",
+			"*.yaml": "yaml",
+			"*.yml": "yaml"
 		},
 		"files.trimTrailingWhitespace": true,
 		"search.exclude": {
 			"**/node_modules": true
 		},
-        "files.eol": "\n"
+		"files.eol": "\n"
 	},
 	"extensions": {
 		"recommendations": [
