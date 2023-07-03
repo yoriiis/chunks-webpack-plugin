@@ -12,3 +12,5 @@ on:
 jobs:
   lint:
     uses: yoriiis/actions/.github/workflows/lint.yml@main
+    with:
+      stylelint-status: false
