@@ -13,7 +13,7 @@ module.exports = (env, argv) => {
 		entry: {
 			'shared/app-a': `${path.resolve(__dirname, './src/js/app-a.js')}`,
 			'app-b': `${path.resolve(__dirname, './src/js/app-b.js')}`,
-			// 'app-c': `${path.resolve(__dirname, './src/js/app-c.js')}`
+			'app-c': `${path.resolve(__dirname, './src/js/app-c.js')}`
 		},
 		watchOptions: {
 			ignored: /node_modules/
