@@ -5,6 +5,9 @@ on:
     types: [published]
 
 jobs:
+  lint:
+    uses: yoriiis/chunks-webpack-plugin/.github/workflows/lint.yml@main
+
   npm:
     uses: yoriiis/actions/.github/workflows/npm-publish.yml@main
     with:
