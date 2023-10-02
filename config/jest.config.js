@@ -1,10 +1,18 @@
-module.exports = {
+export default {
 	moduleFileExtensions: ['js', 'ts'],
 	modulePaths: ['<rootDir>/src'],
 	rootDir: '../',
 	resetModules: true,
 	transform: {
-		'\\.(js|ts)$': 'ts-jest'
+		'\\.(js|ts)$': [
+			'ts-jest',
+			{
+				diagnostics: {
+					// Disable error reporting with import assertions
+					ignoreCodes: ['TS2821']
+				}
+			}
+		]
 	},
 	moduleNameMapper: {
 		'^@src(.*)$': '<rootDir>/src$1'

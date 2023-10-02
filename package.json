@@ -18,7 +18,8 @@
 	},
 	"license": "MIT",
 	"author": "Joris DANIEL",
-	"main": "./lib/index.js",
+	"type": "module",
+	"exports": "./lib/index.js",
 	"types": "./types/index.d.ts",
 	"files": [
 		"lib",
@@ -27,7 +28,6 @@
 	"scripts": {
 		"build": "rm -rf ./types ./lib && tsc",
 		"build:example": "rm -rf ./example/dist/ && webpack --config=./example/webpack.config.js --mode=production",
-		"coverage": "jest --config ./config/jest.config.js --coverage && cat ./coverage/lcov.info | coveralls",
 		"dev": "tsc --watch",
 		"dev:unit": "jest --config ./config/jest.config.js --watchAll --verbose --coverage",
 		"inspect:example": "rm -rf ./example/dist/ && node --inspect node_modules/webpack/bin/webpack.js --config=./example/webpack.config.js --mode=development",
@@ -36,7 +36,7 @@
 		"test": "npm run test:unit",
 		"test:unit": "jest --config ./config/jest.config.js --verbose --coverage"
 	},
-	"prettier": "./config/prettier.config.js",
+	"prettier": "./config/prettier.config.cjs",
 	"dependencies": {
 		"schema-utils": "^4.0.1"
 	},

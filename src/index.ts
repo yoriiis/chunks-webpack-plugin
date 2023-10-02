@@ -1,9 +1,10 @@
 import webpack, { sources } from 'webpack';
 import path from 'path';
 import { validate } from 'schema-utils';
-import unTypedSchemaOptions from './schemas/plugin-options.json';
+import unTypedSchemaOptions from './schemas/plugin-options.json' assert { type: 'json' };
 import type { Compiler, Compilation, Asset } from 'webpack';
-import { Schema } from 'schema-utils/declarations/validate';
+import { Schema } from 'schema-utils/declarations/validate.js';
+
 import {
 	FilesDependencies,
 	Manifest,
@@ -14,10 +15,10 @@ import {
 	EntryCssData,
 	EntryJsData,
 	PublicPath
-} from './types';
+} from './types.js';
 const schemaOptions = unTypedSchemaOptions as Schema;
 
-class ChunksWebpackPlugin {
+export default class ChunksWebpackPlugin {
 	options: PluginOptions;
 
 	/**
@@ -353,5 +354,3 @@ class ChunksWebpackPlugin {
 		compilation.emitAsset('chunks-manifest.json', output);
 	}
 }
-
-export = ChunksWebpackPlugin;

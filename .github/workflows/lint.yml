@@ -15,3 +15,4 @@ jobs:
     uses: yoriiis/actions/.github/workflows/lint.yml@main
     with:
       stylelint-status: false
+      eslint-config: 'config/.eslintrc.cjs'
