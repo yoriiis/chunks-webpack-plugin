@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 10.0.0
+
+### ⚠️ Breaking changes
+
+#### **This package is now pure ESM.** Please read [Sindre Sorhus ESM note](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) for more information
+
+- Migrate to ESM with package `exports` ([#95](https://github.com/yoriiis/chunks-webpack-plugin/pull/95))
+
 ## 9.0.0
 
 ### ⚠️ Breaking changes

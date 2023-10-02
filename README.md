@@ -28,9 +28,9 @@ npm install chunks-webpack-plugin --save-dev
 yarn add chunks-webpack-plugin --dev
 ```
 
-## Environment
-
-`chunks-webpack-plugin` was built for Node.js `>=16.20.0` and webpack `v5`.
+> **Warning** `chunks-webpack-plugin@10` is ESM only.
+>
+> **Note** Minimum supported `Node.js` version is `16.20.0` and Webpack `>=5.10.3`.
 
 ## Example
 
