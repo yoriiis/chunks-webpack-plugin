@@ -17,7 +17,7 @@
 		"url": "https://github.com/sponsors/yoriiis"
 	},
 	"license": "MIT",
-	"author": "Joris DANIEL",
+	"author": "Yoriiis",
 	"type": "module",
 	"exports": "./lib/index.js",
 	"types": "./types/index.d.ts",
