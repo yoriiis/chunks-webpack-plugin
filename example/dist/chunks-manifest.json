@@ -1,31 +1,31 @@
 {
   "shared/app-a": {
     "styles": [
-      "/dist/css/747.css",
+      "/dist/css/328.css",
       "/dist/css/shared/app-a.css"
     ],
     "scripts": [
-      "/dist/js/747.js",
+      "/dist/js/328.js",
       "/dist/js/shared/app-a.js"
     ]
   },
   "app-b": {
     "styles": [
-      "/dist/css/747.css",
+      "/dist/css/328.css",
       "/dist/css/app-b.css"
     ],
     "scripts": [
-      "/dist/js/747.js",
+      "/dist/js/328.js",
       "/dist/js/app-b.js"
     ]
   },
   "app-c": {
     "styles": [
-      "/dist/css/747.css",
+      "/dist/css/328.css",
       "/dist/css/app-c.css"
     ],
     "scripts": [
-      "/dist/js/747.js",
+      "/dist/js/328.js",
       "/dist/js/app-c.js"
     ]
   }

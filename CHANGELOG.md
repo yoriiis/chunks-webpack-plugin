@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 11.0.0
+
+### ⚠️ Breaking changes
+
+- Updates Node.js ([#100](https://github.com/yoriiis/chunks-webpack-plugin/pull/100))
+  - Minimum supported `Node.js` version is `18.19.0`
+  - Updates other packages
+
 ## 10.0.0
 
 ### ⚠️ Breaking changes
