@@ -57,7 +57,7 @@
 		"ts-jest": "^29.1.2",
 		"typescript": "^5.3.3",
 		"vlitejs": "^6.0.2",
-		"webpack": "^5.90.2",
+		"webpack": "^5.94.0",
 		"webpack-cli": "^5.1.4"
 	},
 	"peerDependencies": {
