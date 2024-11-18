@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"strict": true,
 		"module": "nodenext",
-		"moduleResolution": "node16",
+		"moduleResolution": "nodenext",
 		"target": "esnext",
 		"lib": ["ESNext"],
 		"outDir": "./lib",

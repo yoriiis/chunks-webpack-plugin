@@ -1,20 +1,20 @@
-import webpack, { sources } from 'webpack';
-import path from 'path';
+import path from 'node:path';
 import { validate } from 'schema-utils';
-import unTypedSchemaOptions from './schemas/plugin-options.json' assert { type: 'json' };
-import type { Compiler, Compilation, Asset } from 'webpack';
-import { Schema } from 'schema-utils/declarations/validate.js';
+import type { Schema } from 'schema-utils/declarations/validate.js';
+import webpack, { type sources } from 'webpack';
+import type { Asset, Compilation, Compiler } from 'webpack';
+import unTypedSchemaOptions from './schemas/plugin-options.json' with { type: 'json' };
 
-import {
-	FilesDependencies,
-	Manifest,
-	PluginOptions,
+import type {
 	AssetData,
-	TemplateFunction,
 	EntryCache,
 	EntryCssData,
 	EntryJsData,
-	PublicPath
+	FilesDependencies,
+	Manifest,
+	PluginOptions,
+	PublicPath,
+	TemplateFunction
 } from './types.js';
 const schemaOptions = unTypedSchemaOptions as Schema;
 
@@ -101,9 +101,7 @@ export default class ChunksWebpackPlugin {
 
 				if (filesDependencies.css.length) {
 					const eTag = filesDependencies.css
-						.map((item: Asset) =>
-							cache.getLazyHashedEtag(item.source as sources.Source)
-						)
+						.map((item: Asset) => cache.getLazyHashedEtag(item.source as sources.Source))
 						.reduce((result, item) => cache.mergeEtags(result, item));
 
 					const cacheItem = cache.getItemCache(`css|${entryName}`, eTag);
@@ -140,9 +138,7 @@ export default class ChunksWebpackPlugin {
 
 				if (filesDependencies.js.length) {
 					const eTag = filesDependencies.js
-						.map((item: Asset) =>
-							cache.getLazyHashedEtag(item.source as sources.Source)
-						)
+						.map((item: Asset) => cache.getLazyHashedEtag(item.source as sources.Source))
 						.reduce((result, item) => cache.mergeEtags(result, item));
 
 					const cacheItem = cache.getItemCache(`js|${entryName}`, eTag);

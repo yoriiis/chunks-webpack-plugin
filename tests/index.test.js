@@ -1,7 +1,7 @@
+import path from 'node:path';
 import ChunksWebpackPlugin from '@src/index';
-import path from 'path';
-import { validate } from 'schema-utils';
 import schemaOptions from '@src/schemas/plugin-options.json';
+import { validate } from 'schema-utils';
 
 jest.mock('schema-utils');
 jest.mock('webpack', () => ({
@@ -163,10 +163,7 @@ describe('ChunksWebpackPlugin', () => {
 				compilation: compilationWebpack,
 				entryName: 'home'
 			});
-			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(
-				compilationWebpack,
-				'home'
-			);
+			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(compilationWebpack, 'home');
 			expect(compilationWebpack.getCache().getLazyHashedEtag).not.toHaveBeenCalled();
 			expect(compilationWebpack.getCache().mergeEtags).not.toHaveBeenCalled();
 			expect(compilationWebpack.getCache().getItemCache).not.toHaveBeenCalled();
@@ -201,9 +198,11 @@ describe('ChunksWebpackPlugin', () => {
 				});
 			chunksWebpackPlugin.createChunksManifestFile = jest.fn();
 			compilationWebpack.compiler.webpack.sources.RawSource.mockReturnValueOnce({
-				source: '<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
+				source:
+					'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
 			}).mockReturnValueOnce({
-				source: '<script defer src="https://cdn.domain.com/dist/abc.js"></script><script defer src="https://cdn.domain.com/dist/def.js"></script>'
+				source:
+					'<script defer src="https://cdn.domain.com/dist/abc.js"></script><script defer src="https://cdn.domain.com/dist/def.js"></script>'
 			});
 
 			compilationWebpack.entrypoints.keys.mockReturnValue(['home']);
@@ -237,10 +236,7 @@ describe('ChunksWebpackPlugin', () => {
 				compilation: compilationWebpack,
 				entryName: 'home'
 			});
-			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(
-				compilationWebpack,
-				'home'
-			);
+			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(compilationWebpack, 'home');
 
 			// CSS
 			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(
@@ -260,9 +256,7 @@ describe('ChunksWebpackPlugin', () => {
 				'css|home',
 				'123456789123'
 			);
-			expect(compilationWebpack.getCache().getItemCache().getPromise).toHaveBeenNthCalledWith(
-				1
-			);
+			expect(compilationWebpack.getCache().getItemCache().getPromise).toHaveBeenNthCalledWith(1);
 			expect(chunksWebpackPlugin.getAssetData).toHaveBeenNthCalledWith(1, {
 				templateFunction: chunksWebpackPlugin.options.templateStyle,
 				assets: [
@@ -282,11 +276,10 @@ describe('ChunksWebpackPlugin', () => {
 				entryName: 'home',
 				publicPath: 'dist/'
 			});
-			expect(
-				compilationWebpack.getCache().getItemCache().storePromise
-			).toHaveBeenNthCalledWith(1, {
+			expect(compilationWebpack.getCache().getItemCache().storePromise).toHaveBeenNthCalledWith(1, {
 				source: {
-					source: '<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
+					source:
+						'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
 				},
 				filePath: ['dist/abc.css', 'dist/def.css'],
 				htmlTags:
@@ -312,9 +305,7 @@ describe('ChunksWebpackPlugin', () => {
 				'js|home',
 				'abcdefghijkl'
 			);
-			expect(compilationWebpack.getCache().getItemCache().getPromise).toHaveBeenNthCalledWith(
-				2
-			);
+			expect(compilationWebpack.getCache().getItemCache().getPromise).toHaveBeenNthCalledWith(2);
 			expect(chunksWebpackPlugin.getAssetData).toHaveBeenNthCalledWith(2, {
 				templateFunction: chunksWebpackPlugin.options.templateScript,
 				assets: [
@@ -334,11 +325,10 @@ describe('ChunksWebpackPlugin', () => {
 				entryName: 'home',
 				publicPath: 'dist/'
 			});
-			expect(
-				compilationWebpack.getCache().getItemCache().storePromise
-			).toHaveBeenNthCalledWith(2, {
+			expect(compilationWebpack.getCache().getItemCache().storePromise).toHaveBeenNthCalledWith(2, {
 				source: {
-					source: '<script defer src="https://cdn.domain.com/dist/abc.js"></script><script defer src="https://cdn.domain.com/dist/def.js"></script>'
+					source:
+						'<script defer src="https://cdn.domain.com/dist/abc.js"></script><script defer src="https://cdn.domain.com/dist/def.js"></script>'
 				},
 				filePath: ['dist/abc.js', 'dist/def.js'],
 				htmlTags:
@@ -347,10 +337,12 @@ describe('ChunksWebpackPlugin', () => {
 			});
 
 			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(7, {
-				source: '<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
+				source:
+					'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
 			});
 			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(8, {
-				source: '<script defer src="https://cdn.domain.com/dist/abc.js"></script><script defer src="https://cdn.domain.com/dist/def.js"></script>'
+				source:
+					'<script defer src="https://cdn.domain.com/dist/abc.js"></script><script defer src="https://cdn.domain.com/dist/def.js"></script>'
 			});
 			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenCalledTimes(8);
 			expect(compilationWebpack.getCache().mergeEtags).toHaveBeenCalledTimes(5);
@@ -394,7 +386,8 @@ describe('ChunksWebpackPlugin', () => {
 				});
 			chunksWebpackPlugin.createChunksManifestFile = jest.fn();
 			compilationWebpack.compiler.webpack.sources.RawSource.mockReturnValueOnce({
-				source: '<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
+				source:
+					'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
 			});
 
 			compilationWebpack.entrypoints.keys.mockReturnValue(['home']);
@@ -421,10 +414,7 @@ describe('ChunksWebpackPlugin', () => {
 				compilation: compilationWebpack,
 				entryName: 'home'
 			});
-			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(
-				compilationWebpack,
-				'home'
-			);
+			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(compilationWebpack, 'home');
 
 			// CSS
 			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(
@@ -444,9 +434,7 @@ describe('ChunksWebpackPlugin', () => {
 				'css|home',
 				'123456789123'
 			);
-			expect(compilationWebpack.getCache().getItemCache().getPromise).toHaveBeenNthCalledWith(
-				1
-			);
+			expect(compilationWebpack.getCache().getItemCache().getPromise).toHaveBeenNthCalledWith(1);
 			expect(chunksWebpackPlugin.getAssetData).toHaveBeenNthCalledWith(1, {
 				templateFunction: chunksWebpackPlugin.options.templateStyle,
 				assets: [
@@ -466,11 +454,10 @@ describe('ChunksWebpackPlugin', () => {
 				entryName: 'home',
 				publicPath: 'dist/'
 			});
-			expect(
-				compilationWebpack.getCache().getItemCache().storePromise
-			).toHaveBeenNthCalledWith(1, {
+			expect(compilationWebpack.getCache().getItemCache().storePromise).toHaveBeenNthCalledWith(1, {
 				source: {
-					source: '<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
+					source:
+						'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
 				},
 				filePath: ['dist/abc.css', 'dist/def.css'],
 				htmlTags:
@@ -479,7 +466,8 @@ describe('ChunksWebpackPlugin', () => {
 			});
 
 			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(4, {
-				source: '<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
+				source:
+					'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
 			});
 			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenCalledTimes(4);
 			expect(compilationWebpack.getCache().mergeEtags).toHaveBeenCalledTimes(2);
@@ -711,8 +699,7 @@ describe('ChunksWebpackPlugin', () => {
 
 			expect(response).toStrictEqual({
 				filePath: ['abc', 'def'],
-				htmlTags:
-					'<link rel="stylesheet" href="../abc" /><link rel="stylesheet" href="../def" />'
+				htmlTags: '<link rel="stylesheet" href="../abc" /><link rel="stylesheet" href="../def" />'
 			});
 		});
 	});
