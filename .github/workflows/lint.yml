@@ -14,5 +14,8 @@ jobs:
   lint:
     uses: yoriiis/actions/.github/workflows/lint.yml@main
     with:
+      node-version: 20
       stylelint-status: false
+      eslint-status: false
+      biome-status: true
       eslint-config: 'config/.eslintrc.cjs'

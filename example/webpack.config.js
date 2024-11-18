@@ -1,14 +1,14 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import TerserJSPlugin from 'terser-webpack-plugin';
-import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import ChunksWebpackPlugin from '../lib/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default (env, argv) => {
+export default (_env, argv) => {
 	const isProduction = argv.mode === 'production';
 
 	return {
@@ -29,7 +29,7 @@ export default (env, argv) => {
 		output: {
 			path: path.resolve(__dirname, './dist'),
 			publicPath: '/dist/',
-			filename: `js/[name].js`
+			filename: 'js/[name].js'
 		},
 		module: {
 			rules: [
@@ -58,10 +58,8 @@ export default (env, argv) => {
 			}),
 			new ChunksWebpackPlugin({
 				filename: '/templates/[name]-[type].html',
-				templateStyle: (name) =>
-					`<link rel="stylesheet" href="https://cdn.domain.com${name}" />`,
-				templateScript: (name) =>
-					`<script defer src="https://cdn.domain.com${name}"></script>`,
+				templateStyle: (name) => `<link rel="stylesheet" href="https://cdn.domain.com${name}" />`,
+				templateScript: (name) => `<script defer src="https://cdn.domain.com${name}"></script>`,
 				generateChunksManifest: true,
 				generateChunksFiles: true
 			})

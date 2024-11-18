@@ -207,7 +207,7 @@ Example of the webpack configuration with multiple entry points which share comm
 
 ```js
 import ChunksWebpackPlugin from 'chunks-webpack-plugin';
-import path from 'path';
+import path from 'node:path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
