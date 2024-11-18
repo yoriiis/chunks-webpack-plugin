@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 12.0.0
+
+### ⚠️ Breaking changes
+
+- Updates Node.js ([#105](https://github.com/yoriiis/chunks-webpack-plugin/pull/105))
+  - Minimum supported `Node.js` version is `20.18.0`
+  - Fix import assertion compatibility with Node.js 22
+  - Updates other packages
+  - Migrate ESLint/Prettier to Biome
+
 ## 11.0.0
 
 ### ⚠️ Breaking changes
