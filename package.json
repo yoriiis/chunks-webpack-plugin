@@ -1,6 +1,6 @@
 {
 	"name": "chunks-webpack-plugin",
-	"version": "12.0.0",
+	"version": "12.0.1",
 	"description": "Create HTML files with entrypoints and chunks relations to serve your bundles",
 	"keywords": ["chunks", "chunks-webpack-plugin", "plugin", "split chunks", "webpack"],
 	"homepage": "https://github.com/yoriiis/chunks-webpack-plugin",

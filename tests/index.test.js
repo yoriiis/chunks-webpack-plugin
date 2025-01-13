@@ -286,6 +286,14 @@ describe('ChunksWebpackPlugin', () => {
 					'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />',
 				filename: 'templates/home-styles.html'
 			});
+			expect(compilationWebpack.emitAsset).toHaveBeenNthCalledWith(
+				1,
+				'templates/home-styles.html',
+				{
+					source:
+						'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
+				}
+			);
 
 			// JS
 			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(
@@ -335,6 +343,14 @@ describe('ChunksWebpackPlugin', () => {
 					'<script defer src="https://cdn.domain.com/dist/abc.js"></script><script defer src="https://cdn.domain.com/dist/def.js"></script>',
 				filename: 'templates/home-scripts.html'
 			});
+			expect(compilationWebpack.emitAsset).toHaveBeenNthCalledWith(
+				2,
+				'templates/home-scripts.html',
+				{
+					source:
+						'<script defer src="https://cdn.domain.com/dist/abc.js"></script><script defer src="https://cdn.domain.com/dist/def.js"></script>'
+				}
+			);
 
 			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(7, {
 				source:
@@ -363,128 +379,153 @@ describe('ChunksWebpackPlugin', () => {
 			});
 		});
 
-		it('Should call the addAssets function with dependencies and without cache with CSS only', async () => {
-			chunksWebpackPlugin.getFilesDependenciesByEntrypoint = jest.fn().mockReturnValue({
-				css: [
-					{ name: 'a.css', source: 'module css a' },
-					{ name: 'b.css', source: 'module css b' },
-					{ name: 'c.css', source: 'module css c' }
-				],
-				js: []
-			});
-			chunksWebpackPlugin.getPublicPath = jest.fn().mockReturnValue('dist/');
-			chunksWebpackPlugin.getAssetData = jest
-				.fn()
-				.mockReturnValueOnce({
-					filePath: ['dist/abc.css', 'dist/def.css'],
-					htmlTags:
-						'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
-				})
-				.mockReturnValueOnce({
-					filePath: [],
-					htmlTags: ''
+		describe('Should call the addAssets function with dependencies and without cache with CSS only', () => {
+			beforeEach(() => {
+				chunksWebpackPlugin.getFilesDependenciesByEntrypoint = jest.fn().mockReturnValue({
+					css: [
+						{ name: 'a.css', source: 'module css a' },
+						{ name: 'b.css', source: 'module css b' },
+						{ name: 'c.css', source: 'module css c' }
+					],
+					js: []
 				});
-			chunksWebpackPlugin.createChunksManifestFile = jest.fn();
-			compilationWebpack.compiler.webpack.sources.RawSource.mockReturnValueOnce({
-				source:
-					'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
-			});
-
-			compilationWebpack.entrypoints.keys.mockReturnValue(['home']);
-			compilationWebpack.getCache.mockReturnValue({
-				getLazyHashedEtag: jest
+				chunksWebpackPlugin.getPublicPath = jest.fn().mockReturnValue('dist/');
+				chunksWebpackPlugin.getAssetData = jest
 					.fn()
-					.mockReturnValueOnce('module css a')
-					.mockReturnValueOnce('module css b')
-					.mockReturnValueOnce('module css c')
-					.mockReturnValueOnce('css home'),
-				mergeEtags: jest
-					.fn()
-					.mockReturnValueOnce('123456789123')
-					.mockReturnValueOnce('123456789123'),
-				getItemCache: jest.fn().mockReturnValue({
-					getPromise: jest.fn(),
-					storePromise: jest.fn()
-				})
-			});
-
-			await chunksWebpackPlugin.addAssets(compilationWebpack);
-
-			expect(chunksWebpackPlugin.getFilesDependenciesByEntrypoint).toHaveBeenCalledWith({
-				compilation: compilationWebpack,
-				entryName: 'home'
-			});
-			expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(compilationWebpack, 'home');
-
-			// CSS
-			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(
-				1,
-				'module css a'
-			);
-			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(
-				2,
-				'module css b'
-			);
-			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(
-				3,
-				'module css c'
-			);
-			expect(compilationWebpack.getCache().getItemCache).toHaveBeenNthCalledWith(
-				1,
-				'css|home',
-				'123456789123'
-			);
-			expect(compilationWebpack.getCache().getItemCache().getPromise).toHaveBeenNthCalledWith(1);
-			expect(chunksWebpackPlugin.getAssetData).toHaveBeenNthCalledWith(1, {
-				templateFunction: chunksWebpackPlugin.options.templateStyle,
-				assets: [
-					{
-						name: 'a.css',
-						source: 'module css a'
-					},
-					{
-						name: 'b.css',
-						source: 'module css b'
-					},
-					{
-						name: 'c.css',
-						source: 'module css c'
-					}
-				],
-				entryName: 'home',
-				publicPath: 'dist/'
-			});
-			expect(compilationWebpack.getCache().getItemCache().storePromise).toHaveBeenNthCalledWith(1, {
-				source: {
+					.mockReturnValueOnce({
+						filePath: ['dist/abc.css', 'dist/def.css'],
+						htmlTags:
+							'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
+					})
+					.mockReturnValueOnce({
+						filePath: [],
+						htmlTags: ''
+					});
+				chunksWebpackPlugin.createChunksManifestFile = jest.fn();
+				compilationWebpack.compiler.webpack.sources.RawSource.mockReturnValueOnce({
 					source:
 						'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
-				},
-				filePath: ['dist/abc.css', 'dist/def.css'],
-				htmlTags:
-					'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />',
-				filename: 'templates/home-styles.html'
+				});
+
+				compilationWebpack.entrypoints.keys.mockReturnValue(['home']);
+				compilationWebpack.getCache.mockReturnValue({
+					getLazyHashedEtag: jest
+						.fn()
+						.mockReturnValueOnce('module css a')
+						.mockReturnValueOnce('module css b')
+						.mockReturnValueOnce('module css c')
+						.mockReturnValueOnce('css home'),
+					mergeEtags: jest
+						.fn()
+						.mockReturnValueOnce('123456789123')
+						.mockReturnValueOnce('123456789123'),
+					getItemCache: jest.fn().mockReturnValue({
+						getPromise: jest.fn(),
+						storePromise: jest.fn()
+					})
+				});
 			});
 
-			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(4, {
-				source:
-					'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
-			});
-			expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenCalledTimes(4);
-			expect(compilationWebpack.getCache().mergeEtags).toHaveBeenCalledTimes(2);
-			expect(chunksWebpackPlugin.createChunksManifestFile).toHaveBeenCalledWith({
-				compilation: compilationWebpack,
-				cache: {
-					getLazyHashedEtag: expect.any(Function),
-					mergeEtags: expect.any(Function),
-					getItemCache: expect.any(Function)
-				},
-				eTag: 'css home', // Because reduce is not executed when array contains only one item
-				manifest: {
-					home: {
-						scripts: [],
-						styles: ['dist/abc.css', 'dist/def.css']
+			afterEach(() => {
+				expect(chunksWebpackPlugin.getFilesDependenciesByEntrypoint).toHaveBeenCalledWith({
+					compilation: compilationWebpack,
+					entryName: 'home'
+				});
+				expect(chunksWebpackPlugin.getPublicPath).toHaveBeenCalledWith(compilationWebpack, 'home');
+
+				// CSS
+				expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(
+					1,
+					'module css a'
+				);
+				expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(
+					2,
+					'module css b'
+				);
+				expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(
+					3,
+					'module css c'
+				);
+				expect(compilationWebpack.getCache().getItemCache).toHaveBeenNthCalledWith(
+					1,
+					'css|home',
+					'123456789123'
+				);
+				expect(compilationWebpack.getCache().getItemCache().getPromise).toHaveBeenNthCalledWith(1);
+				expect(chunksWebpackPlugin.getAssetData).toHaveBeenNthCalledWith(1, {
+					templateFunction: chunksWebpackPlugin.options.templateStyle,
+					assets: [
+						{
+							name: 'a.css',
+							source: 'module css a'
+						},
+						{
+							name: 'b.css',
+							source: 'module css b'
+						},
+						{
+							name: 'c.css',
+							source: 'module css c'
+						}
+					],
+					entryName: 'home',
+					publicPath: 'dist/'
+				});
+				expect(compilationWebpack.getCache().getItemCache().storePromise).toHaveBeenNthCalledWith(
+					1,
+					{
+						source: {
+							source:
+								'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
+						},
+						filePath: ['dist/abc.css', 'dist/def.css'],
+						htmlTags:
+							'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />',
+						filename: 'templates/home-styles.html'
 					}
-				}
+				);
+
+				expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenNthCalledWith(4, {
+					source:
+						'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
+				});
+				expect(compilationWebpack.getCache().getLazyHashedEtag).toHaveBeenCalledTimes(4);
+				expect(compilationWebpack.getCache().mergeEtags).toHaveBeenCalledTimes(2);
+				expect(chunksWebpackPlugin.createChunksManifestFile).toHaveBeenCalledWith({
+					compilation: compilationWebpack,
+					cache: {
+						getLazyHashedEtag: expect.any(Function),
+						mergeEtags: expect.any(Function),
+						getItemCache: expect.any(Function)
+					},
+					eTag: 'css home', // Because reduce is not executed when array contains only one item
+					manifest: {
+						home: {
+							scripts: [],
+							styles: ['dist/abc.css', 'dist/def.css']
+						}
+					}
+				});
+			});
+
+			it('With generateChunksFiles true', async () => {
+				await chunksWebpackPlugin.addAssets(compilationWebpack);
+
+				expect(compilationWebpack.emitAsset).toHaveBeenNthCalledWith(
+					1,
+					'templates/home-styles.html',
+					{
+						source:
+							'<link rel="stylesheet" href="https://cdn.domain.com/dist/abc.css" /><link rel="stylesheet" href="https://cdn.domain.com/dist/def.css" />'
+					}
+				);
+			});
+
+			it('With generateChunksFiles false', async () => {
+				chunksWebpackPlugin.options.generateChunksFiles = false;
+				await chunksWebpackPlugin.addAssets(compilationWebpack);
+
+				expect(compilationWebpack.emitAsset).not.toHaveBeenCalled();
 			});
 		});
 	});

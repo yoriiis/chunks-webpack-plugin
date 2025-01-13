@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 12.0.1
+
+### Fixes
+
+- Fix `generateChunksFiles` ignored [#108](https://github.com/yoriiis/chunks-webpack-plugin/pull/108)
+
 ## 12.0.0
 
 ### ⚠️ Breaking changes
