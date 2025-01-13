@@ -127,7 +127,9 @@ export default class ChunksWebpackPlugin {
 						await cacheItem.storePromise(output);
 					}
 
-					compilation.emitAsset(output.filename, output.source);
+					if (this.options.generateChunksFiles) {
+						compilation.emitAsset(output.filename, output.source);
+					}
 
 					entryCssData.push({
 						entryName,
@@ -164,7 +166,9 @@ export default class ChunksWebpackPlugin {
 						await cacheItem.storePromise(output);
 					}
 
-					compilation.emitAsset(output.filename, output.source);
+					if (this.options.generateChunksFiles) {
+						compilation.emitAsset(output.filename, output.source);
+					}
 
 					entryJsData.push({
 						entryName,
