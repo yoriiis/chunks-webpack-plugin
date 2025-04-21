@@ -11,6 +11,11 @@
 			"editor.tabSize": 4,
 			"editor.rulers": [100]
 		},
+		"[markdown][html]": {
+			"editor.formatOnSave": true,
+			"editor.defaultFormatter": "esbenp.prettier-vscode",
+			"editor.wordWrap": "off"
+		},
 		"[yaml]": {
 			"editor.tabSize": 2,
 			"editor.detectIndentation": true,
@@ -25,6 +30,7 @@
 			"*.yaml": "yaml",
 			"*.yml": "yaml"
 		},
+		"prettier.configPath": "./config/prettier.config.cjs",
 		"files.trimTrailingWhitespace": true,
 		"search.exclude": {
 			"**/node_modules": true
@@ -32,7 +38,12 @@
 		"files.eol": "\n"
 	},
 	"extensions": {
-		"recommendations": ["davidanson.vscode-markdownlint", "biomejs.biome", "dbaeumer.vscode-eslint"]
+		"recommendations": [
+			"esbenp.prettier-vscode",
+			"davidanson.vscode-markdownlint",
+			"biomejs.biome",
+			"dbaeumer.vscode-eslint"
+		]
 	},
 	"launch": {
 		"configurations": [

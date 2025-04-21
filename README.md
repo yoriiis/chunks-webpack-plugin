@@ -28,9 +28,10 @@ npm install chunks-webpack-plugin --save-dev
 yarn add chunks-webpack-plugin --dev
 ```
 
-> **Warning** `chunks-webpack-plugin@10` is ESM only.
->
-> **Note** Minimum supported `Node.js` version is `16.20.0` and Webpack `>=5.10.3`.
+> [!WARNING]
+> Plugin `chunks-webpack-plugin@10` is ESM only.
+> [!NOTE]
+> Minimum supported `Node.js` version is `16.20.0` and Webpack `>=5.10.3`.
 
 ## Example
 
@@ -95,7 +96,8 @@ new ChunksWebpackPlugin({
 });
 ```
 
-> **Note** The `filename` can contain directories, which will be created automatically.
+> [!NOTE]
+> The `filename` can contain directories, which will be created automatically.
 
 ### `templateStyle`
 
@@ -193,7 +195,8 @@ export default {
 };
 ```
 
-> **Warning** When set to `false`, HTML files will not be generated. It can **only** be useful together with `generateChunksManifest` option set to `true` for custom generation of the HTML files.
+> [!WARNING]
+> When set to `false`, HTML files will not be generated. It can **only** be useful together with `generateChunksManifest` option set to `true` for custom generation of the HTML files.
 
 ---
 
