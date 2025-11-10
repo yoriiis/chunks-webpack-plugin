@@ -1,8 +1,14 @@
 {
 	"name": "chunks-webpack-plugin",
-	"version": "12.0.1",
+	"version": "13.0.0",
 	"description": "Create HTML files with entrypoints and chunks relations to serve your bundles",
-	"keywords": ["chunks", "chunks-webpack-plugin", "plugin", "split chunks", "webpack"],
+	"keywords": [
+		"chunks",
+		"chunks-webpack-plugin",
+		"plugin",
+		"split chunks",
+		"webpack"
+	],
 	"homepage": "https://github.com/yoriiis/chunks-webpack-plugin",
 	"bugs": "https://github.com/yoriiis/chunks-webpack-plugin/issues",
 	"repository": "https://github.com/yoriiis/chunks-webpack-plugin.git",
@@ -15,7 +21,10 @@
 	"type": "module",
 	"exports": "./lib/index.js",
 	"types": "./types/index.d.ts",
-	"files": ["lib", "types"],
+	"files": [
+		"lib",
+		"types"
+	],
 	"scripts": {
 		"biome:check": "biome check",
 		"biome:fix": "biome check --write",
@@ -30,34 +39,34 @@
 		"test:unit": "jest --config ./config/jest.config.js --verbose --coverage"
 	},
 	"dependencies": {
-		"schema-utils": "^4.2.0"
+		"schema-utils": "^4.3.3"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.26.0",
-		"@biomejs/biome": "^1.9.4",
+		"@babel/core": "^7.28.5",
+		"@biomejs/biome": "^2.3.4",
 		"@types/fs-extra": "^11.0.4",
-		"@types/jest": "^29.5.14",
-		"@types/tapable": "^2.2.7",
+		"@types/jest": "^30.0.0",
+		"@types/tapable": "^2.3.0",
 		"@types/webpack": "^5.28.5",
-		"babel-loader": "^9.2.1",
+		"babel-loader": "^10.0.0",
 		"coveralls": "^3.1.1",
 		"css-loader": "^7.1.2",
-		"css-minimizer-webpack-plugin": "^7.0.0",
-		"jest": "^29.7.0",
-		"mini-css-extract-plugin": "^2.9.2",
-		"prettier": "^3.5.1",
+		"css-minimizer-webpack-plugin": "^7.0.2",
+		"jest": "^30.2.0",
+		"mini-css-extract-plugin": "^2.9.4",
+		"prettier": "^3.6.2",
 		"sanitize.css": "^13.0.0",
-		"terser-webpack-plugin": "^5.3.10",
-		"ts-jest": "^29.2.5",
-		"typescript": "^5.6.3",
-		"vlitejs": "^6.0.5",
-		"webpack": "^5.96.1",
-		"webpack-cli": "^5.1.4"
+		"terser-webpack-plugin": "^5.3.14",
+		"ts-jest": "^29.4.5",
+		"typescript": "^5.9.3",
+		"vlitejs": "^7.4.2",
+		"webpack": "^5.102.1",
+		"webpack-cli": "^6.0.1"
 	},
 	"peerDependencies": {
 		"webpack": "^5.0.0"
 	},
 	"engines": {
-		"node": ">=20.18.0"
+		"node": ">=22"
 	}
 }

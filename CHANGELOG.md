@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 13.0.0
+
+### ⚠️ Breaking changes
+
+- Updates Node.js ([#109](https://github.com/yoriiis/chunks-webpack-plugin/pull/109))
+  - Minimum supported `Node.js` version is `>=22`
+  - Updates other packages
+
 ## 12.0.1
 
 ### Fixes

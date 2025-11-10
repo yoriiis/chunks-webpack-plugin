@@ -22,6 +22,12 @@
 			"editor.insertSpaces": true,
 			"editor.autoIndent": "none"
 		},
+		"[javascript][typescript][css][json]": {
+			"editor.codeActionsOnSave": {
+				"quickfix.biome": "explicit",
+				"source.organizeImports.biome": "explicit"
+			}
+		},
 		"files.associations": {
 			"*.css": "postcss",
 			"*.html": "html",
