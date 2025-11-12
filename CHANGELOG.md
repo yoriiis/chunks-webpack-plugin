@@ -4,7 +4,7 @@
 
 ### ⚠️ Breaking changes
 
-- Updates Node.js ([#109](https://github.com/yoriiis/chunks-webpack-plugin/pull/109))
+- Updates Node.js ([#110](https://github.com/yoriiis/chunks-webpack-plugin/pull/110))
   - Minimum supported `Node.js` version is `>=22`
   - Updates other packages
 
