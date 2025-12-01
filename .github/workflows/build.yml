@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-root:
     strategy:
       matrix:
         node-version: [22, 24]
@@ -19,4 +19,20 @@ jobs:
     with:
       node-version: ${{ matrix.node-version }}
       os: ${{ matrix.os }}
-      command-build: npm run build && npm run build:example
+      upload-artifact: true
+      artifact-name: build-artifact-${{ matrix.os }}-${{ matrix.node-version }}
+
+  build-example:
+    needs: build-root
+    strategy:
+      matrix:
+        node-version: [22, 24]
+        os: [ubuntu-latest, macos-latest]
+    uses: yoriiis/actions/.github/workflows/test-and-build.yml@main
+    with:
+      node-version: ${{ matrix.node-version }}
+      os: ${{ matrix.os }}
+      working-directory: ./example
+      download-artifact: true
+      artifact-name: build-artifact-${{ matrix.os }}-${{ matrix.node-version }}
+      command-install: npm ci --install-links
