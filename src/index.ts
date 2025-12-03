@@ -26,7 +26,7 @@ export default class ChunksWebpackPlugin {
 	 * Instanciate the constructor
 	 * @param options Plugin options
 	 */
-	constructor(options: PluginOptions) {
+	constructor(options?: Partial<PluginOptions>) {
 		// Merge default options with user options
 		this.options = Object.assign(
 			{
