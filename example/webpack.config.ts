@@ -8,6 +8,11 @@ import TerserJSPlugin from 'terser-webpack-plugin';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+export const templateStyle = (name: string) =>
+	`<link rel="stylesheet" href="https://cdn.domain.com${name}" />`;
+export const templateScript = (name: string) =>
+	`<script defer src="https://cdn.domain.com${name}"></script>`;
+
 export default (_env: any, argv: { mode: string }) => {
 	const isProduction = argv.mode === 'production';
 
@@ -58,8 +63,8 @@ export default (_env: any, argv: { mode: string }) => {
 			}),
 			new ChunksWebpackPlugin({
 				filename: '/templates/[name]-[type].html',
-				templateStyle: (name) => `<link rel="stylesheet" href="https://cdn.domain.com${name}" />`,
-				templateScript: (name) => `<script defer src="https://cdn.domain.com${name}"></script>`,
+				templateStyle: templateStyle,
+				templateScript: templateScript,
 				generateChunksManifest: true,
 				generateChunksFiles: true
 			})

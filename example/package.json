@@ -6,7 +6,8 @@
 		"build": "rm -rf ./dist/ && webpack --config=./webpack.config.ts --mode=production",
 		"dev": "rm -rf ./dist/ && webpack --config=./webpack.config.ts --mode=development",
 		"inspect": "rm -rf ./dist/ && node --inspect node_modules/webpack/bin/webpack.js --config=./webpack.config.ts --mode=development",
-		"test": "echo 'No local tests' && exit 0"
+		"test": "npm run verify",
+		"verify": "tsx verify-build.js"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.28.5",
@@ -19,6 +20,7 @@
 		"sanitize.css": "^13.0.0",
 		"terser-webpack-plugin": "^5.3.14",
 		"ts-node": "^10.9.2",
+		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
 		"vlitejs": "^7.4.2",
 		"webpack": "^5.102.1",
