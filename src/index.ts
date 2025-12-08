@@ -234,12 +234,18 @@ export default class ChunksWebpackPlugin {
 			return listDependencies;
 		}
 
-		type FilesDependenciesKey = 'css' | 'js';
+		const jsExtensions = ['js', 'mjs'];
+		const cssExtensions = ['css'];
+
 		entry.getFiles().forEach((file: string) => {
-			const extension = path.extname(file).slice(1) as FilesDependenciesKey;
-			if (['css', 'js'].includes(extension)) {
-				const asset = compilation.getAsset(file);
-				asset && listDependencies[extension].push(asset);
+			const extension = path.extname(file).slice(1);
+			const asset = compilation.getAsset(file);
+			if (!asset) return;
+
+			if (jsExtensions.includes(extension)) {
+				listDependencies.js.push(asset);
+			} else if (cssExtensions.includes(extension)) {
+				listDependencies.css.push(asset);
 			}
 		});
 

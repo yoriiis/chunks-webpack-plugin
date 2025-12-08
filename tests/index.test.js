@@ -535,11 +535,12 @@ describe('ChunksWebpackPlugin', () => {
 			compilationWebpack.entrypoints.get.mockReturnValue({
 				getFiles: jest
 					.fn()
-					.mockReturnValue(['a.css', 'a.js', 'b.css', 'b.js', 'a.jpg', 'a.svg', 'a.json'])
+					.mockReturnValue(['a.css', 'a.js', 'a.mjs', 'b.css', 'b.js', 'a.jpg', 'a.svg', 'a.json'])
 			});
 			compilationWebpack.getAsset
 				.mockReturnValueOnce('a.css')
 				.mockReturnValueOnce('a.js')
+				.mockReturnValueOnce('a.mjs')
 				.mockReturnValueOnce('b.css')
 				.mockReturnValueOnce('b.js');
 
@@ -548,7 +549,7 @@ describe('ChunksWebpackPlugin', () => {
 				entryName: 'home'
 			});
 
-			expect(result).toStrictEqual({ css: ['a.css', 'b.css'], js: ['a.js', 'b.js'] });
+			expect(result).toStrictEqual({ css: ['a.css', 'b.css'], js: ['a.js', 'a.mjs', 'b.js'] });
 		});
 
 		it('Should call the getFilesDependenciesByEntrypoint function with entries null', () => {
