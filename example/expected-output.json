@@ -1,0 +1,34 @@
+{
+	"entries": {
+		"shared/app-a": {
+			"styles": {
+				"count": 2,
+				"patterns": ["/dist/css/.*\\.css", "/dist/css/shared/app-a\\.css"]
+			},
+			"scripts": {
+				"count": 2,
+				"patterns": ["/dist/js/.*\\.js", "/dist/js/shared/app-a\\.js"]
+			}
+		},
+		"app-b": {
+			"styles": {
+				"count": 2,
+				"patterns": ["/dist/css/.*\\.css", "/dist/css/app-b\\.css"]
+			},
+			"scripts": {
+				"count": 2,
+				"patterns": ["/dist/js/.*\\.js", "/dist/js/app-b\\.js"]
+			}
+		},
+		"app-c": {
+			"styles": {
+				"count": 2,
+				"patterns": ["/dist/css/.*\\.css", "/dist/css/app-c\\.css"]
+			},
+			"scripts": {
+				"count": 2,
+				"patterns": ["/dist/js/.*\\.js", "/dist/js/app-c\\.js"]
+			}
+		}
+	}
+}
