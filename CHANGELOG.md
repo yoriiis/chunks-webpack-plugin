@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 13.1.0
+
+### Updates
+
+- Fix types and use package inside demo ([#116](https://github.com/yoriiis/chunks-webpack-plugin/pull/116))
+- Make config optional by @duckblaster in ([#117](https://github.com/yoriiis/chunks-webpack-plugin/pull/117))
+- Add verify script to check dist content ([#119](https://github.com/yoriiis/chunks-webpack-plugin/pull/119))
+- Add support for `.mjs` extension ([#120](https://github.com/yoriiis/chunks-webpack-plugin/pull/120))
+
 ## 13.0.0
 
 ### ⚠️ Breaking changes
