@@ -15,10 +15,8 @@ jobs:
       matrix:
         node-version: [22, 24]
         os: [ubuntu-latest, macos-latest]
-    uses: yoriiis/actions/.github/workflows/test-and-build.yml@main
+    uses: yoriiis/actions/.github/workflows/test-and-build-root-demo.yml@main
     with:
       node-version: ${{ matrix.node-version }}
       os: ${{ matrix.os }}
-      artifact-name: build-artifact-${{ matrix.os }}-${{ matrix.node-version }}
-      command-install: npm ci && (cd ../example && npm ci)
-      command-build: npm run build && (cd ../example && npm run build)
+      working-directory-demo: ./example
