@@ -30,7 +30,6 @@ jobs:
       working-directory: ./example
       download-artifact: true
       artifact-name: build-artifact-${{ matrix.os }}-${{ matrix.node-version }}
-      command-install: npm ci --install-links
       command-test: npm run build && npm run test
 
   lint:
